@@ -6,6 +6,7 @@ export default function Loader() {
             <div
             className='w-20 h-20 border-6 border-t-background border-foreground rounded-full animate-spin'
             ></div>
+            <p>Carregando...</p>
         </div>
     )
 }
