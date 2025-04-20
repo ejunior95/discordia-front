@@ -5,7 +5,7 @@ export default function Chat () {
     return(
         <>
             <Navbar />
-            <section className='w-full h-dvh flex-col place-content-center justify-items-center'>
+            <section className='w-full flex-col justify-items-center'>
                 <ChatBody />
             </section>
         </>
