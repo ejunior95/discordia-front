@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Paperclip } from "lucide-react";
@@ -14,6 +14,14 @@ export const ChatBody = () => {
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom on new message
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSend = async () => {
     if (!question.trim()) return;
@@ -70,7 +78,7 @@ export const ChatBody = () => {
     <section className="w-220 flex-col ">
       {
         firstAccess ?
-        <div>
+        <div className='mt-[5%]'>
           <p className="text-4xl font-semibold tracking-tighter select-none">Boa tarde, Junior.</p>
           <p className="text-4xl font-semibold tracking-tighter select-none">
             Faça sua pergunta e veja as IAs disputarem pelo seu voto!
@@ -92,7 +100,7 @@ export const ChatBody = () => {
         </ScrollArea>
       }
 
-      <div className="w-220 h-40 bg-secondary rounded-md mt-6 px-2 py-3 relative">
+      <div className="w-220 h-40 bg-input rounded-md mt-6 px-2 py-3 relative">
         <textarea
           name="textareaQuestion"
           id="text-question"
@@ -108,23 +116,15 @@ export const ChatBody = () => {
           <Paperclip className="h-[1.5rem] w-[1.5rem]" />
           <p>Anexar arquivo (em breve)</p>
         </Button>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="outline"
-                size="icon"
-                className="cursor-pointer absolute right-2 bottom-2"
-                onClick={handleSend}
-                disabled={loading || !question.trim()}
-              >
-                <SendHorizontal className="h-[1.5rem] w-[1.5rem]" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Enviar mensagem</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Button
+          variant="default"
+          className="cursor-pointer absolute right-2 bottom-2"
+          onClick={handleSend}
+          disabled={loading || !question.trim()}
+        >
+          Enviar mensagem
+          <SendHorizontal className="h-[1.5rem] w-[1.5rem]" />
+        </Button>
       </div>
       {
         firstAccess && (
