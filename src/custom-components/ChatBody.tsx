@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Paperclip } from "lucide-react";
 import { SendHorizontal } from "lucide-react";
 import { DeepSeek, Gemini, Grok, OpenAI } from '@lobehub/icons';
@@ -14,14 +13,6 @@ export const ChatBody = () => {
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to bottom on new message
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   const handleSend = async () => {
     if (!question.trim()) return;
