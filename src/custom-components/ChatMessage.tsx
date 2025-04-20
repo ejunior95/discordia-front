@@ -1,5 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons"
+import { ThumbsDown, ThumbsUp } from "lucide-react"
 
 export interface IChatMessage {
     type: 'ia' | 'user'
@@ -11,7 +12,7 @@ export const ChatMessage = (props: IChatMessage) => {
     if (props.type === 'user') {
         return (
             <div className="w-full place-items-end place-content-between mb-6">
-                <div className="flex w-1/2">
+                <div className="flex w-1/2 justify-end">
                     <div className="p-4 bg-accent-foreground rounded-tl-md rounded-b-md">
                         <p className="text-background">{props.message}</p>
                     </div>
@@ -27,7 +28,7 @@ export const ChatMessage = (props: IChatMessage) => {
 
         if (props.agentIA === 'gemini') {
             iaContent = <>
-                <Gemini size={50} className="bg-white text-blue-600 mr-2 p-2 rounded-3xl border" />
+                <Gemini size={50} title="Gemini" className="bg-white text-blue-600 mr-2 p-2 rounded-3xl border" />
                 <div className="p-4 bg-accent-foreground rounded-tr-md rounded-b-md">
                     <p className="text-background">{props.message}</p>
                 </div>
@@ -35,7 +36,7 @@ export const ChatMessage = (props: IChatMessage) => {
         } 
         if (props.agentIA === 'grok') {
             iaContent = <>
-                <Grok size={50} className="bg-gray-600 text-white mr-2 p-2 rounded-3xl border" />
+                <Grok size={50} title="Grok" className="bg-gray-600 text-white mr-2 p-2 rounded-3xl border" />
                 <div className="p-4 bg-accent-foreground rounded-tr-md rounded-b-md">
                     <p className="text-background">{props.message}</p>
                 </div>
@@ -43,7 +44,7 @@ export const ChatMessage = (props: IChatMessage) => {
         }
         if (props.agentIA === 'deepseek') {
             iaContent = <>
-                <DeepSeek size={50} className="bg-blue-600 text-white mr-2 p-2 rounded-3xl border" />
+                <DeepSeek size={50} title="Deepseek" className="bg-blue-600 text-white mr-2 p-2 rounded-3xl border" />
                 <div className="p-4 bg-accent-foreground rounded-tr-md rounded-b-md">
                     <p className="text-background">{props.message}</p>
                 </div>
@@ -51,7 +52,7 @@ export const ChatMessage = (props: IChatMessage) => {
         }
         if (props.agentIA === 'chat-gpt') {
             iaContent = <>
-                <OpenAI size={50} className="bg-black text-white mr-2 p-2 rounded-3xl border" />
+                <OpenAI size={50} title="ChatGPT" className="bg-black text-white mr-2 p-2 rounded-3xl border" />
                 <div className="p-4 bg-accent-foreground rounded-tr-md rounded-b-md">
                     <p className="text-background">{props.message}</p>
                 </div>
@@ -59,8 +60,13 @@ export const ChatMessage = (props: IChatMessage) => {
         }
 
         return (
-            <div className="w-full place-content-between mb-6">
+            <div className="w-full place-content-between mb-6 relative">
                 <div className="flex w-1/2">{iaContent}</div>
+                <div title="Essa foi a melhor resposta?">
+                <ThumbsUp 
+                    size={30} 
+                    className="absolute flex bottom-0 right-1/2 text-background pb-2 pr-2 cursor-pointer" /> 
+                </div>
             </div>
         )
     }
