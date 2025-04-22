@@ -3,6 +3,7 @@ import Logo from "/discordia-logo.png"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import { LogOut } from "lucide-react"
 
 export const Navbar = () => {
   return (
@@ -26,7 +27,11 @@ export const Navbar = () => {
           {/* <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>JR</AvatarFallback>
-          </Avatar> */}
+          </Avatar>
+          <Button variant="outline" size="icon" className="cursor-pointer">
+            <LogOut  className="h-[1.2rem] w-[1.2rem]" />
+            <span className="sr-only">Fazer logout</span>
+          </Button> */}
         </div>
     </nav>
   )
