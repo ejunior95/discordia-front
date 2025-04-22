@@ -33,7 +33,7 @@ export const ChatBody = () => {
     }
   };
 
-  function insertMessagesChat(data: IResponseApiAllIa, userQuestion: string): IChatMessage[] {
+  const insertMessagesChat = (data: IResponseApiAllIa, userQuestion: string): IChatMessage[] => {
     messages.push(
       {
         message: userQuestion,
