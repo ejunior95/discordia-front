@@ -9,7 +9,7 @@ export default function Home() {
             <Navbar />
             <div className='w-full flex-col place-content-center justify-items-center'>
                 <section className='w-full flex-col h-dvh place-content-center justify-items-center'>
-                    <img src={Discordia3dLogo} alt='discordia-logo3d' className='w-1/4' />   
+                    <img src={Discordia3dLogo} alt='discordia-logo3d' className='w-1/4 -mt-20' />   
                     <div className='flex justify-center items-center text-8xl'>
                         <h1 className='font-extrabold tracking-tight'>
                             Discord
