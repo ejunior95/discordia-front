@@ -1,6 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons"
-import { ThumbsDown, ThumbsUp } from "lucide-react"
+import { ThumbsUp } from "lucide-react"
 
 export interface IChatMessage {
     type: 'ia' | 'user'
