@@ -17,6 +17,17 @@ export const Navbar = () => {
     navigate('/login');
   };
 
+  const formatFallbackAvatarStr = () => {
+    const names = user?.name.split(' ')
+    if(names) {
+        if(names?.length === 1) {
+            return names[0].slice(0,1)
+        }
+        return `${names[0].slice(0,1)}${names[names.length - 1].slice(0,1)}`
+    }
+    return '?'
+  }
+
   return (
     <nav className="p-4 flex w-full justify-between bg-background text-foreground">
       <Link to="/" className="flex gap-3">
@@ -43,7 +54,7 @@ export const Navbar = () => {
           <>
             <Avatar>
               <AvatarImage src={user?.avatar} className="object-cover object-center" />
-              <AvatarFallback>JR</AvatarFallback>
+              <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
             </Avatar>
             <Button onClick={handleLogout} variant="outline" size="icon" title="Encerrar sessão" className="cursor-pointer">
               <LogOut  className="h-[1.2rem] w-[1.2rem]" />
