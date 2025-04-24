@@ -10,6 +10,34 @@ const loaderMessages = [
   "Comparando sinapses artificiais...",
   "Disputando sua atenção...",
   "Inteligência em ebulição...",
+  "Decifrando padrões cósmicos...",
+  "Trocando ideias entre chips...",
+  "Recarregando neurônios sintéticos...",
+  "Puxando sabedoria da nuvem...",
+  "Sincronizando mentes artificiais...",
+  "Esquentando os algoritmos...",
+  "Colocando bits em ordem...",
+  "Gerando genialidade em tempo real...",
+  "Fazendo contas que humanos evitam...",
+  "Discutindo quem responde melhor...",
+  "Injetando criatividade nos circuitos...",
+  "Coletando dados do multiverso...",
+  "Destilando conhecimento puro...",
+  "Digitando com dedos imaginários...",
+  "Derrapando nos fios da sabedoria...",
+  "Caçando insights nos dados...",
+  "Raciocinando na velocidade da luz...",
+  "Conectando com a mente universal...",
+  "Misturando lógica com poesia...",
+  "Pescando respostas no mar binário...",
+  "Fazendo mágica com matemática...",
+  "Consultando o mestre dos algoritmos...",
+  "Reunindo conselhos intergalácticos...",
+  "Traduzindo bits em sabedoria humana...",
+  "Cozinhando ideias em alta voltagem...",
+  "Buscando sentido na matrix...",
+  "Ligando o modo gênio...",
+  "A inteligência está quase pronta..."
 ];
 
 const SecondaryLoader = () => {
@@ -24,7 +52,7 @@ const SecondaryLoader = () => {
   }, []);
 
   return (
-    <div className="w-full h-dvh flex-col place-content-center justify-items-center space-y-4">
+    <div className="w-full h-[80vh] flex-col place-content-center justify-items-center space-y-4">
 
         <div className="flex items-center justify-center h-40">
           <motion.div
@@ -34,19 +62,19 @@ const SecondaryLoader = () => {
               scale: [1, 1.2, 1],
             }}
             transition={{
-              duration: 1.5,
+              duration: 2,
               repeat: Infinity,
               ease: "easeInOut",
             }}
           >
 
             <motion.div
-              className="absolute w-16 h-16 rounded-full bg-primary/20 blur-xl z-0"
+              className="absolute w-16 h-16 rounded-full bg-foreground/30 blur-xl z-0"
               animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.3, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            <Brain size={50} className="text-primary relative z-10" />
+            <Brain size={60} className="text-primary relative z-10" />
           </motion.div>
         </div>
 
