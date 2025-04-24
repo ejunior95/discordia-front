@@ -22,7 +22,7 @@ export default function Home() {
                         </h1>    
                     </div> 
                 </section>
-                <section className='w-1/2 my-8'>
+                <section className='w-1/2 h-dvh my-8'>
                     <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
                         Um chat conflituoso entre as principais IAs do mercado
                     </h2>
