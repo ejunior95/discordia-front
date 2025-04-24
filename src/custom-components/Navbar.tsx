@@ -4,8 +4,22 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 import { Link, useNavigate } from "react-router-dom"
-import { LogOut } from "lucide-react"
+import { 
+  CreditCard, 
+  LogOut, 
+  Settings, 
+  User, 
+} from "lucide-react"
 import { logout } from "@/services/auth.service"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuGroup, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu"
 
 export const Navbar = () => {
   const { user, setUser } = useAuth();
@@ -52,10 +66,67 @@ export const Navbar = () => {
           </>
           :
           <>
-            <Avatar>
-              <AvatarImage src={user?.avatar} className="object-cover object-center" />
-              <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
-            </Avatar>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer" title={user?.name}>
+                  <AvatarImage src={user?.avatar} className="object-cover object-center" />
+                  <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuLabel className="select-none">{`Olá, ${user?.name.split(' ')[0]}!`}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <User />
+                    <span>Meu perfil</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <CreditCard />
+                    <span>Assinatura</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings />
+                    <span>Configurações</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                {/* <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <Users />
+                    <span>Team</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <UserPlus />
+                      <span>Invite users</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>
+                          <Mail />
+                          <span>Email</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <MessageSquare />
+                          <span>Message</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <PlusCircle />
+                          <span>More...</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuItem>
+                    <Plus />
+                    <span>New Team</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup> */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button onClick={handleLogout} variant="outline" size="icon" title="Encerrar sessão" className="cursor-pointer">
               <LogOut  className="h-[1.2rem] w-[1.2rem]" />
               <span className="sr-only">Encerrar sessão</span>
