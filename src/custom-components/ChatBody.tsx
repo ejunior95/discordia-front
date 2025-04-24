@@ -1,18 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
 import { SendHorizontal } from "lucide-react";
 import { DeepSeek, Gemini, Grok, OpenAI } from '@lobehub/icons';
-import Loader from './Loader';
 import MainService, { IResponseApiAllIa } from '@/services/main.service';
 import { ChatMessage, IChatMessage } from './ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SecondaryLoader from './SecondaryLoader';
 
 export const ChatBody = () => {
   const [firstAccess, setFirstAccess] = useState<boolean>(true);
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollAreaRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }
+  }, [messages]);
   
 
   const handleSend = async () => {
@@ -46,7 +55,7 @@ export const ChatBody = () => {
   }
 
   return (
-    loading ? ( <> <Loader /> </> ) :
+    loading ? ( <> <SecondaryLoader /> </> ) :
     <section className="w-220 flex-col ">
       {
         firstAccess ?
@@ -56,7 +65,7 @@ export const ChatBody = () => {
             Faça sua pergunta e veja as IAs disputarem pelo seu voto!
           </p>
         </div> :
-        <ScrollArea className="h-150 w-full rounded-md border p-5">
+        <ScrollArea className="h-150 w-full rounded-md border p-5" ref={scrollAreaRef}>
           {messages.map((message) => (
             !message.agentIA ?
               <ChatMessage
