@@ -108,7 +108,7 @@ export function RegisterForm({
                 </div>
                 <div className="flex w-full place-content-between items-center">
                 <Avatar className="w-12 h-12">
-                  <AvatarImage src={previewAvatar} />
+                  <AvatarImage src={previewAvatar} className="object-cover object-center" />
                   <AvatarFallback>?</AvatarFallback>
                 </Avatar>
                   <div className="grid gap-3 w-[82%]">
