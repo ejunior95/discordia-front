@@ -24,6 +24,8 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"div">) {
 
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [visiblePassword, setVisiblePassword] = useState<string>('password');
   const [visibleConfirmPassword, setVisibleConfirmPassword] = useState<string>('password');
@@ -32,35 +34,43 @@ export function RegisterForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     e.preventDefault();
-
-    const name = (e.currentTarget as any).name.value;
-    const email = (e.currentTarget as any).email.value;
-    const password = (e.currentTarget as any).password.value;
-    const navigate = useNavigate();
-
-    const payload: ICreateUser = { name, email, password }
-    
-    const userService = new UserService();
-    await userService.create(payload)
-    .then((success) => {
-      toast("Usuário criado com sucesso!", {
-        description: 'Email de confirmação enviado',
-      })
-    }).catch((error) => {
-      console.error("Erro ao fazer login", error);
-      toast("Não foi possível criar usuário", {
-        description: String(error?.response?.data.message),
-        action: {
-          label: "Detalhes",
-          onClick: () => console.log("Undo"),
-        },
-      })
-    }).finally(() => {
-      navigate("/login");
-    })
   
-    setLoading(false);
+    const form = e.currentTarget as any;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const avatar = form.avatar.files?.[0];
+  
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    if (avatar) {
+      formData.append('avatar', avatar); // só se houver imagem
+    }
+  
+    const userService = new UserService();
+  
+    await userService.create(formData)
+      .then((success) => {
+        toast("Usuário criado com sucesso!", {
+          description: 'Email de confirmação enviado',
+        });
+      }).catch((error) => {
+        console.error("Erro ao fazer login", error);
+        toast("Não foi possível criar usuário", {
+          description: String(error?.response?.data.message),
+          action: {
+            label: "Detalhes",
+            onClick: () => console.log("Undo"),
+          },
+        });
+      }).finally(() => {
+        navigate("/login");
+        setLoading(false);
+      });
   };
+  
 
   const toggleVisiblePassword = (type: 'pass' | 'confirm-pass') => {
     if (type === 'pass') {
