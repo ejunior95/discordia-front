@@ -42,7 +42,7 @@ export const Navbar = () => {
           :
           <>
             <Avatar>
-              <AvatarImage src={user?.avatar} />
+              <AvatarImage src={user?.avatar} className="object-cover object-center" />
               <AvatarFallback>JR</AvatarFallback>
             </Avatar>
             <Button onClick={handleLogout} variant="outline" size="icon" title="Encerrar sessão" className="cursor-pointer">
