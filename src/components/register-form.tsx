@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Logo from "../assets/discordia-logo-removebg2.png"
 import Loader from "@/custom-components/Loader"
 import { useState } from "react"
@@ -36,6 +36,7 @@ export function RegisterForm({
     const name = (e.currentTarget as any).name.value;
     const email = (e.currentTarget as any).email.value;
     const password = (e.currentTarget as any).password.value;
+    const navigate = useNavigate();
 
     const payload: ICreateUser = { name, email, password }
     
@@ -54,6 +55,8 @@ export function RegisterForm({
           onClick: () => console.log("Undo"),
         },
       })
+    }).finally(() => {
+      navigate("/login");
     })
   
     setLoading(false);
