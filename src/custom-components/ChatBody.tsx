@@ -7,12 +7,15 @@ import MainService, { IResponseApiAllIa } from '@/services/main.service';
 import { ChatMessage, IChatMessage } from './ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SecondaryLoader from './SecondaryLoader';
+import { useAuth } from '@/hooks/useAuth';
 
 export const ChatBody = () => {
   const [firstAccess, setFirstAccess] = useState<boolean>(true);
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
+
+  const { user } = useAuth();
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -54,13 +57,27 @@ export const ChatBody = () => {
     setMessages([...messages, ...novasMensagens]);
   }
 
+  const verifyDayOrNight = () => {
+    const hour = new Date().getHours()
+
+    if (hour >= 5 && hour < 12) {
+      return 'Bom dia'
+    } else if (hour >= 12 && hour < 18) {
+      return 'Boa tarde'
+    } else {
+      return 'Boa noite'
+    }
+  }
+
   return (
     loading ? ( <> <SecondaryLoader /> </> ) :
     <section className="w-220 flex-col ">
       {
         firstAccess ?
         <div className='mt-[5%]'>
-          <p className="text-4xl font-semibold tracking-tighter select-none">Boa tarde, Junior.</p>
+          <p className="text-4xl font-semibold tracking-tighter select-none">
+            {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}.`}
+          </p>
           <p className="text-4xl font-semibold tracking-tighter select-none">
             Faça sua pergunta e veja as IAs disputarem pelo seu voto!
           </p>
@@ -119,11 +136,11 @@ export const ChatBody = () => {
           <div className="w-full flex items-center justify-between">
             {[
               { icon: <OpenAI size={35} />, label: 'Chat GPT', sub: 'gpt-4o' },
-              { icon: <DeepSeek size={35} />, label: 'Deepseek', sub: 'deepseek-chat' },
+              { icon: <DeepSeek size={35} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
               { icon: <Gemini size={35} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
               { icon: <Grok size={35} />, label: 'Grok', sub: 'grok-3-beta' },
             ].map((ia) => (
-              <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none w-48">
+              <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none w-52">
                 {ia.icon}
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-medium leading-none">{ia.label}</p>
