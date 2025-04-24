@@ -13,6 +13,7 @@ export const ChatBody = () => {
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
+  
 
   const handleSend = async () => {
     if (!question.trim()) return;
@@ -22,8 +23,7 @@ export const ChatBody = () => {
       const mainService = new MainService();
       const responses = await mainService.askToAll(question);
       console.log('Respostas: ', responses?.data);
-      setMessages(insertMessagesChat(responses?.data, question))
-
+      insertMessagesChat(responses?.data, question)
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
     } finally {
@@ -33,35 +33,16 @@ export const ChatBody = () => {
     }
   };
 
-  const insertMessagesChat = (data: IResponseApiAllIa, userQuestion: string): IChatMessage[] => {
-    messages.push(
-      {
-        message: userQuestion,
-        type: 'user'
-      },
-      {
-        message: data['chat-gpt']?.response,
-        type: 'ia',
-        agentIA: 'chat-gpt'
-      },
-      {
-        message: data.deepseek?.response,
-        type: 'ia',
-        agentIA: 'deepseek'
-      },
-      {
-        message: data.gemini?.response,
-        type: 'ia',
-        agentIA: 'gemini'
-      },
-      {
-        message: data.grok?.response,
-        type: 'ia',
-        agentIA: 'grok'
-      },
-    )
-
-    return messages;
+  const insertMessagesChat = (data: IResponseApiAllIa, userQuestion: string) => {
+    const novasMensagens: IChatMessage[] = [
+      { message: userQuestion, type: 'user' },
+      { message: data['chat-gpt']?.response, type: 'ia', agentIA: 'chat-gpt' },
+      { message: data.deepseek?.response, type: 'ia', agentIA: 'deepseek' },
+      { message: data.gemini?.response, type: 'ia', agentIA: 'gemini' },
+      { message: data.grok?.response, type: 'ia', agentIA: 'grok' }
+    ];
+    
+    setMessages([...messages, ...novasMensagens]);
   }
 
   return (
