@@ -19,7 +19,7 @@ export const ChatMessage = (props: IChatMessage) => {
                         <p className="text-background">{props.message}</p>
                     </div>
                     <Avatar className="w-12 h-12 ml-2">
-                        <AvatarImage src={user?.avatar} />
+                        <AvatarImage className="object-cover object-center" src={user?.avatar} />
                     </Avatar>
                 </div>
             </div>
