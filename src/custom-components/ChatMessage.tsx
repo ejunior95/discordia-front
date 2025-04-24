@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/useAuth"
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons"
 import { ThumbsUp } from "lucide-react"
@@ -11,6 +11,18 @@ export interface IChatMessage {
 
 export const ChatMessage = (props: IChatMessage) => {
     const { user } = useAuth();
+
+    const formatFallbackAvatarStr = () => {
+        const names = user?.name.split(' ')
+        if(names) {
+            if(names?.length === 1) {
+                return names[0].slice(0,1)
+            }
+            return `${names[0].slice(0,1)}${names[names.length - 1].slice(0,1)}`
+        }
+        return '?'
+    }
+
     if (props.type === 'user') {
         return (
             <div className="w-full place-items-end place-content-between mb-6">
@@ -20,6 +32,7 @@ export const ChatMessage = (props: IChatMessage) => {
                     </div>
                     <Avatar className="w-12 h-12 ml-2">
                         <AvatarImage className="object-cover object-center" src={user?.avatar} />
+                        <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
                     </Avatar>
                 </div>
             </div>
