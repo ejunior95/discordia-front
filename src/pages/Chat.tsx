@@ -1,5 +1,4 @@
 import { ChatBody } from "@/custom-components/ChatBody"
-import { Navbar } from "@/custom-components/Navbar"
 import { useAuth } from "@/hooks/useAuth";
 import { getUserInfo } from "@/services/auth.service";
 import { useEffect } from "react";
@@ -24,10 +23,9 @@ export default function Chat () {
 
     return(
         <>
-            <Navbar />
-            <section className='w-full flex-col justify-items-center'>
-                <ChatBody />
-            </section>
+          <section className='w-full flex-col justify-items-center'>
+              <ChatBody />
+          </section>
         </>
     )
 }
