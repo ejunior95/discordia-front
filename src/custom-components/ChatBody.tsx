@@ -8,6 +8,7 @@ import { ChatMessage, IChatMessage } from './ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SecondaryLoader from './SecondaryLoader';
 import { useAuth } from '@/hooks/useAuth';
+import { motion, AnimatePresence } from 'framer-motion'
 
 export const ChatBody = () => {
   const [firstAccess, setFirstAccess] = useState<boolean>(true);
@@ -71,89 +72,144 @@ export const ChatBody = () => {
 
   return (
     loading ? ( <> <SecondaryLoader /> </> ) :
-    <section className="w-220 flex-col ">
-      {
-        firstAccess ?
-        <div className='mt-[5%]'>
-          <p className="text-4xl font-semibold tracking-tighter select-none">
-            {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}.`}
-          </p>
-          <p className="text-4xl font-semibold tracking-tighter select-none">
-            Faça sua pergunta e veja as IAs disputarem pelo seu voto!
-          </p>
-        </div> :
-        <ScrollArea className="h-150 w-full rounded-md border p-5" ref={scrollAreaRef}>
-          {messages.map((message) => (
-            !message.agentIA ?
-              <ChatMessage
-                message={message.message}
-                type={message.type}
-              /> :
-              <ChatMessage
-                message={message.message}
-                type={message.type}
-                agentIA={message.agentIA}
+    <section className="
+      flex 
+      flex-col 
+      items-center 
+      w-full 
+      max-w-4xl 
+      mx-auto 
+      lg:h-[80vh] 
+      px-4 
+      md:px-8">
+      <AnimatePresence mode="wait">
+        {firstAccess ? (
+          <motion.div
+            key="intro"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.8 }}
+            className="flex-1 flex flex-col justify-center text-center space-y-4"
+          >
+            <p className="text-3xl sm:text-4xl font-semibold w-full text-left">
+              {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}.`}
+            </p>
+            <p className="text-2xl sm:text-3xl font-semibold w-full text-left">
+              Faça sua pergunta e veja as IAs disputarem pelo seu voto!
+            </p>
+            <div className="w-full h-[30vh] 2xl:h-[20vh] bg-input rounded-lg p-3 relative flex flex-col">
+              <textarea
+                rows={2}
+                placeholder="O que você quer saber?"
+                autoFocus
+                value={question}
+                onChange={e => setQuestion(e.target.value)}
+                className="flex-1 w-full resize-none px-2 py-1 text-lg outline-none"
               />
-            ))}
-        </ScrollArea>
-      }
 
-      <div className="w-220 h-40 bg-input rounded-md mt-6 px-2 py-3 relative">
-        <textarea
-          name="textareaQuestion"
-          id="text-question"
-          rows={3}
-          placeholder="O que você quer saber?"
-          autoFocus
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          className="px-2 w-full outline-none text-lg text-foreground resize-none"
-        />
-
-        <Button variant="outline" disabled className="cursor-pointer absolute left-2 bottom-2">
-          <Paperclip className="h-[1.5rem] w-[1.5rem]" />
-          <p>Anexar arquivo (em breve)</p>
-        </Button>
-        <Button
-          variant="default"
-          className="cursor-pointer absolute right-2 bottom-2"
-          onClick={handleSend}
-          disabled={loading || !question.trim()}
-        >
-          Enviar mensagem
-          <SendHorizontal className="h-[1.5rem] w-[1.5rem]" />
-        </Button>
-      </div>
-      {
-        firstAccess && (
-        <div className="w-220">
-          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border py-6">
-            <span className="relative z-10 bg-background px-4 text-muted-foreground select-none">
-              IA's competidoras
-            </span>
-          </div>
-
-          <div className="w-full flex items-center justify-between">
-            {[
-              { icon: <OpenAI size={35} />, label: 'Chat GPT', sub: 'gpt-4o' },
-              { icon: <DeepSeek size={35} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
-              { icon: <Gemini size={35} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
-              { icon: <Grok size={35} />, label: 'Grok', sub: 'grok-3-beta' },
-            ].map((ia) => (
-              <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none w-52">
-                {ia.icon}
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">{ia.label}</p>
-                  <p className="text-sm text-muted-foreground">{ia.sub}</p>
-                </div>
+              <div className="mt-2 flex justify-between">
+                <Button variant="outline" disabled>
+                  <Paperclip className="h-6 w-6" />
+                  <p className='hidden sm:block '>
+                    Anexar arquivo (em breve)
+                  </p>
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={handleSend}
+                  disabled={loading || !question.trim()}
+                >
+                  <p className='hidden sm:block '>
+                    Enviar mensagem
+                  </p>
+                  <SendHorizontal className="h-6 w-6 ml-2" />
+                </Button>
               </div>
-            ))}
-          </div>
-        </div>
-        )
-        
-      }
+            </div>
+            <div className="w-full">
+              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border mb-4">
+                <span className="relative z-10 bg-background px-4 text-muted-foreground select-none">
+                  IA's competidoras
+                </span>
+              </div>
 
+              <div className="w-full flex items-center justify-between">
+                {[
+                  { icon: <OpenAI size={35} />, label: 'Chat GPT', sub: 'gpt-4o' },
+                  { icon: <DeepSeek size={35} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
+                  { icon: <Gemini size={35} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
+                  { icon: <Grok size={35} />, label: 'Grok', sub: 'grok-3-beta' },
+                ].map((ia) => (
+                  <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none w-52">
+                    {ia.icon}
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none text-left">{ia.label}</p>
+                      <p className="text-sm text-muted-foreground text-left">{ia.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="chat"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col w-full"
+          >
+            <ScrollArea
+              ref={scrollAreaRef}
+              className="
+                w-full 
+                h-[68vh]
+                lg:h-[60vh] 
+                2xl:h-[68vh] 
+                border 
+                rounded-md 
+                p-4 
+                mb-4"
+            >
+              {messages.map((msg, i) => (
+                <ChatMessage key={i} {...msg} />
+              ))}
+            </ScrollArea>
+              
+            <div className="w-full h-[20vh] bg-input rounded-lg p-3 relative flex flex-col">
+              <textarea
+                rows={2}
+                placeholder="O que você quer saber?"
+                autoFocus
+                value={question}
+                onChange={e => setQuestion(e.target.value)}
+                className="flex-1 w-full resize-none px-2 py-1 text-lg outline-none"
+              />
+
+              <div className="mt-2 flex justify-between">
+                <Button variant="outline" disabled>
+                  <Paperclip className="h-6 w-6" />
+                  <p className='hidden sm:block '>
+                    Anexar arquivo (em breve)
+                  </p>
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={handleSend}
+                  disabled={loading || !question.trim()}
+                >
+                  <p className='hidden sm:block '>
+                    Enviar mensagem
+                  </p>
+                  <SendHorizontal className="h-6 w-6 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
