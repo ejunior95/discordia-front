@@ -20,6 +20,17 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from "@/components/ui/alert-dialog"
 
 export const Navbar = () => {
   const { user, setUser } = useAuth();
@@ -116,10 +127,26 @@ export const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button onClick={handleLogout} variant="outline" size="icon" title="Encerrar sessão" className="cursor-pointer">
-              <LogOut  className="h-[1.2rem] w-[1.2rem]" />
-              <span className="sr-only">Encerrar sessão</span>
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="icon" title="Encerrar sessão" className="cursor-pointer">
+                  <LogOut  className="h-[1.2rem] w-[1.2rem]" />
+                  <span className="sr-only">Encerrar sessão</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja encerrar sua sessão? Todos os dados não salvos serão perdidos!
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogAction onClick={handleLogout} className="cursor-pointer">Sim</AlertDialogAction>
+                  <AlertDialogCancel className="cursor-pointer">Não</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </>
         }
       </div>
