@@ -44,9 +44,32 @@ export const Navbar = () => {
 
   return (
     <nav className="p-4 flex w-full justify-between bg-background text-foreground">
-      <Link to="/" className="flex gap-3">
-        <img src={Logo} className="w-14" alt="logo-discordia" />
-        <span className="text-2xl font-semibold tracking-tighter py-1 select-none">DiscordIA</span>
+      <Link to="/" className="flex items-center gap-2 sm:gap-3">
+        <img 
+          src={Logo} 
+          alt="logo-discordia" 
+          className="
+            w-12 
+            sm:w-12 
+            md:w-14 
+            max-w-[3.5rem]
+            transition-all
+          " 
+        />
+        <span 
+          className="
+            hidden 
+            sm:block 
+            text-xl 
+            md:text-2xl 
+            font-semibold 
+            tracking-tight 
+            py-1 
+            select-none
+          "
+        >
+          DiscordIA
+        </span>
       </Link>
       <div className="flex gap-4">
         <ModeToggle />
@@ -90,40 +113,6 @@ export const Navbar = () => {
                     <span>Configurações</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                {/* <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <Users />
-                    <span>Team</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <UserPlus />
-                      <span>Invite users</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem>
-                          <Mail />
-                          <span>Email</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <MessageSquare />
-                          <span>Message</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <PlusCircle />
-                          <span>More...</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuItem>
-                    <Plus />
-                    <span>New Team</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup> */}
               </DropdownMenuContent>
             </DropdownMenu>
 
