@@ -59,10 +59,10 @@ export function RegisterForm({
         console.error("Erro ao fazer login", error);
         toast("Não foi possível criar usuário", {
           description: String(error?.response?.data.message),
-          action: {
-            label: "Detalhes",
-            onClick: () => console.log("Undo"),
-          },
+          // action: {
+          //   label: "Detalhes",
+          //   onClick: () => console.log("Undo"),
+          // },
         });
       }).finally(() => {
         navigate("/login");
