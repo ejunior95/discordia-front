@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, cloneElement } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,31 +8,35 @@ import Discordia3dLogo from '../assets/discordia-logo-3D.png'
 const features = [
   {
     id: 'questions',
-    title: 'Batalha de Perguntas',
-    desc: 'Veja ChatGPT, Gemini, DeepSeek e Grok disputarem para te dar a melhor resposta',
-    icon: <MessageSquare size={100} className="text-indigo-500" />,
-    bgImage: '/src/assets/questions-bg.jpg',
+    title: 'Chat conflituoso',
+    desc: "Desafie as maiores IAs do mundo! ChatGPT, Gemini, DeepSeek e Grok competem pra te dar a melhor resposta, e você decide quem manda bem!",
+    icon: <MessageSquare size={100} className="text-white" />,
+    color: 'bg-indigo-500',
+    bgImage: '/src/assets/questions-bg.jpeg',
   },
   {
     id: 'games',
-    title: 'Jogos de IA',
-    desc: 'Xadrez, Jokenpô e Jogo da Velha: IA vs IA ou Você vs IA',
-    icon: <Gamepad2 size={100} className="text-red-500" />,
-    bgImage: '/src/assets/games-bg.jpg',
+    title: 'Jogue com IA',
+    desc: "Diversão sem limites! Jogue xadrez, jokenpô ou jogo da velha contra IAs ou veja elas se enfrentarem, quem vai ganhar essa?",
+    icon: <Gamepad2 size={100} className="text-white" />,
+    color: 'bg-red-500',
+    bgImage: '/src/assets/games-bg.jpeg',
   },
   {
     id: 'rhyme',
     title: 'Batalha de Rima',
-    desc: 'Competição de rimas entre IAs e você decide quem ganhou!',
-    icon: <MicVocal size={100} className="text-green-500" />,
+    desc: "Coloque as IAs pra rimar como nunca! Vote nas rimas mais pesadas e veja quem leva a melhor nesse duelo de criatividade!",
+    icon: <MicVocal size={100} className="text-white" />,
+    color: 'bg-green-500',
     bgImage: '/src/assets/rhyme-bg.jpg',
   },
   {
     id: 'rpg',
     title: 'RPG',
-    desc: 'Uma aventura incrível e surpreendente',
-    icon: <Swords size={100} className="text-amber-500" />,
-    bgImage: '/src/assets/rpg-bg.jpg',
+    desc: "Mergulhe em uma aventura épica! Enfrente desafios, crie a sua história ou viva momentos incríveis criados pelas IAs que te surpreendem a cada escolha!",
+    icon: <Swords size={100} className="text-white" />,
+    color: 'bg-amber-500',
+    bgImage: '/src/assets/rpg-bg.png',
   },
 ];
 
@@ -106,33 +110,60 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="h-[100dvh] flex flex-col justify-center items-center text-black bg-white px-4">
-        <h2 className="text-4xl font-semibold mb-6">O que você pode fazer com o DiscordIA?</h2>
-        <div className="relative w-full max-w-4xl overflow-hidden">
-          <div className="flex transition-transform duration-700" style={{ transform: `translateX(-${active * 100}%)` }}>
-            {features.map((feat) => (
-              <motion.div
-                key={feat.id}
-                className="flex-shrink-0 w-full flex flex-col items-center p-8"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="p-6 bg-gray-100 rounded-full mb-4">
-                  {feat.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-2 text-center w-full">{feat.title}</h3>
-                <p className="text-center max-w-lg text-gray-600">{feat.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-          
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {features.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActive(idx)}
-                className={`h-3 w-3 rounded-full transition-colors ${idx === active ? 'bg-amber-500' : 'bg-gray-300'}`}
-              ></button>
-            ))}
+      <section className="h-[100dvh] flex flex-col justify-center items-center text-black relative overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${features[active].bgImage})`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          key={features[active].id}
+        >
+          <div className="absolute inset-0 bg-black/70"></div>
+        </motion.div>
+        
+        <div className=" z-10 flex flex-col items-center max-w-4xl h-full w-full">
+          <h2 className="scroll-m-20 mt-[1vh] text-4xl font-extrabold tracking-tight lg:text-5xl text-white w-full text-center">O que você pode fazer com o DiscordIA?</h2>
+          <div className="relative w-full overflow-hidden">
+            <div className="flex transition-transform duration-700"
+              style={{ transform: `translateX(-${active * 100}%)` }}
+            >
+              {features.map((feat) => (
+                <motion.div
+                  key={feat.id}
+                  className="flex-shrink-0 w-full 2xl:h-[90vh] xl:h-[82vh] h-dvh flex flex-col justify-evenly items-center p-8"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className={`p-8 ${feat.color} rounded-full mb-10 flex items-center justify-center`}>
+                      {cloneElement(feat.icon, {
+                        size: 100,
+                        style: { width: '100px', height: '100px' },
+                      })}
+                    </div>
+                    <h2 className="scroll-m-20 border-b pb-2 text-3xl text-white font-semibold tracking-tight first:mt-0">
+                      {feat.title}
+                    </h2>
+                  </div>
+                    
+                  <p className="text-xl text-center max-w-lg text-gray-300">{feat.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+              
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {features.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActive(idx)}
+                  className={`h-3 w-3 rounded-full transition-colors cursor-pointer ${
+                    idx === active ? 'bg-amber-500' : 'bg-gray-300'
+                  }`}
+                ></button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
