@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom"
 export const Layout = () => {
   const location = useLocation()
 
-  const hideNavbarOn = ['/login', '/register', '/home', '/']
+  const hideNavbarOn = ['/login', '/register', '/']
 
   const hideNavbar = hideNavbarOn.includes(location.pathname)
 
