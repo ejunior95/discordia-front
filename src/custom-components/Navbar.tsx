@@ -55,7 +55,7 @@ export const Navbar = () => {
 
   return (
     <nav className="p-4 flex w-full justify-between bg-background text-foreground">
-      <Link to="/" className="flex items-center gap-2 sm:gap-3">
+      <Link to="/home" className="flex items-center gap-2 sm:gap-3">
         <img 
           src={Logo} 
           alt="logo-discordia" 
