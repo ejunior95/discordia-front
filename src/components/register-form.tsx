@@ -17,7 +17,6 @@ import { toast } from "sonner"
 import { Eye, EyeClosed } from "lucide-react"
 import UserService from "@/services/user.service"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { ICreateUser } from "@/interfaces/user"
 
 export function RegisterForm({
   className,
@@ -46,7 +45,7 @@ export function RegisterForm({
     formData.append('email', email);
     formData.append('password', password);
     if (avatar) {
-      formData.append('avatar', avatar); // só se houver imagem
+      formData.append('avatar', avatar);
     }
   
     const userService = new UserService();
@@ -108,7 +107,7 @@ export function RegisterForm({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} autoComplete="nope">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Seu nome</Label>
@@ -136,34 +135,60 @@ export function RegisterForm({
                     type="email"
                     placeholder="email@exemplo.com"
                     required
+                    autoComplete="nope"
                   />
                 </div>
                 <div className="grid gap-3 relative">
                   <div className="flex items-center">
                     <Label htmlFor="password">Senha</Label>
                   </div>
-                  <Input id="password" type={visiblePassword} name="password" className="pr-[2.5rem]" required />
-                  <Button onClick={() => toggleVisiblePassword('pass')} variant="link" size="icon" type="button" className="cursor-pointer absolute bottom-0 right-0">
-                    {
-                      visiblePassword === 'password' ? 
-                      ( <> <EyeClosed className="h-[1.2rem] w-[1.2rem]" /> </> ) :
-                      ( <> <Eye className="h-[1.2rem] w-[1.2rem]" /> </> )
-                    }
+                  <Input
+                    id="password"
+                    type={visiblePassword}
+                    name="password"
+                    className="pr-[2.5rem]"
+                    required
+                    autoComplete="nope"
+                  />
+                  <Button
+                    onClick={() => toggleVisiblePassword('pass')}
+                    variant="link"
+                    size="icon"
+                    type="button"
+                    className="cursor-pointer absolute bottom-0 right-0"
+                  >
+                    {visiblePassword === 'password' ? (
+                      <EyeClosed className="h-[1.2rem] w-[1.2rem]" />
+                    ) : (
+                      <Eye className="h-[1.2rem] w-[1.2rem]" />
+                    )}
                   </Button>
                 </div>
                 <div className="grid gap-3 relative">
                   <div className="flex items-center">
                     <Label htmlFor="password">Confirmar senha</Label>
                   </div>
-                  <Input id="confirm-password" type={visibleConfirmPassword} className="pr-[2.5rem]" required />
-                  <Button onClick={() => toggleVisiblePassword('confirm-pass')} variant="link" size="icon" type="button" className="cursor-pointer absolute bottom-0 right-0">
-                    {
-                      visibleConfirmPassword === 'password' ? 
-                      ( <> <EyeClosed className="h-[1.2rem] w-[1.2rem]" /> </> ) :
-                      ( <> <Eye className="h-[1.2rem] w-[1.2rem]" /> </> )
-                    }
+                  <Input
+                    id="confirm-password"
+                    type={visibleConfirmPassword}
+                    className="pr-[2.5rem]"
+                    required
+                    autoComplete="nope"
+                  />
+                  <Button
+                    onClick={() => toggleVisiblePassword('confirm-pass')}
+                    variant="link"
+                    size="icon"
+                    type="button"
+                    className="cursor-pointer absolute bottom-0 right-0"
+                  >
+                    {visibleConfirmPassword === 'password' ? (
+                      <EyeClosed className="h-[1.2rem] w-[1.2rem]" />
+                    ) : (
+                      <Eye className="h-[1.2rem] w-[1.2rem]" />
+                    )}
                   </Button>
-                </div>
+                </div>                
                 <div className="flex flex-col gap-3">
                   <Button type="submit" className="w-full cursor-pointer">
                     Cadastrar
