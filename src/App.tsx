@@ -19,16 +19,8 @@ export default function App() {
         <Suspense fallback={<Loader />}>
           <Routes>
           <Route element={<Layout />}>
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
-              <Route path="/home" element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
+              <Route path="/" element={<Home />}/>
+              <Route path="/home" element={<Home />}/>
               <Route path="/chat" element={
                 <ProtectedRoute>
                   <Chat />
