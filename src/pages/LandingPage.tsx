@@ -14,6 +14,7 @@ const features = [
     icon: <MessageSquare size={100} className="text-white" />,
     color: 'bg-indigo-500',
     bgImage: '/src/assets/questions-bg.jpeg',
+    link: '/chat'
   },
   {
     id: 'games',
@@ -22,6 +23,7 @@ const features = [
     icon: <Gamepad2 size={100} className="text-white" />,
     color: 'bg-red-500',
     bgImage: '/src/assets/games-bg.jpeg',
+    link: '/games'
   },
   {
     id: 'rhyme',
@@ -30,6 +32,7 @@ const features = [
     icon: <MicVocal size={100} className="text-white" />,
     color: 'bg-green-500',
     bgImage: '/src/assets/rhyme-bg.jpg',
+    link: '/rap-battle'
   },
   {
     id: 'rpg',
@@ -38,6 +41,7 @@ const features = [
     icon: <Swords size={100} className="text-white" />,
     color: 'bg-amber-500',
     bgImage: '/src/assets/rpg-bg.png',
+    link: '/rpg'
   },
 ];
 
@@ -153,7 +157,7 @@ export default function LandingPage() {
                     <h2 className="scroll-m-20 border-b pb-2 text-3xl text-white font-semibold tracking-tight first:mt-0">
                       {feat.title}
                     </h2>
-                    <Link to={user ? '/home' : '/register'}>
+                    <Link to={user ? feat.link : '/register'}>
                       <Button variant='outline' className="cursor-pointer 2xl:text-xl 2xl:p-8 2xl:mt-8 text-white p-4">Começar agora</Button>
                     </Link>
                   </div>
