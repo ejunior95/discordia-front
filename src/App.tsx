@@ -12,6 +12,12 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Chat = lazy(() => import('./pages/Chat'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const Games = lazy(() => import('./pages/Games'));
+const RapBattle = lazy(() => import('./pages/RapBattle'));
+const RolePlaying = lazy(() => import('./pages/RolePlaying'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Subscription = lazy(() => import('./pages/Subscription'));
 
 export default function App() {
   return (
@@ -28,7 +34,48 @@ export default function App() {
                   <Home />
                 </ProtectedRoute>
               } />
+ 
 
+              <Route path="/games" element={
+                <ProtectedRoute>
+                  <Games />
+                </ProtectedRoute>
+              } />
+ 
+
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+ 
+
+              <Route path="/rap-battle" element={
+                <ProtectedRoute>
+                  <RapBattle />
+                </ProtectedRoute>
+              } />
+ 
+
+              <Route path="/rpg" element={
+                <ProtectedRoute>
+                  <RolePlaying />
+                </ProtectedRoute>
+              } />
+ 
+
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/subscription" element={
+                <ProtectedRoute>
+                  <Subscription />
+                </ProtectedRoute>
+              } />
+ 
               <Route path="/chat" element={
                 <ProtectedRoute>
                   <Chat />
