@@ -109,7 +109,7 @@ export const ChatBody = () => {
               />
 
               <div className="mt-2 flex justify-between">
-                <Button variant="outline" disabled>
+                <Button variant="outline" disabled className='cursor-pointer select-none'>
                   <Paperclip className="h-6 w-6" />
                   <p className='hidden sm:block '>
                     Anexar arquivo (em breve)
@@ -119,6 +119,7 @@ export const ChatBody = () => {
                   variant="default"
                   onClick={handleSend}
                   disabled={loading || !question.trim()}
+                  className='cursor-pointer select-none'
                 >
                   <p className='hidden sm:block '>
                     Enviar mensagem
@@ -136,12 +137,12 @@ export const ChatBody = () => {
 
               <div className="w-full flex items-center justify-between">
                 {[
-                  { icon: <OpenAI size={35} />, label: 'Chat GPT', sub: 'gpt-4o' },
-                  { icon: <DeepSeek size={35} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
-                  { icon: <Gemini size={35} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
-                  { icon: <Grok size={35} />, label: 'Grok', sub: 'grok-3-beta' },
+                  { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o' },
+                  { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
+                  { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
+                  { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta' },
                 ].map((ia) => (
-                  <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none w-52">
+                  <div key={ia.label} className="flex items-center space-x-4 rounded-md border p-4 select-none ">
                     {ia.icon}
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none text-left">{ia.label}</p>
@@ -150,6 +151,7 @@ export const ChatBody = () => {
                   </div>
                 ))}
               </div>
+
             </div>
           </motion.div>
         ) : (
