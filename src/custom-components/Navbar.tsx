@@ -111,18 +111,24 @@ export const Navbar = () => {
                 <DropdownMenuLabel className="select-none">{`Olá, ${user?.name.split(' ')[0]}!`}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <User />
-                    <span>Meu perfil</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <CreditCard />
-                    <span>Assinatura</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings />
-                    <span>Configurações</span>
-                  </DropdownMenuItem>
+                  <Link to='/profile'>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <User />
+                      <span>Meu perfil</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link to='/subscription'>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <CreditCard />
+                      <span>Assinatura</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link to='/settings'>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Settings />
+                      <span>Configurações</span>
+                    </DropdownMenuItem>
+                  </Link>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
