@@ -39,14 +39,14 @@ export function LoginForm({
       const user = await getUserInfo();
       setUser(user);
       navigate("/home");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao fazer login", err);
       toast("Erro ao fazer login", {
-        description: String(err),
-        action: {
-          label: "Detalhes",
-          onClick: () => console.log("Undo"),
-        },
+        description: String(err?.response?.data.message),
+        // action: {
+        //   label: "Detalhes",
+        //   onClick: () => console.log("Undo"),
+        // },
       })
     }
     setLoading(false);
