@@ -189,8 +189,8 @@ export default function LandingPage() {
             <motion.div
               key={plan.name}
               className="bg-white text-black h-[50vh] rounded-lg shadow-lg p-8 flex flex-col"
-              whileHover={{ y: -10 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+              whileHover={{ y: -20 }}
+              transition={{ type: 'spring', stiffness: 150 }}
             >
               <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
               <p className="text-5xl font-extrabold mb-6">{plan.price}</p>
@@ -202,7 +202,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Button variant='secondary' className='cursor-pointer'>Assinar agora</Button>
+              <Button variant='secondary' className='cursor-pointer text-xl py-8'>Assinar agora</Button>
             </motion.div>
           ))}
         </div>
