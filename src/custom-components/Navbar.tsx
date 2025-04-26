@@ -142,8 +142,8 @@ export const Navbar = () => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogAction onClick={handleLogout} className="cursor-pointer">Sim</AlertDialogAction>
-                  <AlertDialogCancel className="cursor-pointer">Não</AlertDialogCancel>
+                  <AlertDialogCancel className="cursor-pointer">Não, vou continuar aqui</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLogout} className="cursor-pointer">Sim, quero sair</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
