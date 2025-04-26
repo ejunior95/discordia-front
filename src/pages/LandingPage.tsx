@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Gamepad2, MicVocal, Swords } from 'lucide-react';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png'
+import { useAuth } from '@/hooks/useAuth';
 
 const features = [
   {
@@ -61,6 +62,7 @@ const prices = [
 export default function LandingPage() {
   const [active, setActive] = useState(0);
   const intervalRef = useRef<number>(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     intervalRef.current = window.setInterval(() => {
@@ -109,7 +111,7 @@ export default function LandingPage() {
           animate={{ scale: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
         >
-          <Link to="/register">
+          <Link to={user ? '/home' : '/register'}>
             <Button className="2xl:py-8 2xl:w-[25vw] 2xl:rounded-4xl 2xl:text-2xl cursor-pointer">Começar agora</Button>
           </Link>
         </motion.div>
@@ -151,8 +153,8 @@ export default function LandingPage() {
                     <h2 className="scroll-m-20 border-b pb-2 text-3xl text-white font-semibold tracking-tight first:mt-0">
                       {feat.title}
                     </h2>
-                    <Link to="/register">
-                      <Button variant='outline' className="cursor-pointer 2xl:mt-8 text-white p-4">Começar agora</Button>
+                    <Link to={user ? '/home' : '/register'}>
+                      <Button variant='outline' className="cursor-pointer 2xl:text-xl 2xl:p-8 2xl:mt-8 text-white p-4">Começar agora</Button>
                     </Link>
                   </div>
                     
@@ -176,7 +178,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="h-[100dvh] xl:h-[130dvh] relative flex flex-col justify-center items-center bg-gradient-to-bl from-black to-gray-900  bg-gray-50 px-6 text-center">
+      <section className="h-[100dvh] xl:h-[120dvh] 2xl:h-[100dvh] relative flex flex-col justify-center items-center bg-gradient-to-bl from-black to-gray-900  bg-gray-50 px-6 text-center">
         <h2 className="text-4xl font-semibold mb-8">Assine para aproveitar todos os serviços</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 max-w-6xl w-full">
           {prices.map((plan) => (
