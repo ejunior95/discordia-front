@@ -42,14 +42,19 @@ const features = [
 
 const prices = [
   {
+    name: 'Grátis',
+    price: 'R$0,00/mês',
+    perks: ['10 créditos/mês'],
+  },
+  {
     name: 'Basic',
     price: 'R$9,99/mês',
-    perks: ['100 perguntas/mês', 'Suporte Email'],
+    perks: ['200 créditos/mês'],
   },
   {
     name: 'Premium',
     price: 'R$19,99/mês',
-    perks: ['Perguntas ilimitadas', 'Suporte 24/7', 'Acesso Beta'],
+    perks: ['Créditos ilimitados', 'Acesso Beta'],
   },
 ];
 
@@ -125,7 +130,7 @@ export default function Home() {
         </motion.div>
         
         <div className=" z-10 flex flex-col items-center max-w-4xl h-full w-full">
-          <h2 className="scroll-m-20 mt-[1vh] text-4xl font-extrabold tracking-tight lg:text-5xl text-white w-full text-center">O que você pode fazer com o DiscordIA?</h2>
+          <h2 className="scroll-m-20 mt-[1vh] text-4xl xl:text-4xl font-extrabold tracking-tight lg:text-5xl text-white w-full text-center">O que você pode fazer com o DiscordIA?</h2>
           <div className="relative w-full overflow-hidden">
             <div className="flex transition-transform duration-700"
               style={{ transform: `translateX(-${active * 100}%)` }}
@@ -146,9 +151,12 @@ export default function Home() {
                     <h2 className="scroll-m-20 border-b pb-2 text-3xl text-white font-semibold tracking-tight first:mt-0">
                       {feat.title}
                     </h2>
+                    <Link to="/register">
+                      <Button variant='outline' className="cursor-pointer 2xl:mt-8 text-white p-4">Começar agora</Button>
+                    </Link>
                   </div>
                     
-                  <p className="text-xl text-center max-w-lg text-gray-300">{feat.desc}</p>
+                  <p className="text-xl text-center max-w-lg text-gray-200">{feat.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -168,15 +176,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="h-[100dvh] flex flex-col justify-center items-center bg-gradient-to-bl from-black to-gray-900  bg-gray-50 px-6 text-center">
+      <section className="h-[100dvh] xl:h-[130dvh] relative flex flex-col justify-center items-center bg-gradient-to-bl from-black to-gray-900  bg-gray-50 px-6 text-center">
         <h2 className="text-4xl font-semibold mb-8">Assine para aproveitar todos os serviços</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 max-w-6xl w-full">
           {prices.map((plan) => (
             <motion.div
               key={plan.name}
-              className="bg-white text-black rounded-xl shadow-lg p-8 flex flex-col"
-              whileHover={{ y: -5 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              className="bg-white text-black h-[50vh] rounded-lg shadow-lg p-8 flex flex-col"
+              whileHover={{ y: -10 }}
+              transition={{ type: 'spring', stiffness: 300 }}
             >
               <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
               <p className="text-5xl font-extrabold mb-6">{plan.price}</p>
