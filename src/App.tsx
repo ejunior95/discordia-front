@@ -19,6 +19,8 @@ const RolePlaying = lazy(() => import('./pages/RolePlaying'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Subscription = lazy(() => import('./pages/Subscription'));
+const Chess = lazy(() => import('./pages/Chess'));
+const Jokenpo = lazy(() => import('./pages/Jokenpo'));
 
 export const navigationItems = [
   { label: 'Início', path: '/home', icon: House },
@@ -48,6 +50,18 @@ export default function App() {
               <Route path="/games" element={
                 <ProtectedRoute>
                   <Games />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/games/chess" element={
+                <ProtectedRoute>
+                  <Chess />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/games/jokenpo" element={
+                <ProtectedRoute>
+                  <Jokenpo />
                 </ProtectedRoute>
               } />
  
