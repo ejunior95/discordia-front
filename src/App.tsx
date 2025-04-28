@@ -6,6 +6,7 @@ import { Layout } from './custom-components/Layout';
 import Loader from './custom-components/Loader';
 import ProtectedRoute from './custom-components/ProtectedRoute';
 import PublicRoute from './custom-components/PublicRoute';
+import { Gamepad2, House, MessagesSquare, MicVocal, Swords } from 'lucide-react';
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -18,6 +19,14 @@ const RolePlaying = lazy(() => import('./pages/RolePlaying'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Subscription = lazy(() => import('./pages/Subscription'));
+
+export const navigationItems = [
+  { label: 'Início', path: '/home', icon: House },
+  { label: 'Chat', path: '/chat', icon: MessagesSquare },
+  { label: 'Jogos', path: '/games', icon: Gamepad2 },
+  { label: 'Batalha de rima', path: '/rap-battle', icon: MicVocal },
+  { label: 'RPG', path: '/rpg', icon: Swords },
+];
 
 export default function App() {
   return (
