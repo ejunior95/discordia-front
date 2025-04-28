@@ -59,7 +59,7 @@ export const Navbar = () => {
     const names = user?.name.split(' ')
     if(names) {
         if(names?.length === 1) {
-            return names[0].slice(0,1)
+            return `${names[0].slice(0,1)}${names[0].slice(1,1)}`
         }
         return `${names[0].slice(0,1)}${names[names.length - 1].slice(0,1)}`
     }
@@ -82,13 +82,30 @@ export const Navbar = () => {
         {/* Exibição normal (Desktop) */}
         <div className="hidden md:flex gap-4 justify-center items-center">
           <NavigationMenu>
-            <NavigationMenuList  className=" items-center flex justify-center">
+            <NavigationMenuList  className="items-center flex justify-center gap-2 xl:gap-4">
               {navigationItems.map((item) => (
                 <NavigationMenuItem key={item.path}>
                   <Link to={item.path}>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                      {/* {item.icon && <item.icon className="w-4 h-4" />} */}
-                      {item.label}
+                    <NavigationMenuLink className="
+                      rounded-md 
+                      bg-background 
+                      text-sm 
+                      font-medium 
+                      hover:bg-accent 
+                      hover:text-accent-foreground 
+                      focus:bg-accent 
+                      focus:text-accent-foreground 
+                      disabled:pointer-events-none 
+                      disabled:opacity-50 
+                      focus-visible:ring-ring/50 
+                      outline-none 
+                      transition-[color,box-shadow] 
+                      focus-visible:ring-[3px] 
+                      focus-visible:outline-1">
+                      <div className="flex items-center justify-center gap-3">
+                        {item.icon && <item.icon className="w-10 h-10" />}
+                        <p>{item.label}</p>
+                      </div>
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
