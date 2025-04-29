@@ -51,7 +51,7 @@ export function RegisterForm({
     const userService = new UserService();
   
     await userService.create(formData)
-      .then((success) => {
+      .then(() => {
         toast("Usuário criado com sucesso!", {
           description: 'Email de confirmação enviado',
         });

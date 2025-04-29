@@ -37,7 +37,6 @@ import {
   NavigationMenuItem, 
   NavigationMenuLink, 
   NavigationMenuList, 
-  navigationMenuTriggerStyle 
 } from "@/components/ui/navigation-menu"
 import { navigationItems } from "@/App"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
