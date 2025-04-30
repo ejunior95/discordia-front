@@ -103,11 +103,35 @@ export const ChatBody = () => {
                 rows={2}
                 placeholder="O que você quer saber?"
                 autoFocus
+                maxLength={150}
                 value={question}
                 onChange={e => setQuestion(e.target.value)}
                 className="flex-1 w-full resize-none px-2 py-1 text-lg outline-none"
               />
-
+              {
+                question.length !== 150 ?
+                <p className="
+                  text-sm 
+                  text-muted-foreground 
+                  opacity-60 
+                  absolute 
+                  right-3 
+                  bottom-[6.2dvh] 
+                  select-none"
+                >
+                  Limite de caracteres ({150 - question.length})
+                </p> :
+                <p className="
+                  text-sm
+                  text-red-600 
+                   absolute 
+                   right-3 
+                   bottom-[6.2dvh] 
+                   select-none"
+                >
+                  Limite de caracteres atingido!
+                </p>
+              }              
               <div className="mt-2 flex justify-between">
                 <Button variant="outline" disabled className='cursor-pointer select-none'>
                   <Paperclip className="h-6 w-6" />
