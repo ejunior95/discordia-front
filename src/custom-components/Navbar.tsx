@@ -121,7 +121,7 @@ export const Navbar = () => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer" title={user?.name}>
+                  <Avatar className="cursor-pointer border-2" title={user?.name}>
                     <AvatarImage src={user?.avatar} className="object-cover object-center" />
                     <AvatarFallback>{formatFallbackAvatarStr(user)}</AvatarFallback>
                   </Avatar>
