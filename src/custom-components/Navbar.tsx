@@ -42,6 +42,7 @@ import { navigationItems } from "@/App"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { formatFallbackAvatarStr } from "@/utils/sharedFunctions"
 
 export const Navbar = () => {
   const { user, setUser } = useAuth();
@@ -53,17 +54,6 @@ export const Navbar = () => {
     setUser(null);
     navigate('/login');
   };
-
-  const formatFallbackAvatarStr = () => {
-    const names = user?.name.split(' ')
-    if(names) {
-        if(names?.length === 1) {
-            return `${names[0].slice(0,1)}${names[0].slice(1,1)}`
-        }
-        return `${names[0].slice(0,1)}${names[names.length - 1].slice(0,1)}`
-    }
-    return '?'
-  }
 
   return (
     <nav className="p-4 flex w-full justify-between bg-background text-foreground">
@@ -79,7 +69,7 @@ export const Navbar = () => {
       </Link>
 
         {/* Exibição normal (Desktop) */}
-        <div className="hidden md:flex gap-4 justify-center items-center">
+        <div className="hidden lg:flex gap-4 justify-center items-center">
           <NavigationMenu>
             <NavigationMenuList  className="items-center flex justify-center gap-2 xl:gap-4">
               {navigationItems.map((item) => (
@@ -133,7 +123,7 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Avatar className="cursor-pointer" title={user?.name}>
                     <AvatarImage src={user?.avatar} className="object-cover object-center" />
-                    <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
+                    <AvatarFallback>{formatFallbackAvatarStr(user)}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuUser />
@@ -166,7 +156,7 @@ export const Navbar = () => {
         </div>
 
         {/* Exibição Mobile */}
-        <div className="flex md:hidden gap-4">
+        <div className="flex lg:hidden gap-4">
           <Sheet open={openSheet} onOpenChange={setOpenSheet}>
             <SheetTrigger asChild>
               <Button 
@@ -199,7 +189,7 @@ export const Navbar = () => {
                   <div className="flex m-6 p-6 border">
                     <Avatar className="h-10 w-10 mr-4 rounded-lg">
                       <AvatarImage src={user?.avatar} alt={user?.name} className="object-cover object-center" />
-                      <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
+                      <AvatarFallback>{formatFallbackAvatarStr(user!)}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">{user?.name}</span>
@@ -243,7 +233,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
               <AvatarImage src={user?.avatar} alt={user?.name} className="object-cover object-center" />
-              <AvatarFallback>{formatFallbackAvatarStr()}</AvatarFallback>
+              <AvatarFallback>{formatFallbackAvatarStr(user!)}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">{user?.name}</span>
