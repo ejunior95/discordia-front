@@ -110,15 +110,9 @@ export default function LandingPage() {
         >
           Uma plataforma única onde as principais IA's do mercado competem, e VOCÊ escolhe a vencedora!
         </motion.p>
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-        >
-          <Link to={user ? '/home' : '/register'}>
-            <Button className="2xl:py-8 2xl:w-[25vw] 2xl:rounded-4xl 2xl:text-2xl cursor-pointer">Começar agora</Button>
-          </Link>
-        </motion.div>
+        <Link to={user ? '/home' : '/register'}>
+          <Button className="2xl:py-8 2xl:w-[25vw] 2xl:rounded-4xl 2xl:text-2xl cursor-pointer">Começar agora</Button>
+        </Link>
       </section>
 
       <section className="h-[100dvh] flex flex-col justify-center items-center text-black relative overflow-hidden">
