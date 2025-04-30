@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/useAuth"
-import { formatFallbackAvatarStr } from "@/utils/sharedFunctions"
+import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons"
 import { ThumbsUp } from "lucide-react"
 
