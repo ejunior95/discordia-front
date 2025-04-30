@@ -42,7 +42,7 @@ import { navigationItems } from "@/App"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { formatFallbackAvatarStr } from "@/utils/sharedFunctions"
+import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
 
 export const Navbar = () => {
   const { user, setUser } = useAuth();
