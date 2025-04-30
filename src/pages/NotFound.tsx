@@ -26,7 +26,7 @@ export default function NotFound() {
               Página não encontrada
             </p>
             <p className="mt-2">
-              Opa! A rota que você tentou acessar não existe ou foi movida.
+              Ops! A rota que você tentou acessar não existe ou foi movida.
             </p>
 
             <Link
