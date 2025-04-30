@@ -124,8 +124,31 @@ export function RegisterForm({
                   <AvatarFallback>?</AvatarFallback>
                 </Avatar>
                   <div className="grid gap-3 w-[82%]">
-                    <Label htmlFor="email">Selecione sua foto de perfil</Label>
-                    <Input onChange={handleAvatarChange} id="avatar" name="avatar" type="file" className="cursor-pointer" />
+                    <Label
+                      htmlFor="avatar"
+                      className="
+                          cursor-pointer 
+                          inline-flex 
+                          items-center 
+                          justify-center 
+                          p-3
+                          bg-blue-600 
+                          text-white 
+                          font-semibold 
+                          rounded-md
+                          shadow-md 
+                          hover:bg-blue-900 
+                          transition duration-300"
+                    >
+                            Escolha sua foto de perfil
+                          </Label>
+                          <input
+                            id="avatar"
+                            name="avatar"
+                            type="file"
+                            className="hidden"
+                            onChange={handleAvatarChange}
+                          />
                   </div>
                 </div>
                 <div className="grid gap-3">
