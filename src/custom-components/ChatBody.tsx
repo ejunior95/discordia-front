@@ -7,16 +7,13 @@ import MainService, { IResponseApiAllIa } from '@/services/main.service';
 import { ChatMessage, IChatMessage } from './ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SecondaryLoader from './SecondaryLoader';
-import { useAuth } from '@/hooks/useAuth';
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const ChatBody = () => {
   const [firstAccess, setFirstAccess] = useState<boolean>(true);
   const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<IChatMessage[]>([]);
-
-  const { user } = useAuth();
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -58,18 +55,6 @@ export const ChatBody = () => {
     setMessages([...messages, ...novasMensagens]);
   }
 
-  const verifyDayOrNight = () => {
-    const hour = new Date().getHours()
-
-    if (hour >= 5 && hour < 12) {
-      return 'Bom dia'
-    } else if (hour >= 12 && hour < 18) {
-      return 'Boa tarde'
-    } else {
-      return 'Boa noite'
-    }
-  }
-
   return (
     loading ? ( <> <SecondaryLoader /> </> ) :
     <section className="
@@ -92,9 +77,6 @@ export const ChatBody = () => {
             transition={{ duration: 0.8 }}
             className="flex-1 flex flex-col justify-center text-center space-y-4"
           >
-            <p className="text-3xl sm:text-4xl font-semibold w-full text-left">
-              {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}.`}
-            </p>
             <p className="text-2xl sm:text-3xl font-semibold w-full text-left">
               Faça sua pergunta e veja as IAs disputarem pelo seu voto!
             </p>
@@ -116,8 +98,11 @@ export const ChatBody = () => {
                   opacity-60 
                   absolute 
                   right-3 
-                  bottom-[6.2dvh] 
-                  select-none"
+                  select-none
+                  bottom-[6dvh]
+                  xl:bottom-[10dvh] 
+                  2xl:bottom-[6dvh]
+                  "
                 >
                   Limite de caracteres ({150 - question.length})
                 </p> :
