@@ -21,6 +21,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const Chess = lazy(() => import('./pages/Chess'));
 const Jokenpo = lazy(() => import('./pages/Jokenpo'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 export const navigationItems = [
   { label: 'Início', path: '/home', icon: House },
@@ -116,7 +117,7 @@ export default function App() {
                   <Register />
                 </PublicRoute>
               } />
-
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </Suspense>
