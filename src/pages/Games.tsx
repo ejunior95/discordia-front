@@ -1,15 +1,29 @@
 export default function Games() {
     return(
-        <section className="h-[100dvh] flex flex-col justify-center items-center">
-            <h1 className="scroll-m-20 text-8xl font-extrabold tracking-tight ">
+        <section className="
+            p-10
+            w-full 
+            flex 
+            flex-col 
+            items-center
+            2xl:h-[90dvh] 
+        ">
+            <h1 className="
+                font-extrabold 
+                tracking-tight 
+                text-5xl 
+                mb-5 
+                md:text-6xl 
+                md:mb-8 
+                xl:text-7xl 
+                xl:mb-8 
+                2xl:mb-10
+                w-full 
+                lg:w-[80%]
+                2xl:w-[60%] 
+                2xl:max-w-[1200px]">
                 Jogos com IA
             </h1>
-            <p className="leading-7 [&:not(:first-child)]:mt-6">
-              Once upon a time, in a far-off land, there was a very lazy king who
-              spent all day lounging on his throne. One day, his advisors came to him
-              with a problem: the kingdom was running out of money.
-            </p>
         </section>
-        
     )
 }
