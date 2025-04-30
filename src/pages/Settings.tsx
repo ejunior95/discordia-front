@@ -98,7 +98,7 @@ export default function Settings() {
                     </div>
                     <div className="space-y-1">
                       <Label className="my-3" htmlFor="current">Senha atual</Label>
-                      <Input id="current" type="password" />
+                      <Input id="current" defaultValue="" type="password" />
                     </div>
                     <div className="space-y-1">
                       <Label className="my-3" htmlFor="new">Nova senha</Label>
