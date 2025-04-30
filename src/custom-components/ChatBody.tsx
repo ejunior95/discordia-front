@@ -187,13 +187,25 @@ export const ChatBody = () => {
             transition={{ duration: 0.3 }}
             className="flex flex-col w-full"
           >
+            <h1 className="
+                font-extrabold 
+                tracking-tight 
+                text-5xl 
+                mb-5 
+                md:text-6xl 
+                md:mb-8 
+                xl:text-7xl 
+                w-full 
+                lg:w-[80%]
+                2xl:max-w-[1200px]">
+                Chat com as IAs
+            </h1>
             <ScrollArea
               ref={scrollAreaRef}
               className="
                 w-full 
-                h-[68vh]
-                lg:h-[60vh] 
-                2xl:h-[68vh] 
+                h-[60vh]
+                md:h-[55vh] 
                 border 
                 rounded-md 
                 p-4 
@@ -202,6 +214,7 @@ export const ChatBody = () => {
               {messages.map((msg, i) => (
                 <ChatMessage key={i} {...msg} />
               ))}
+              <p className='absolute -bottom-3 text-sm md:-top-8 right-0'>Interações restantes 10</p>
             </ScrollArea>
               
             <div className="w-full h-[20vh] bg-input rounded-lg p-3 relative flex flex-col">
@@ -210,9 +223,34 @@ export const ChatBody = () => {
                 placeholder="O que você quer saber?"
                 autoFocus
                 value={question}
+                maxLength={150}
                 onChange={e => setQuestion(e.target.value)}
                 className="flex-1 w-full resize-none px-2 py-1 text-lg outline-none"
               />
+              {
+                question.length !== 150 ?
+                <p className="
+                  text-sm 
+                  text-muted-foreground 
+                  opacity-60 
+                  absolute 
+                  right-3 
+                  bottom-[6.2dvh] 
+                  select-none"
+                >
+                  Limite de caracteres ({150 - question.length})
+                </p> :
+                <p className="
+                  text-sm
+                  text-red-600 
+                   absolute 
+                   right-3 
+                   bottom-[6.2dvh] 
+                   select-none"
+                >
+                  Limite de caracteres atingido!
+                </p>
+              }        
 
               <div className="mt-2 flex justify-between">
                 <Button variant="outline" disabled>
