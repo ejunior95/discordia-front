@@ -38,7 +38,16 @@ export function RegisterForm({
     const name = form.name.value;
     const email = form.email.value;
     const password = form.password.value;
+    const confirmPassword = form['confirm-password'].value
     const avatar = form.avatar.files?.[0];
+
+    if(password !== confirmPassword) {
+      toast("Erro ao fazer o cadastro!", {
+        description: 'As senhas não conferem',
+      });
+      setLoading(false)
+      return
+    }
   
     const formData = new FormData();
     formData.append('name', name);
@@ -56,7 +65,7 @@ export function RegisterForm({
           description: 'Email de confirmação enviado',
         });
       }).catch((error) => {
-        console.error("Erro ao fazer login", error);
+        console.error("Erro ao fazer cadastro", error);
         toast("Não foi possível criar usuário", {
           description: String(error?.response?.data.message),
           // action: {
@@ -161,9 +170,7 @@ export function RegisterForm({
                   />
                 </div>
                 <div className="grid gap-3 relative">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Senha</Label>
-                  </div>
+                  <Label htmlFor="password">Senha</Label>
                   <Input
                     id="password"
                     type={visiblePassword}
@@ -186,10 +193,8 @@ export function RegisterForm({
                     )}
                   </Button>
                 </div>
-                <div className="grid gap-3 relative">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Confirmar senha</Label>
-                  </div>
+                <div className="grid gap-3 mb-2 relative">
+                  <Label htmlFor="confirm-password">Confirmar senha</Label>
                   <Input
                     id="confirm-password"
                     type={visibleConfirmPassword}
