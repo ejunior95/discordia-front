@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DialogSelectIA } from "./DialogSelectIA";
 
 export interface IGameCard {
     titleCard: string
@@ -17,9 +18,13 @@ export function GameCard(props: IGameCard) {
                     <CardTitle className="text-xl">{props.titleCard}</CardTitle>
                     <CardDescription>{props.description}</CardDescription>
                 </CardHeader>
-                <Button className="cursor-pointer inline-flex items-center justify-center p-6 -mt-4 mx-4 mb-4 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-900 transition duration-300">
-                    JOGAR
-                </Button>
+                <DialogSelectIA
+                    titleDialog="Escolha contra qual você vai jogar"
+                    trigger={
+                      <Button className="cursor-pointer p-6 mx-4 mb-4 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 transition duration-300">
+                        JOGAR
+                      </Button>
+                    } />
             </Card>
         </>
     )
