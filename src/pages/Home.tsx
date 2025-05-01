@@ -42,7 +42,7 @@ export default function Home() {
                 lg:w-[80%]
                 2xl:w-[60%] 
                 2xl:max-w-[1200px]">
-                {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}`}
+                {`${verifyDayOrNight()}, ${user?.name.split(' ')[0]}!`}
             </h1>
             <p className="
                 tracking-tight 
