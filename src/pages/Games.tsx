@@ -11,7 +11,7 @@ export default function Games() {
                 Jogos com IA
             </h1>
             <Card className="tracking-tight w-full lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px] p-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
                     <GameCard
                         titleCard="Xadrez"
                         description="Coloque suas habilidades à prova em uma partida estratégica contra a inteligência artificial."
