@@ -26,8 +26,8 @@ export function RegisterForm({
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [visiblePassword, setVisiblePassword] = useState<string>('password');
-  const [visibleConfirmPassword, setVisibleConfirmPassword] = useState<string>('password');
+  const [visiblePassword, setVisiblePassword] = useState<string>('text');
+  const [visibleConfirmPassword, setVisibleConfirmPassword] = useState<string>('text');
   const [previewAvatar, setPreviewAvatar] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,7 +107,7 @@ export function RegisterForm({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} autoComplete="nope">
+            <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Seu nome</Label>
@@ -158,7 +158,6 @@ export function RegisterForm({
                     type="email"
                     placeholder="email@exemplo.com"
                     required
-                    autoComplete="nope"
                   />
                 </div>
                 <div className="grid gap-3 relative">
@@ -168,10 +167,10 @@ export function RegisterForm({
                   <Input
                     id="password"
                     type={visiblePassword}
+                    onKeyDown={() => setVisiblePassword('password')}
                     name="password"
                     className="pr-[2.5rem]"
                     required
-                    autoComplete="nope"
                   />
                   <Button
                     onClick={() => toggleVisiblePassword('pass')}
@@ -194,9 +193,9 @@ export function RegisterForm({
                   <Input
                     id="confirm-password"
                     type={visibleConfirmPassword}
+                    onKeyDown={() => setVisibleConfirmPassword('password')}
                     className="pr-[2.5rem]"
                     required
-                    autoComplete="nope"
                   />
                   <Button
                     onClick={() => toggleVisiblePassword('confirm-pass')}
