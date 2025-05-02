@@ -22,8 +22,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { setUser } = useAuth();
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [visiblePassword, setVisiblePassword] = useState<string>('password');
 
