@@ -9,15 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface DialogSelectIAProps {
   trigger: React.ReactNode;
   titleDialog: string;
+  link?: string;
 }
 
-export function DialogSelectIA({ trigger, titleDialog }: DialogSelectIAProps) {
+export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAProps) {
   const [selectedIA, setSelectedIA] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const ias = [
     { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o' },
@@ -25,6 +28,12 @@ export function DialogSelectIA({ trigger, titleDialog }: DialogSelectIAProps) {
     { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
     { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta' },
   ];
+  
+  const handleSelect = () => {
+    if(link) {
+      navigate(link);
+    }
+  }
 
   return (
     <Dialog
@@ -71,12 +80,13 @@ export function DialogSelectIA({ trigger, titleDialog }: DialogSelectIAProps) {
             </div>
           ))}
         </div>
-        <Button
-          disabled={!selectedIA}
-          className="cursor-pointer p-6 mb-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Vamos lá!
-        </Button>
+          <Button
+            disabled={!selectedIA}
+            onClick={handleSelect}
+            className="cursor-pointer p-6 mb-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Vamos lá!
+          </Button>
       </DialogContent>
     </Dialog>
   );
