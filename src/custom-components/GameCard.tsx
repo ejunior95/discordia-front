@@ -10,6 +10,17 @@ export interface IGameCard {
 }
 
 export function GameCard(props: IGameCard) {
+    let verifyLink = ''
+    if (props.titleCard === 'Xadrez') {
+        verifyLink = 'chess'
+    }
+    if (props.titleCard === 'Jokenpô') {
+        verifyLink = 'jokenpo'
+    }
+    if (props.titleCard === 'Forca') {
+        verifyLink = 'hangman'
+    }
+
     return(
         <>
             <Card className="py-0 w-full xl:w-90 rounded-xl">
@@ -24,7 +35,9 @@ export function GameCard(props: IGameCard) {
                       <Button className="cursor-pointer p-6 mx-4 mb-4 bg-green-600! text-white! font-semibold rounded-md shadow-md hover:bg-green-700! transition duration-300">
                         JOGAR
                       </Button>
-                    } />
+                    }
+                    link={verifyLink}
+                />
             </Card>
         </>
     )
