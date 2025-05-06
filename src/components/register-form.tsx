@@ -14,7 +14,7 @@ import Logo from "../assets/discordia-logo-removebg2.png"
 import Loader from "@/custom-components/Loader"
 import { useState } from "react"
 import { toast } from "sonner"
-import { Eye, EyeClosed } from "lucide-react"
+import { Eye, EyeClosed, ImagePlus } from "lucide-react"
 import UserService from "@/services/user.service"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
@@ -149,12 +149,14 @@ export function RegisterForm({
                           hover:bg-blue-900 
                           transition duration-300"
                     >
+                            <ImagePlus />
                             Escolha sua foto de perfil
                           </Label>
                           <input
                             id="avatar"
                             name="avatar"
                             type="file"
+                            accept="image/jpeg, image/jpg, image/png, image/webp, image/gif"
                             className="hidden"
                             onChange={handleAvatarChange}
                           />
@@ -217,8 +219,20 @@ export function RegisterForm({
                   </Button>
                 </div>                
                 <div className="flex flex-col gap-3">
-                  <Button type="submit" className="w-full cursor-pointer">
-                    Cadastrar
+                  <Button 
+                    type="submit" 
+                    className="
+                      cursor-pointer 
+                      p-5 
+                      bg-green-600! 
+                      text-white! 
+                      font-semibold 
+                      rounded-md 
+                      shadow-md 
+                      hover:bg-green-700! 
+                      transition 
+                      duration-300">
+                    Continuar
                   </Button>
                 </div>
               </div>

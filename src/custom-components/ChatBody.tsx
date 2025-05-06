@@ -147,7 +147,7 @@ export const ChatBody = () => {
               <div className="w-full flex items-center justify-between">
                 {[
                   { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o' },
-                  { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-reasoner' },
+                  { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-chat' },
                   { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
                   { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta' },
                 ].map((ia) => (

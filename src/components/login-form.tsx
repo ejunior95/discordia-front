@@ -22,8 +22,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { setUser } = useAuth();
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [visiblePassword, setVisiblePassword] = useState<string>('password');
 
@@ -106,7 +106,9 @@ export function LoginForm({
                   </Button>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <Button type="submit" className="w-full cursor-pointer">
+                  <Button 
+                    type="submit" 
+                    className="cursor-pointer p-5 bg-green-600! text-white! font-semibold rounded-md shadow-md hover:bg-green-700! transition duration-300">
                     Continuar
                   </Button>
                 </div>

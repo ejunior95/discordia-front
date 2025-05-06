@@ -6,7 +6,13 @@ import { Layout } from './custom-components/Layout';
 import Loader from './custom-components/Loader';
 import ProtectedRoute from './custom-components/ProtectedRoute';
 import PublicRoute from './custom-components/PublicRoute';
-import { Gamepad2, House, MessagesSquare, MicVocal, Swords } from 'lucide-react';
+import { 
+  Gamepad2, 
+  House, 
+  MessagesSquare, 
+  MicVocal, 
+  Swords 
+} from 'lucide-react';
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -21,6 +27,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const Chess = lazy(() => import('./pages/Chess'));
 const Jokenpo = lazy(() => import('./pages/Jokenpo'));
+const Hangman = lazy(() => import('./pages/Hangman'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 export const navigationItems = [
@@ -63,6 +70,12 @@ export default function App() {
               <Route path="/games/jokenpo" element={
                 <ProtectedRoute>
                   <Jokenpo />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/games/hangman" element={
+                <ProtectedRoute>
+                  <Hangman />
                 </ProtectedRoute>
               } />
  
