@@ -22,7 +22,7 @@ export const ChatMessage = (props: IChatMessage) => {
                     </div>
                     <Avatar className="w-12 h-12 ml-2 hidden sm:block">
                         <AvatarImage className="object-cover object-center" src={user?.avatar} />
-                        <AvatarFallback>{formatFallbackAvatarStr(user)}</AvatarFallback>
+                        <AvatarFallback>{formatFallbackAvatarStr(user!)}</AvatarFallback>
                     </Avatar>
                 </div>
             </div>
