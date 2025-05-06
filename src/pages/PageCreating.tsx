@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Helmet } from "react-helmet"
-import { Construction, Mail } from "lucide-react"
+import { Construction } from "lucide-react"
 
 export default function PageCreating() {
   return (
