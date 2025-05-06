@@ -188,7 +188,7 @@ export default function Hangman() {
                   <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" />
                   <div className="grid grid-cols-10 gap-x-2 w-full h-1/3 lg:w-1/2 lg:h-full">
                       {
-                        teste.map((tst) => (
+                        teste.map(() => (
                           <h1 className="border-b-2 border-background text-center text-2xl h-[4dvh]"></h1>
                         ))
                       }
