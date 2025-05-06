@@ -11,6 +11,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import HangmanNone from "../assets/hangman-none.jpg";
+// import HangmanNoneDark from "../assets/hangman-none-dark.jpg";
+import { TagCurrentIA } from "@/custom-components/TagCurrentIA";
 
 export default function Hangman() {
     const [open, setOpen] = useState(false);
@@ -68,6 +71,11 @@ export default function Hangman() {
         { key: 26,label:"Z" },
     ]
 
+    const testeStr = ""
+    const teste = testeStr.split('')
+
+    console.log('LOOOOOOOOOOOOOOOOOOG TESTE', teste)
+
     return (
         <section className="
             p-10
@@ -90,8 +98,13 @@ export default function Hangman() {
                 w-full 
                 lg:w-[80%]
                 2xl:w-[60%]
+                flex
+                justify-between
             ">
                 Jogo da forca
+                <TagCurrentIA 
+                  ia="deepseek"
+                />
             </h1>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -117,21 +130,19 @@ export default function Hangman() {
                         : "Escolha um tema..."
                     }
                   </p>
-                  <ChevronsUpDown />
+                  <ChevronsUpDown size={30} />
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
                 align="start"
                 className="
-                  p-0 
-                  w-[100dvh]!
-                  lg:w-[74dvw]!
-                  2xl:w-[58.2dvw]!
-                  mx-auto
-                  
+                  p-1 
+                  w-[82dvw]
+                  2xl:w-[58dvw]
+                  2xl:max-w-[58dvw]
                 "
               >
-                <Command className="w-full!">
+                <Command>
                   <CommandInput placeholder="Filtrar categorias..." />
                   <CommandList>
                     <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
@@ -160,16 +171,37 @@ export default function Hangman() {
                 </Command>
               </PopoverContent>
             </Popover>
+
             <div className="
                 bg-accent-foreground 
-                w-full 
-                h-[50dvh]  
+                w-full
+                justify-items-center 
+                p-2
+                h-[60dvh]  
                 lg:w-[80%]
                 2xl:w-[60%]
-            ">
+                lg:flex
+                lg: justify-center
+                lg: items-center
+                relative
+                ">
+                  <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" />
+                  <div className="grid grid-cols-10 gap-x-2 w-full h-1/3 lg:w-1/2 lg:h-full">
+                      {
+                        teste.map((tst) => (
+                          <h1 className="border-b-2 border-background text-center text-2xl h-[4dvh]"></h1>
+                        ))
+                      }
+                  </div>
             </div>
+
             <div className="
-                flex
+                grid
+                grid-cols-7
+                gap-x-2
+                gap-y-2
+                lg:gap-x-10
+                lg:gap-y-4
                 justify-between
                 w-full 
                 mt-4
@@ -178,26 +210,8 @@ export default function Hangman() {
             ">
                 <>
                     {
-                      letters.slice(0,12).map((letter) => (
-                        <Button key={letter.key} className="px-5 text-xl rounded-sm select-none cursor-pointer">
-                          {letter.label}
-                        </Button>
-                      ))
-                    }
-                </>
-            </div>
-            <div className="
-                flex
-                justify-between
-                w-full 
-                mt-4
-                lg:w-[80%]
-                2xl:w-[60%]
-            ">
-                <>
-                    {
-                      letters.slice(12,26).map((letter) => (
-                        <Button key={letter.key} className="px-5 text-xl rounded-sm select-none cursor-pointer">
+                      letters.map((letter) => (
+                        <Button key={letter.key} className="p-6 text-xl rounded-sm select-none cursor-pointer">
                           {letter.label}
                         </Button>
                       ))
