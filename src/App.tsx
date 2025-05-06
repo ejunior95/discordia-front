@@ -16,6 +16,7 @@ import {
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
+const PageCreating = lazy(() => import('./pages/PageCreating'));
 const Chat = lazy(() => import('./pages/Chat'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -39,6 +40,7 @@ export const navigationItems = [
 ];
 
 export default function App() {
+  const flagPageIsCreating = import.meta.env.VITE_FLAG_ISWORKING;
   return (
     <ThemeProvider defaultTheme="system" storageKey="discordia-theme-select">
       <BrowserRouter>
@@ -46,7 +48,11 @@ export default function App() {
           <Routes>
             <Route element={<Layout />}>
               
-              <Route path="/" element={<LandingPage />}/>
+              <Route path="/" element={  
+                flagPageIsCreating === "true" ? 
+                <PageCreating /> :
+                <LandingPage /> 
+              }/>
 
               <Route path="/home" element={
                 <ProtectedRoute>
