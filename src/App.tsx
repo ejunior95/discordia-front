@@ -126,12 +126,16 @@ export default function App() {
               } />
 
               <Route path="/login" element={
+                flagPageIsCreating === "true" ? 
+                <PageCreating /> :
                 <PublicRoute>
                   <Login />
                 </PublicRoute>
               } />
 
               <Route path="/register" element={
+                flagPageIsCreating === "true" ? 
+                <PageCreating /> :
                 <PublicRoute>
                   <Register />
                 </PublicRoute>
