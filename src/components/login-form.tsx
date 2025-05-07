@@ -97,7 +97,7 @@ export function LoginForm({
                     </a>
                   </div>
                   <Input id="password" type={visiblePassword} name="password" className="pr-[2.5rem]" required />
-                  <Button onClick={() => toggleVisiblePassword()} variant="link" size="icon" className="cursor-pointer absolute bottom-0 right-0">
+                  <Button type="button" size="icon" className="cursor-pointer absolute bottom-0 right-0">
                     {
                       visiblePassword === 'password' ? 
                       ( <> <EyeClosed className="h-[1.2rem] w-[1.2rem]" /> </> ) :
