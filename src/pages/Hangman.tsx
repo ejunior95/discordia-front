@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import HangmanNone from "../assets/hangman-none.jpg";
 // import HangmanNoneDark from "../assets/hangman-none-dark.jpg";
-import { TagCurrentIA } from "@/custom-components/TagCurrentIA";
 
 export default function Hangman() {
     const [open, setOpen] = useState(false);
@@ -102,9 +101,6 @@ export default function Hangman() {
                 justify-between
             ">
                 Jogo da forca
-                <TagCurrentIA 
-                  ia="deepseek"
-                />
             </h1>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
