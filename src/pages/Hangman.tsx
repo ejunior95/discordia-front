@@ -10,13 +10,27 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import HangmanNone from "../assets/hangman-none.jpg";
+import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { setCurrentIA } from "@/utils/globalFunctions";
+// import HangmanNone from "../assets/hangman-none.jpg";
 // import HangmanNoneDark from "../assets/hangman-none-dark.jpg";
 
 export default function Hangman() {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
+    const [open, setOpen] = useState<boolean>(false);
+
+    const [categoryValue, setCategoryValue] = useState<string>("");
+    const [modeGame, setModeGame] = useState<string>('none');
+    const [word, setWord] = useState<string>("");
+
+    const [fieldsComplete, setFieldComplete] = useState<boolean>(false);
+    const [hasStarted, setHasStarted] = useState<boolean>(false);
+
+    useEffect(() => {
+      console.log('LOOOOOOOOOOOOOOG USEEFFECT', [categoryValue, modeGame, word])
+      verifyFields();
+    }, [categoryValue, modeGame, word]);
 
     const categories = [
         { label: "Animais", value: "animais" },
@@ -73,17 +87,23 @@ export default function Hangman() {
     const testeStr = ""
     const teste = testeStr.split('')
 
-    console.log('LOOOOOOOOOOOOOOOOOOG TESTE', teste)
+    // console.log('LOOOOOOOOOOOOOOOOOOG TESTE', teste)
+
+    const verifyFields = () => {
+      if(categoryValue !== '') {
+        if(modeGame === 'chooser' && word !== '') {
+          setFieldComplete(true)
+        } else {
+          setFieldComplete(false)
+        }
+        if(modeGame === 'guesser') {
+          setFieldComplete(true)
+        }
+      }
+    }
 
     return (
-        <section className="
-            p-10
-            w-full 
-            flex 
-            flex-col 
-            items-center
-            2xl:h-[90dvh] 
-        ">
+        <section className="py-20 px-10 w-full flex flex-col items-center 2xl:h-[90dvh]">
             <h1 className="
                 font-extrabold 
                 tracking-tight 
@@ -102,118 +122,179 @@ export default function Hangman() {
             ">
                 Jogo da forca
             </h1>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="
-                    w-full 
-                    text-2xl
-                    lg:w-[80%]
-                    2xl:w-[60%] 
-                    justify-between
-                    cursor-pointer
-                    p-8
-                    mb-4
-                  "
-                >
-                  <p className="ml-2">
-                    { 
-                      value
-                        ? categories.find((framework) => framework.value === value)?.label
-                        : "Escolha um tema..."
-                    }
-                  </p>
-                  <ChevronsUpDown size={30} />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent 
-                align="start"
-                className="
-                  p-1 
-                  w-[82dvw]
-                  2xl:w-[58dvw]
-                  2xl:max-w-[58dvw]
-                "
-              >
-                <Command>
-                  <CommandInput placeholder="Filtrar categorias..." />
-                  <CommandList>
-                    <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
-                    <CommandGroup>
-                      {categories.map((framework) => (
-                        <CommandItem
-                          className="text-xl p-8 cursor-pointer"
-                          key={framework.value}
-                          value={framework.value}
-                          onSelect={(currentValue) => {
-                            setValue(currentValue === value ? "" : currentValue);
-                            setOpen(false);
-                          }}
-                        >
-                          {framework.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              value === framework.value ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-
-            <div className="
-                bg-accent-foreground 
-                w-full
-                justify-items-center 
-                p-2
-                h-[60dvh]  
-                lg:w-[80%]
-                2xl:w-[60%]
-                lg:flex
-                lg: justify-center
-                lg: items-center
-                relative
-                ">
-                  <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" />
-                  <div className="grid grid-cols-10 gap-x-2 w-full h-1/3 lg:w-1/2 lg:h-full">
-                      {
-                        teste.map(() => (
-                          <h1 className="border-b-2 border-background text-center text-2xl h-[4dvh]"></h1>
-                        ))
+            <div className="flex justify-between items-center w-full lg:w-[80%] 2xl:w-[60%] pb-4">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    disabled={hasStarted}
+                    aria-expanded={open}
+                    className="
+                      w-100 
+                      text-2xl 
+                      justify-between
+                      cursor-pointer
+                      p-8
+                    "
+                  >
+                    <p className="ml-2">
+                      { 
+                        categoryValue
+                          ? categories.find((framework) => framework.value === categoryValue)?.label
+                          : "Escolha um tema..."
                       }
+                    </p>
+                    <ChevronsUpDown />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="p-1">
+                  <Command>
+                    <CommandInput placeholder="Filtrar categorias..." />
+                    <CommandList>
+                      <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
+                      <CommandGroup>
+                        {categories.map((framework) => (
+                          <CommandItem
+                            className="text-xl p-8 cursor-pointer"
+                            key={framework.value}
+                            value={framework.value}
+                            onSelect={(currentValue) => {
+                              setCategoryValue(currentValue === categoryValue ? "" : currentValue);
+                              setOpen(false);
+                            }}
+                          >
+                            {framework.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                categoryValue === framework.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <div>
+                <Label className="mb-2">Quem vai escolher a palavra?</Label>
+                <div className="flex bg-input rounded-md">
+                  {
+                    !hasStarted ? 
+                      <>
+                        <p 
+                          className={`cursor-pointer ${modeGame === 'chooser' ? 'bg-background' : 'hover:bg-background'} m-1 py-1 px-2 rounded-sm select-none`}
+                          onClick={() => setModeGame('chooser')}>
+                          Você escolhe
+                        </p>
+                        <p 
+                          className={`cursor-pointer ${modeGame === 'guesser' ? 'bg-background' : 'hover:bg-background'} m-1 py-1 px-2 rounded-sm select-none`}
+                          onClick={() => setModeGame('guesser')}>
+                          IA escolhe
+                        </p>
+                      </> :
+                      <>
+                        <p 
+                          className={`${modeGame === 'chooser' && 'bg-background'} text-ring m-1 py-1 px-2 rounded-sm select-none`}>
+                          Você escolhe
+                        </p>
+                        <p 
+                          className={`${modeGame === 'guesser' && 'bg-background'} text-ring m-1 py-1 px-2 rounded-sm select-none`}>
+                          IA escolhe
+                        </p>
+                      </> 
+                  }
+                </div>
+              </div>
+              <div>
+                <Label className="mb-2">Qual será a palavra?</Label>
+                <Input 
+                  id="word" 
+                  type="word" 
+                  onChange={e => setWord(e.target.value)}
+                  className="w-100 p-2 py-5" 
+                  placeholder="Digite aqui a palavra..." 
+                  disabled={modeGame !== 'chooser' || hasStarted}
+                  required/>
+            </div>
+            </div>
+                            
+              {
+                hasStarted &&
+                  <div className="
+                      bg-accent-foreground 
+                      w-full
+                      justify-items-center 
+                      p-2
+                      h-[60dvh]  
+                      lg:w-[80%]
+                      2xl:w-[60%]
+                      lg:flex
+                      lg: justify-center
+                      lg: items-center
+                      relative
+                      ">
+                        {/* <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" /> */}
+                        <div className="grid grid-cols-10 place-content-center gap-x-4 w-full h-1/3 lg:w-1/2 lg:h-full">
+                            {
+                              teste.map((tst) => (
+                                <h1 className="border-b-2 border-background text-background font-bold text-center text-2xl 2xl:text-3xl">{tst}</h1>
+                              ))
+                            }
+                        </div>
                   </div>
-            </div>
+              }
 
-            <div className="
-                grid
-                grid-cols-7
-                gap-x-2
-                gap-y-2
-                lg:gap-x-10
-                lg:gap-y-4
-                justify-between
-                w-full 
-                mt-4
-                lg:w-[80%]
-                2xl:w-[60%]
-            ">
-                <>
-                    {
-                      letters.map((letter) => (
-                        <Button key={letter.key} className="p-6 text-xl rounded-sm select-none cursor-pointer">
-                          {letter.label}
-                        </Button>
-                      ))
-                    }
-                </>
-            </div>
+              <Button 
+                className="
+                  cursor-pointer 
+                  w-full 
+                  select-none 
+                  p-8
+                  my-4 
+                  tracking-widest
+                  lg:w-[80%] 
+                  2xl:w-[60%]
+                  text-2xl          
+                  bg-green-600! 
+                  text-white! 
+                  font-semibold 
+                  rounded-md 
+                  shadow-md 
+                  hover:bg-green-700! 
+                  transition duration-300"
+                onClick={() => [setHasStarted(true), setCurrentIA("")]}
+                disabled={!fieldsComplete}
+              >
+                JOGAR
+              </Button>    
+
+              {
+                hasStarted && modeGame === 'guesser' &&
+                  <div className="
+                      grid
+                      grid-cols-12
+                      gap-y-4
+                      w-full 
+                      mt-4
+                      place-items-center
+                      lg:w-[80%]
+                      2xl:w-[60%]
+                  ">
+                      <>
+                          {
+                            letters.map((letter) => (
+                              <Button key={letter.key} disabled className="w-20 h-20 text-xl rounded-sm select-none cursor-pointer">
+                                {letter.label}
+                              </Button>
+                            ))
+                          }
+                      </>
+                  </div>
+              }
+            
         </section>
     );
 }
