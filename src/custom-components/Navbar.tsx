@@ -40,15 +40,29 @@ import {
 } from "@/components/ui/navigation-menu"
 import { navigationItems } from "@/App"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
 import { TagCurrentIA } from "./TagCurrentIA"
 
 export const Navbar = () => {
-  const { user, setUser } = useAuth();
   const navigate = useNavigate();
+  const { user, setUser } = useAuth();
   const [openSheet, setOpenSheet] = useState(false);
+  const [openTagCurrentIA, setOpenTagCurrentIA] = useState(
+    localStorage.getItem('currentIA') || ''
+  );
+
+  useEffect(() => {
+    const handleCurrentIAChange = (e: Event) => {
+      const value = (e as CustomEvent).detail;
+      setOpenTagCurrentIA(value);
+    };
+    window.addEventListener('currentIAChange', handleCurrentIAChange);
+    return () => {
+      window.removeEventListener('currentIAChange', handleCurrentIAChange);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -228,10 +242,10 @@ export const Navbar = () => {
             </AlertDialog>
           </div>
       </nav>
-      <TagCurrentIA 
-        ia="deepseek"
-        user={user!}
-      />
+      {
+        openTagCurrentIA !== '' &&
+        <TagCurrentIA ia={openTagCurrentIA as 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'} user={user!} />
+      }
     </>
   )
 
