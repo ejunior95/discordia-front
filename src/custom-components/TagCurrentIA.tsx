@@ -5,7 +5,7 @@ import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons"
 import IconVersus from "../assets/icon-versus.svg"
 
 export interface ITagCurrentIA {
-    ia: 'gemini' | 'grok' | 'chat-gpt' | 'deepseek'
+    ia: 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'
     user: CurrentUser
 }
 
@@ -14,47 +14,47 @@ export function TagCurrentIA(props: ITagCurrentIA) {
         gemini: {
             title: 'Gemini',
             sub: 'gemini-2.0-flash',
-            icon: <Gemini size={40} />,
+            icon: <Gemini size={35} />,
         },
         grok: {
             title: 'Grok',
             sub: 'grok-3-beta',
-            icon: <Grok size={40} />,
+            icon: <Grok size={35} />,
         },
         deepseek: {
             title: 'Deepseek',
             sub: 'deepseek-reasoner',
-            icon: <DeepSeek size={50} />,
+            icon: <DeepSeek size={35} />,
         },
         'chat-gpt': {
             title: 'Chat GPT',
             sub: 'gpt-4o',
-            icon: <OpenAI size={40} />,
+            icon: <OpenAI size={35} />,
         },
     }
     return(
-        <div className="absolute w-full left-0 top-20 flex justify-center items-center">
-            <div className="px-6 bg-blue-500 flex justify-between items-center rounded-b-lg">
+        <div className="absolute w-full left-0 top-14 flex justify-center items-center">
+            <div className="px-12 pt-3 bg-gradient-to-b from-red-500 to-red-900 flex justify-between items-center text-white rounded-b-full">
                 
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-12 w-12 rounded-full">
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold text-right">{props.user?.name}</span>
+                    <span className="truncate text-xs text-right">{props.user?.email}</span>
+                  </div>
+                  <Avatar className="h-9 w-9 rounded-full">
                     <AvatarImage src={props.user?.avatar} alt={props.user?.name} className="object-cover object-center" />
                     <AvatarFallback>{formatFallbackAvatarStr(props.user!)}</AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{props.user?.name}</span>
-                    <span className="truncate text-xs">{props.user?.email}</span>
-                  </div>
                 </div>
 
-                <img src={IconVersus} className="h-12 w-12" alt="VS" />
+                <img src={IconVersus} className="h-14 w-14" alt="VS" />
 
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-right">{objIA[props.ia].title}</span>
-                    <span className="truncate text-xs text-right">{ objIA[props.ia].sub }</span>
-                  </div>
                     { objIA[props.ia].icon }
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold text-left">{objIA[props.ia].title}</span>
+                    <span className="truncate text-xs text-left">{ objIA[props.ia].sub }</span>
+                  </div>
                 </div>
 
             </div>
