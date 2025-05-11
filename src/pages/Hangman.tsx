@@ -13,11 +13,12 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { setCurrentIA } from "@/utils/globalFunctions";
-// import HangmanNone from "../assets/hangman-none.jpg";
-// import HangmanNoneDark from "../assets/hangman-none-dark.jpg";
+import { useTheme } from "@/components/theme-provider";
+import HangmanNone from "../assets/hangman-none.jpg";
+import HangmanNoneDark from "../assets/hangman-none-dark.jpg";
 
 export default function Hangman() {
+    const { theme } = useTheme()
     const [open, setOpen] = useState<boolean>(false);
 
     const [categoryValue, setCategoryValue] = useState<string>("");
@@ -28,7 +29,6 @@ export default function Hangman() {
     const [hasStarted, setHasStarted] = useState<boolean>(false);
 
     useEffect(() => {
-      console.log('LOOOOOOOOOOOOOOG USEEFFECT', [categoryValue, modeGame, word])
       verifyFields();
     }, [categoryValue, modeGame, word]);
 
@@ -236,7 +236,11 @@ export default function Hangman() {
                       lg: items-center
                       relative
                       ">
-                        {/* <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" /> */}
+                        {
+                          theme === 'light' ?
+                          <img src={HangmanNoneDark} className="w-[60dvw] lg:w-1/3 -mt-2" /> :
+                          <img src={HangmanNone} className="w-[60dvw] lg:w-1/3 -mt-2" />
+                        }
                         <div className="grid grid-cols-10 place-content-center gap-x-4 w-full h-1/3 lg:w-1/2 lg:h-full">
                             {
                               teste.map((tst) => (
