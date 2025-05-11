@@ -56,7 +56,7 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
           {ias.map((ia) => (
             <div
               key={ia.label}
-              onClick={() => setSelectedIA(ia.label)}
+              onClick={() => [setSelectedIA(ia.label), setCurrentIALink(ia.linkValue)]}
               className={`
                 flex 
                 items-center 
