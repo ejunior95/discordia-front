@@ -33,8 +33,8 @@ export function TagCurrentIA(props: ITagCurrentIA) {
         },
     }
     return(
-        <div className="absolute w-full left-0 top-14 flex justify-center items-center">
-            <div className="px-12 pt-3 bg-gradient-to-b from-red-500 to-red-900 flex justify-between items-center text-white rounded-b-full">
+        <div className="absolute w-full left-0 top-16 flex justify-center items-center">
+            <div className="px-12 py-1 bg-gradient-to-t from-red-600 to-red-900 flex justify-between items-center text-white relative rounded-b-full">
                 
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -47,6 +47,10 @@ export function TagCurrentIA(props: ITagCurrentIA) {
                   </Avatar>
                 </div>
 
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 left-15"></div>
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 left-25"></div>
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 left-35"></div>
+
                 <img src={IconVersus} className="h-14 w-14" alt="VS" />
 
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -56,6 +60,10 @@ export function TagCurrentIA(props: ITagCurrentIA) {
                     <span className="truncate text-xs text-left">{ objIA[props.ia].sub }</span>
                   </div>
                 </div>
+
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 right-15"></div>
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 right-25"></div>
+                <div className="w-3 h-3 bg-gray-600 border-zinc-100 border-1 rounded-full absolute -bottom-2 right-35"></div>
 
             </div>
           </div>
