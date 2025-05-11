@@ -265,7 +265,7 @@ export default function Hangman() {
                   shadow-md 
                   hover:bg-green-700! 
                   transition duration-300"
-                onClick={() => [setHasStarted(true), setCurrentIA("")]}
+                onClick={() => setHasStarted(true)}
                 disabled={!fieldsComplete}
               >
                 JOGAR
