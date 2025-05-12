@@ -10,6 +10,7 @@ import {
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { setCurrentIA } from "@/utils/globalFunctions";
 
 interface DialogSelectIAProps {
   trigger: React.ReactNode;
@@ -19,17 +20,19 @@ interface DialogSelectIAProps {
 
 export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAProps) {
   const [selectedIA, setSelectedIA] = useState<string | null>(null);
+  const [currentIALink, setCurrentIALink] = useState<string>('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const ias = [
-    { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o' },
-    { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-chat' },
-    { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash' },
-    { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta' },
+    { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o', linkValue: 'chat-gpt' },
+    { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-chat', linkValue: 'deepseek' },
+    { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash', linkValue: 'gemini' },
+    { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta', linkValue: 'grok' },
   ];
   
   const handleSelect = () => {
+    setCurrentIA(currentIALink);
     if(link) {
       navigate(link);
     }
@@ -53,7 +56,7 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
           {ias.map((ia) => (
             <div
               key={ia.label}
-              onClick={() => setSelectedIA(ia.label)}
+              onClick={() => [setSelectedIA(ia.label), setCurrentIALink(ia.linkValue)]}
               className={`
                 flex 
                 items-center 
