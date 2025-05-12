@@ -60,15 +60,15 @@ export function TagCurrentIA(props: ITagCurrentIA) {
                 <div className="w-full flex justify-evenly items-center left-0 -bottom-3 absolute">
                   
                   <div className="flex space-x-4">
-                    <div className="w-3 h-3 bg-gradient-to-b from-green-500 to-green-800  border-zinc-100 border-1 rounded-full"></div>
-                    <div className="w-3 h-3 bg-gradient-to-b from-green-500 to-green-800  border-zinc-100 border-1 rounded-full"></div>
-                    <div className="w-3 h-3 bg-gradient-to-b from-green-500 to-green-800 border-zinc-100 border-1 rounded-full"></div>
+                    <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800  border-zinc-100 border-1 rounded-full"></div>
+                    <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800  border-zinc-100 border-1 rounded-full"></div>
+                    <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800 border-zinc-100 border-1 rounded-full"></div>
                   </div>
 
                   <small className="py-1 px-2 bg-yellow-500 text-black rounded-xl text-sm font-medium leading-none">Round 1</small>
 
                   <div className="flex space-x-4">
-                    <div className="w-3 h-3 bg-gradient-to-b from-green-500 to-green-800 border-zinc-100 border-1 rounded-full"></div>
+                    <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800 border-zinc-100 border-1 rounded-full"></div>
                     <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800 border-zinc-100 border-1 rounded-full"></div>
                     <div className="w-3 h-3 bg-gradient-to-b from-gray-500 to-gray-800 border-zinc-100 border-1 rounded-full"></div>
                   </div>
