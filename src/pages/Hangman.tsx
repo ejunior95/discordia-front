@@ -93,7 +93,8 @@ export default function Hangman() {
   }, [categoryValue, modeGame, word]);
 
   // Palavra a ser exibida (ainda precisa da lógica de adivinhação)
-  const displayWordArr = word.split(''); // Placeholder, vai precisar de lógica real
+  // const displayWordArr = word.split(''); // Placeholder, vai precisar de lógica real
+  const displayWordArr: string[] = []; // Placeholder, vai precisar de lógica real
 
   const handleStartGame = () => {
     if (areFieldsComplete) {
