@@ -17,17 +17,24 @@ export default function PageCreating() {
         <Card className="max-w-md w-full rounded-2xl shadow-xl bg-gray-950 border-gray-800">
           <CardContent className="p-8 text-center">
             <motion.div
-              initial={{ rotate: -15 }}
-              animate={{ rotate: [ -15, 15, -15 ] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+               initial={{ scale: 1 }}
+               animate={{
+                 scale: [1, 1.2, 1],
+               }}
+               transition={{
+                 duration: 2,
+                 repeat: Infinity,
+                 ease: "easeInOut",
+               }}
               className="mx-auto mb-4 w-30 h-30 text-yellow-400"
             >
               <Construction className="w-full h-full" />
             </motion.div>
-            <h1 className="text-3xl font-bold mb-2">Estamos trabalhando!</h1>
+            <h1 className="text-3xl font-bold mb-2">We're working on it!</h1>
             <p className="text-gray-400 mb-6">
-              Nosso site está em construção. <br/> Em breve estaremos prontos para te surpreender.
+              Our website is under construction. <br/> We'll be ready soon to surprise you.
             </p>
+            <p>Contact: <a href="mailto:suporte@discordia.app.br" className="underline text-indigo-600">suporte@discordia.app.br</a></p>
           </CardContent>
         </Card>
       </motion.div>
