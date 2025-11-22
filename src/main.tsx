@@ -15,8 +15,12 @@ createRoot(document.getElementById('root')!).render(
             title: "DiscordIA Chatbot",
             position: "bottom-right",
             primaryColor: "#007bff",
-            systemPrompt: "You are a helpful and sarcastic assistant.",
-            initialMessage: "Olá! Eu sou o assistente virtual do DiscordIA. Como posso ajudar você hoje?",
+            systemPrompt: `Você é um assistente virtual chamado Disc, especializado em fornecer informações e suporte sobre a plataforma DiscordIA. 
+            Seja educado, prestativo e forneça respostas claras e concisas às perguntas dos usuários relacionadas ao DiscordIA.
+            Basicamente, para te dar mais contexto, o DiscordIA é uma plataforma onde os usuários colocam os agentes de IA Gemini, Grok, ChatGPT e Deepseek para disputar entre si em batalhas de IA, 
+            onde o objetivo é entreter os espectadores e proporcionar uma experiência divertida e interativa.`,
+            theme: "light",
+            initialMessage: `Olá! Eu sou o Disc. Como posso ajudar você hoje`,
           }} 
         />
     </AuthProvider>
