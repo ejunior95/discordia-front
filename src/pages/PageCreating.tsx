@@ -1,14 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
-import { Helmet } from "react-helmet"
 import { Construction } from "lucide-react"
 
 export default function PageCreating() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center p-4">
-      <Helmet>
-        <title>Site em Construção</title>
-      </Helmet>
+      <title>Site em Construção</title>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

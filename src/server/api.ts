@@ -12,3 +12,19 @@ export const api = axios.create({
   baseURL,
   withCredentials: true,
 });
+
+const PUBLIC_PATHS = ['/', '/login', '/register'];
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const currentPath = window.location.pathname;
+    const isAuthEndpoint = typeof error?.config?.url === 'string' && error.config.url.includes('/auth/me');
+
+    if (status === 401 && !PUBLIC_PATHS.includes(currentPath) && !isAuthEndpoint) {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);

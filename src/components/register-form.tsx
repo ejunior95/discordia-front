@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import Logo from "../assets/discordia-logo-removebg2.png"
 import Loader from "@/custom-components/Loader"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Eye, EyeClosed, ImagePlus } from "lucide-react"
 import UserService from "@/services/user.service"
@@ -64,17 +64,13 @@ export function RegisterForm({
         toast("Usuário criado com sucesso!", {
           description: 'Email de confirmação enviado',
         });
+        navigate("/login");
       }).catch((error) => {
         console.error("Erro ao fazer cadastro", error);
         toast("Não foi possível criar usuário", {
-          description: String(error?.response?.data.message),
-          // action: {
-          //   label: "Detalhes",
-          //   onClick: () => console.log("Undo"),
-          // },
+          description: error?.response?.data?.message ?? 'Erro desconhecido. Tente novamente.',
         });
       }).finally(() => {
-        navigate("/login");
         setLoading(false);
       });
   };
@@ -99,6 +95,11 @@ export function RegisterForm({
       setPreviewAvatar(imageUrl);
     }
   };
+
+  useEffect(() => {
+    if (!previewAvatar) return;
+    return () => URL.revokeObjectURL(previewAvatar);
+  }, [previewAvatar]);
 
   return (
     loading ? ( <> <Loader /> </> ) :

@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Gamepad2, MicVocal, Swords } from 'lucide-react';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png'
+import questionsBg from '../assets/questions-bg.jpeg';
+import gamesBg from '../assets/games-bg.jpeg';
+import rhymeBg from '../assets/rhyme-bg.jpg';
+import rpgBg from '../assets/rpg-bg.png';
 import { useAuth } from '@/hooks/useAuth';
 
 const features = [
@@ -13,7 +17,7 @@ const features = [
     desc: "Desafie as maiores IAs do mundo! ChatGPT, Gemini, DeepSeek e Grok competem pra te dar a melhor resposta, e você decide quem manda bem!",
     icon: <MessageSquare size={100} className="text-white" />,
     color: 'bg-indigo-500',
-    bgImage: '/src/assets/questions-bg.jpeg',
+    bgImage: questionsBg,
     link: '/chat'
   },
   {
@@ -22,7 +26,7 @@ const features = [
     desc: "Diversão sem limites! Jogue xadrez, jokenpô ou jogo da velha contra IAs ou veja elas se enfrentarem, quem vai ganhar essa?",
     icon: <Gamepad2 size={100} className="text-white" />,
     color: 'bg-red-500',
-    bgImage: '/src/assets/games-bg.jpeg',
+    bgImage: gamesBg,
     link: '/games'
   },
   {
@@ -31,7 +35,7 @@ const features = [
     desc: "Coloque as IAs pra rimar como nunca! Vote nas rimas mais pesadas e veja quem leva a melhor nesse duelo de criatividade!",
     icon: <MicVocal size={100} className="text-white" />,
     color: 'bg-green-500',
-    bgImage: '/src/assets/rhyme-bg.jpg',
+    bgImage: rhymeBg,
     link: '/rap-battle'
   },
   {
@@ -40,7 +44,7 @@ const features = [
     desc: "Mergulhe em uma aventura épica! Enfrente desafios, crie a sua história ou viva momentos incríveis criados pelas IAs que te surpreendem a cada escolha!",
     icon: <Swords size={100} className="text-white" />,
     color: 'bg-amber-500',
-    bgImage: '/src/assets/rpg-bg.png',
+    bgImage: rpgBg,
     link: '/rpg'
   },
 ];

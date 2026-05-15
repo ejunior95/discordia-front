@@ -22,8 +22,3 @@ export function verifyDayOrNight() {
       return 'Boa noite'
     }
 }
-
-export function setCurrentIA(value: string) {
-  localStorage.setItem('currentIA', value);
-  window.dispatchEvent(new CustomEvent('currentIAChange', { detail: value }));
-}
