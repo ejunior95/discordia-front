@@ -1,212 +1,680 @@
-import { useState, useRef, useEffect, cloneElement } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  Check,
+  Gamepad2,
+  MessageSquare,
+  MicVocal,
+  Sparkles,
+  Swords,
+  Trophy,
+  Vote,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Gamepad2, MicVocal, Swords } from 'lucide-react';
-import Discordia3dLogo from '../assets/discordia-logo-3D.png'
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { IA_CONFIG } from '@/features/chat/chat.constants';
+import type { AgentIA } from '@/features/chat/types';
+import Discordia3dLogo from '../assets/discordia-logo-3D.png';
 import questionsBg from '../assets/questions-bg.jpeg';
 import gamesBg from '../assets/games-bg.jpeg';
 import rhymeBg from '../assets/rhyme-bg.jpg';
 import rpgBg from '../assets/rpg-bg.png';
-import { useAuth } from '@/hooks/useAuth';
 
-const features = [
+const AGENTS: AgentIA[] = ['chat-gpt', 'gemini', 'deepseek', 'grok'];
+
+const FEATURES = [
   {
-    id: 'questions',
+    id: 'chat',
     title: 'Chat conflituoso',
-    desc: "Desafie as maiores IAs do mundo! ChatGPT, Gemini, DeepSeek e Grok competem pra te dar a melhor resposta, e você decide quem manda bem!",
-    icon: <MessageSquare size={100} className="text-white" />,
-    color: 'bg-indigo-500',
+    tagline: 'Pergunte uma vez, receba 4 respostas',
+    desc: 'ChatGPT, Gemini, DeepSeek e Grok respondem à mesma pergunta em paralelo. Compare lado a lado, vote na melhor e veja quem dominou a rodada.',
+    icon: MessageSquare,
     bgImage: questionsBg,
-    link: '/chat'
+    link: '/chat',
+    accent: 'from-indigo-500 to-violet-500',
+    badge: 'Mais usado',
   },
   {
-    id: 'games',
-    title: 'Jogue com IA',
-    desc: "Diversão sem limites! Jogue xadrez, jokenpô ou jogo da velha contra IAs ou veja elas se enfrentarem, quem vai ganhar essa?",
-    icon: <Gamepad2 size={100} className="text-white" />,
-    color: 'bg-red-500',
-    bgImage: gamesBg,
-    link: '/games'
-  },
-  {
-    id: 'rhyme',
-    title: 'Batalha de Rima',
-    desc: "Coloque as IAs pra rimar como nunca! Vote nas rimas mais pesadas e veja quem leva a melhor nesse duelo de criatividade!",
-    icon: <MicVocal size={100} className="text-white" />,
-    color: 'bg-green-500',
+    id: 'rap',
+    title: 'Batalhas de rima',
+    tagline: 'Duelo estilo 8 Mile entre IAs',
+    desc: 'Escolha dois competidores, defina um tema e assista a 3 rounds de versos cortantes. Você é o público — e o juiz que aplaude o vencedor.',
+    icon: MicVocal,
     bgImage: rhymeBg,
-    link: '/rap-battle'
+    link: '/rap-battle',
+    accent: 'from-fuchsia-500 to-cyan-500',
+    badge: 'Novo',
   },
   {
     id: 'rpg',
-    title: 'RPG',
-    desc: "Mergulhe em uma aventura épica! Enfrente desafios, crie a sua história ou viva momentos incríveis criados pelas IAs que te surpreendem a cada escolha!",
-    icon: <Swords size={100} className="text-white" />,
-    color: 'bg-amber-500',
+    title: 'RPG colaborativo',
+    tagline: 'Mestre humano ou IA, jogadores IA',
+    desc: 'Monte uma mesa em segundos: cenário, mestre e jogadores. Personagens com ficha completa, narrativa que evolui turno a turno.',
+    icon: Swords,
     bgImage: rpgBg,
-    link: '/rpg'
+    link: '/rpg',
+    accent: 'from-amber-500 to-rose-500',
+    badge: 'Novo',
+  },
+  {
+    id: 'games',
+    title: 'Jogos contra IA',
+    tagline: 'Xadrez, jogo da velha e mais',
+    desc: 'Desafie cada IA em um tabuleiro. Ou organize torneios em que elas se enfrentam enquanto você analisa quem joga melhor.',
+    icon: Gamepad2,
+    bgImage: gamesBg,
+    link: '/games',
+    accent: 'from-emerald-500 to-teal-500',
+    badge: 'Em breve',
+  },
+] as const;
+
+const STATS = [
+  { value: '4', label: 'IAs em competição' },
+  { value: '1 voto', label: 'Decide a rodada' },
+  { value: '0', label: 'Anúncios ou viés' },
+  { value: '100%', label: 'Comparação lado a lado' },
+];
+
+const HOW_STEPS = [
+  {
+    icon: Sparkles,
+    title: 'Faça uma pergunta',
+    desc: 'Digite o que quiser saber. Disparamos a mesma pergunta para todas as IAs simultaneamente.',
+  },
+  {
+    icon: Zap,
+    title: 'Receba respostas em paralelo',
+    desc: 'Streaming individual para cada modelo. Você compara estilo, profundidade e velocidade.',
+  },
+  {
+    icon: Vote,
+    title: 'Vote no vencedor',
+    desc: 'Decida quem mandou bem em cada rodada. O placar é seu, sem algoritmo opinando.',
   },
 ];
 
-const prices = [
+const PRICES = [
   {
     name: 'Grátis',
-    price: 'R$0,00/mês',
-    perks: ['10 créditos/mês'],
+    price: 'R$ 0',
+    period: 'pra sempre',
+    perks: ['10 créditos por mês', 'Chat conflituoso'],
+    cta: 'Começar grátis',
+    highlight: false,
   },
   {
     name: 'Basic',
-    price: 'R$9,99/mês',
-    perks: ['200 créditos/mês'],
+    price: 'R$ 29,99',
+    period: 'por mês',
+    perks: ['200 créditos por mês', 'Chat conflituoso', 'Jogos contra IA'],
+    cta: 'Assinar Basic',
+    highlight: true,
+    badge: 'Recomendado',
   },
   {
     name: 'Premium',
-    price: 'R$19,99/mês',
-    perks: ['Créditos ilimitados', 'Acesso Beta'],
+    price: 'R$ 49,99',
+    period: 'por mês',
+    perks: ['Créditos ilimitados', 'Chat conflituoso', 'Jogos contra IA', 'Batalha de rima', 'RPG colaborativo', 'Acesso antecipado a novos modos'],
+    cta: 'Assinar Premium',
+    highlight: false,
   },
 ];
 
 export default function LandingPage() {
-  const [active, setActive] = useState(0);
-  const intervalRef = useRef<number>(0);
   const { user } = useAuth();
+  const ctaTarget = user ? '/home' : '/register';
+  const [scrolled, setScrolled] = useState(false);
+  const [activeFeature, setActiveFeature] = useState(0);
 
   useEffect(() => {
-    intervalRef.current = window.setInterval(() => {
-      setActive((prev) => (prev + 1) % features.length);
-    }, 4000);
-    return () => clearInterval(intervalRef.current);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <div className="space-y-0">
-      <section className="h-[100dvh] flex flex-col justify-center items-center bg-gradient-to-tr from-black to-gray-900 px-6 text-center">
-        <motion.img 
-          src={Discordia3dLogo} 
-          alt='discordia-logo3d' 
-          className='
-            w-[50vw] 
-            sm:w-[400px] 
-            md:w-[500px] 
-            lg:w-[500px] 
-            xl:w-[350px] 
-            2xl:w-[650px]'
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        />
-        <motion.h1
-          className='flex text-5xl 2xl:-mt-10 sm:text-6xl md:text-7xl lg:text-8xl xl:text-6xl 2xl:text-8xl font-extrabold tracking-tight'
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-            Discord
-            <h1 className='text-blue-500 ml-1'>I</h1>
-            <h1 className='text-amber-600 ml-1'>A</h1>
-        </motion.h1>
-        <motion.p
-          className="max-w-2xl text-lg md:text-xl text-slate-300 mb-4 mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-        >
-          Uma plataforma única onde as principais IA's do mercado competem, e VOCÊ escolhe a vencedora!
-        </motion.p>
-        <Link to={user ? '/home' : '/register'}>
-          <Button className="2xl:py-8 2xl:w-[25vw] 2xl:rounded-4xl 2xl:text-2xl cursor-pointer">Começar agora</Button>
-        </Link>
-      </section>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+      <TopNav scrolled={scrolled} user={!!user} />
+      <Hero ctaTarget={ctaTarget} />
+      <AgentsStrip />
+      <StatsBand />
+      <FeaturesShowcase
+        active={activeFeature}
+        onChange={setActiveFeature}
+        ctaTarget={ctaTarget}
+      />
+      <HowItWorks />
+      <Pricing ctaTarget={ctaTarget} />
+      <FinalCTA ctaTarget={ctaTarget} />
+      <Footer />
+    </div>
+  );
+}
 
-      <section className="h-[100dvh] flex flex-col justify-center items-center text-black relative overflow-hidden">
+/* -------------------------------------------------------------------------- */
+/*  Nav                                                                       */
+/* -------------------------------------------------------------------------- */
+
+function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
+  return (
+    <header
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        scrolled
+          ? 'bg-zinc-950/80 backdrop-blur-xl border-b border-white/5'
+          : 'bg-transparent',
+      )}
+    >
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <img src={Discordia3dLogo} alt="discordIA" className="size-9 object-contain" />
+          <span className="font-extrabold text-lg tracking-tight">
+            discord
+            <span className="text-blue-400">I</span>
+            <span className="text-amber-500">A</span>
+          </span>
+        </Link>
+        <div className="hidden md:flex items-center gap-7 text-sm text-zinc-400">
+          <a href="#features" className="hover:text-white transition-colors">Recursos</a>
+          <a href="#how" className="hover:text-white transition-colors">Como funciona</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Planos</a>
+        </div>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <Link to="/home">
+              <Button size="sm" className="cursor-pointer bg-white text-black hover:bg-zinc-200">
+                Entrar no app
+                <ArrowRight size={14} />
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="cursor-pointer text-zinc-300 hover:text-white hover:bg-white/5">
+                  Entrar
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" className="cursor-pointer bg-white text-black hover:bg-zinc-200">
+                  Criar conta
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Hero                                                                      */
+/* -------------------------------------------------------------------------- */
+
+function Hero({ ctaTarget }: { ctaTarget: string }) {
+  return (
+    <section className="relative isolate overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
+      {/* gradient mesh */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 size-[60rem] rounded-full bg-gradient-to-br from-indigo-500/30 via-fuchsia-500/20 to-transparent blur-3xl" />
+        <div className="absolute top-1/2 -right-32 size-[36rem] rounded-full bg-amber-500/20 blur-3xl" />
+        <div className="absolute -bottom-20 left-0 size-[36rem] rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_30%,rgba(9,9,11,0.85)_70%)]" />
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${features[active].bgImage})`,
-          }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3 py-1 text-xs text-zinc-300 mb-8"
+        >
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Em beta · 4 modelos competindo agora
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05]"
+        >
+          As IAs competem.
+          <br />
+          <span className="bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
+            Você decide quem vence.
+          </span>
+        </motion.h1>
+
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          key={features[active].id}
+          transition={{ delay: 0.25, duration: 0.7 }}
+          className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-zinc-400 leading-relaxed"
         >
-          <div className="absolute inset-0 bg-black/70"></div>
-        </motion.div>
-        
-        <div className=" z-10 flex flex-col items-center max-w-4xl h-full w-full">
-          <h2 className="text-4xl xl:text-4xl font-extrabold tracking-tight lg:text-5xl text-white w-full text-center mt-8">
-            O que você pode fazer com o DiscordIA?
-          </h2>
-          <div className="relative w-full overflow-hidden">
-            <div className="flex transition-transform duration-700"
-              style={{ transform: `translateX(-${active * 100}%)` }}
+          Uma única plataforma onde ChatGPT, Gemini, DeepSeek e Grok respondem,
+          rimam, jogam e narram lado a lado — e o seu voto define a melhor.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
+        >
+          <Link to={ctaTarget}>
+            <Button size="lg" className="cursor-pointer h-12 px-7 text-base bg-white text-black hover:bg-zinc-200 gap-2 shadow-lg shadow-white/10">
+              Começar agora
+              <ArrowRight size={16} />
+            </Button>
+          </Link>
+          <a href="#features">
+            <Button
+              size="lg"
+              variant="outline"
+              className="cursor-pointer h-12 px-7 text-base bg-white/5 border-white/15 text-white hover:bg-white/10 hover:text-white"
             >
-              {features.map((feat) => (
-                <motion.div
-                  key={feat.id}
-                  className="flex-shrink-0 w-full 2xl:h-[90vh] xl:h-[82vh] h-dvh flex flex-col justify-evenly items-center p-8"
-                  whileHover={{ scale: 1.05 }}
+              Ver recursos
+            </Button>
+          </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="mt-16 md:mt-20 relative max-w-3xl mx-auto"
+        >
+          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-500/30 via-fuchsia-500/30 to-amber-500/30 blur-2xl rounded-full" />
+          <img
+            src={Discordia3dLogo}
+            alt="discordIA"
+            className="relative w-40 sm:w-56 md:w-64 mx-auto drop-shadow-2xl"
+          />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Agents strip                                                              */
+/* -------------------------------------------------------------------------- */
+
+function AgentsStrip() {
+  return (
+    <section className="relative border-y border-white/5 bg-zinc-950/60 backdrop-blur">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <p className="text-center text-xs uppercase tracking-[0.2em] text-zinc-500 mb-6">
+          Os competidores
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+          {AGENTS.map((agent) => {
+            const cfg = IA_CONFIG[agent];
+            const Icon = cfg.Icon;
+            return (
+              <div
+                key={agent}
+                className="group flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-4 transition-all hover:border-white/15 hover:bg-white/[0.06]"
+              >
+                <div className={cn('size-9 rounded-full flex items-center justify-center shrink-0', cfg.iconClass)}>
+                  <Icon size={18} />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-sm">{cfg.label}</p>
+                  <p className="text-[11px] text-zinc-500">{cfg.subtitle}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Stats band                                                                */
+/* -------------------------------------------------------------------------- */
+
+function StatsBand() {
+  return (
+    <section className="py-16 md:py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {STATS.map((s) => (
+          <div
+            key={s.label}
+            className="rounded-2xl border border-white/5 bg-gradient-to-b from-white/[0.04] to-transparent p-5 md:p-6"
+          >
+            <p className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
+              {s.value}
+            </p>
+            <p className="text-xs md:text-sm text-zinc-400 mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Features showcase                                                         */
+/* -------------------------------------------------------------------------- */
+
+function FeaturesShowcase({
+  active,
+  onChange,
+  ctaTarget,
+}: {
+  active: number;
+  onChange: (i: number) => void;
+  ctaTarget: string;
+}) {
+  const feat = FEATURES[active];
+  const Icon = feat.icon;
+
+  return (
+    <section id="features" className="py-20 md:py-28">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Recursos</p>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Quatro modos. Uma única arena.
+          </h2>
+          <p className="mt-4 text-zinc-400">
+            Cada experiência foi pensada para destacar diferenças reais entre os modelos.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Tabs verticais */}
+          <div className="lg:col-span-5 flex flex-col gap-2">
+            {FEATURES.map((f, i) => {
+              const FIcon = f.icon;
+              const isActive = i === active;
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => onChange(i)}
+                  className={cn(
+                    'group relative text-left rounded-xl border p-4 md:p-5 transition-all cursor-pointer',
+                    isActive
+                      ? 'border-white/20 bg-white/[0.06]'
+                      : 'border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]',
+                  )}
                 >
-                  <div className="flex flex-col items-center">
-                    <div className={`p-8 ${feat.color} rounded-full mb-10 flex items-center justify-center`}>
-                      {cloneElement(feat.icon, {
-                        size: 100,
-                        style: { width: '100px', height: '100px' },
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        'size-10 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br',
+                        f.accent,
+                      )}
+                    >
+                      <FIcon size={20} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-base md:text-lg">{f.title}</h3>
+                        {f.badge && (
+                          <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-zinc-300">
+                            {f.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-zinc-400 mt-0.5">{f.tagline}</p>
+                    </div>
+                  </div>
+                  {isActive && (
+                    <motion.span
+                      layoutId="feature-active-bar"
+                      className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-gradient-to-b from-amber-400 to-fuchsia-500"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Preview */}
+          <div className="lg:col-span-7">
+            <motion.div
+              key={feat.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="relative rounded-2xl border border-white/10 overflow-hidden h-full min-h-[26rem] flex flex-col"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${feat.bgImage})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-950/30" />
+
+              <div className="relative flex-1 flex flex-col justify-between p-6 md:p-8">
+                <div
+                  className={cn(
+                    'self-start rounded-xl bg-gradient-to-br p-3 shadow-lg',
+                    feat.accent,
+                  )}
+                >
+                  <Icon size={26} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold tracking-tight">{feat.title}</h3>
+                  <p className="text-sm md:text-base text-zinc-300 mt-2 max-w-xl leading-relaxed">
+                    {feat.desc}
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <Link to={ctaTarget}>
+                      <Button className="cursor-pointer bg-white text-black hover:bg-zinc-200 gap-2">
+                        Experimentar
+                        <ArrowRight size={14} />
+                      </Button>
+                    </Link>
+                    <div className="flex -space-x-2">
+                      {AGENTS.map((a) => {
+                        const cfg = IA_CONFIG[a];
+                        const AIIcon = cfg.Icon;
+                        return (
+                          <div
+                            key={a}
+                            className={cn(
+                              'size-8 rounded-full border-2 border-zinc-950 flex items-center justify-center',
+                              cfg.iconClass,
+                            )}
+                            title={cfg.label}
+                          >
+                            <AIIcon size={14} />
+                          </div>
+                        );
                       })}
                     </div>
-                    <h2 className="scroll-m-20 border-b pb-2 text-3xl text-white font-semibold tracking-tight first:mt-0">
-                      {feat.title}
-                    </h2>
-                    <Link to={user ? feat.link : '/register'}>
-                      <Button variant='outline' className="cursor-pointer 2xl:text-xl 2xl:p-8 2xl:mt-8 text-white p-4">Começar agora</Button>
-                    </Link>
                   </div>
-                    
-                  <p className="text-xl text-center max-w-lg text-gray-200">{feat.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-              
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {features.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActive(idx)}
-                  className={`h-3 w-3 rounded-full transition-colors cursor-pointer ${
-                    idx === active ? 'bg-amber-500' : 'bg-gray-300'
-                  }`}
-                ></button>
-              ))}
-            </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      <section className="flex flex-col lg:h-dvh justify-center items-center bg-gradient-to-bl from-black to-gray-900  bg-gray-50 px-6 text-center">
-        <h2 className="text-4xl font-semibold mt-8 mb-12 lg:mt-8 ">Assine para aproveitar todos os serviços</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 max-w-6xl w-full">
-          {prices.map((plan) => (
+/* -------------------------------------------------------------------------- */
+/*  How it works                                                              */
+/* -------------------------------------------------------------------------- */
+
+function HowItWorks() {
+  return (
+    <section id="how" className="py-20 md:py-28 border-t border-white/5 bg-gradient-to-b from-zinc-950 to-black">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Como funciona</p>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Três passos, infinitas rodadas.
+          </h2>
+        </div>
+        <ol className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {HOW_STEPS.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <li
+                key={step.title}
+                className="relative rounded-2xl border border-white/5 bg-white/[0.03] p-6 md:p-7"
+              >
+                <span className="absolute -top-3 -left-3 size-10 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-sm font-bold text-amber-400">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="size-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-fuchsia-500/20 border border-white/10 flex items-center justify-center mb-5">
+                  <Icon size={20} className="text-amber-300" />
+                </div>
+                <h3 className="text-lg font-semibold">{step.title}</h3>
+                <p className="text-sm text-zinc-400 mt-2 leading-relaxed">{step.desc}</p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Pricing                                                                   */
+/* -------------------------------------------------------------------------- */
+
+function Pricing({ ctaTarget }: { ctaTarget: string }) {
+  return (
+    <section id="pricing" className="py-20 md:py-28">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Planos</p>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Escolha o seu nível.
+          </h2>
+          <p className="mt-4 text-zinc-400">
+            Comece grátis. Suba quando quiser mais créditos e modelos premium.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {PRICES.map((plan) => (
             <motion.div
               key={plan.name}
-              className="bg-white text-black h-[50vh] rounded-lg shadow-lg p-8 flex flex-col"
-              whileHover={{ y: -20 }}
-              transition={{ type: 'spring', stiffness: 150 }}
+              whileHover={{ y: -4 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className={cn(
+                'relative rounded-2xl border p-7 flex flex-col',
+                plan.highlight
+                  ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/[0.08] to-transparent shadow-2xl shadow-amber-500/10'
+                  : 'border-white/5 bg-white/[0.03]',
+              )}
             >
-              <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
-              <p className="text-5xl font-extrabold mb-6">{plan.price}</p>
-              <ul className="flex-1 space-y-2 mb-6">
+              {plan.highlight && plan.badge && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-wide px-3 py-1 rounded-full bg-amber-500 text-black font-semibold flex items-center gap-1 shadow-lg">
+                  <Trophy size={11} />
+                  {plan.badge}
+                </span>
+              )}
+              <h3 className="text-lg font-semibold text-zinc-300">{plan.name}</h3>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="text-4xl md:text-5xl font-extrabold tracking-tight">{plan.price}</span>
+                <span className="text-sm text-zinc-500">/ {plan.period}</span>
+              </div>
+              <ul className="mt-6 space-y-3 flex-1">
                 {plan.perks.map((perk) => (
-                  <li key={perk} className="flex items-center">
-                    <span className="mr-2 text-green-500">✔️</span>
+                  <li key={perk} className="flex items-start gap-2 text-sm text-zinc-300">
+                    <Check size={16} className={cn('mt-0.5 shrink-0', plan.highlight ? 'text-amber-400' : 'text-emerald-400')} />
                     <span>{perk}</span>
                   </li>
                 ))}
               </ul>
-              <Button variant='secondary' className='cursor-pointer text-xl py-8'>Assinar agora</Button>
+              <Link to={ctaTarget} className="mt-7">
+                <Button
+                  className={cn(
+                    'w-full cursor-pointer h-11',
+                    plan.highlight
+                      ? 'bg-amber-500 text-black hover:bg-amber-400'
+                      : 'bg-white/10 text-white hover:bg-white/15 border border-white/10',
+                  )}
+                >
+                  {plan.cta}
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Final CTA                                                                 */
+/* -------------------------------------------------------------------------- */
+
+function FinalCTA({ ctaTarget }: { ctaTarget: string }) {
+  return (
+    <section className="py-20 md:py-28">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-600/20 via-fuchsia-600/15 to-amber-500/20 p-10 md:p-16 text-center">
+          <div aria-hidden className="absolute inset-0 -z-10">
+            <div className="absolute -top-20 -left-20 size-80 rounded-full bg-indigo-500/30 blur-3xl" />
+            <div className="absolute -bottom-20 -right-20 size-80 rounded-full bg-amber-500/30 blur-3xl" />
+          </div>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Pronto pra ver quem é a melhor IA?
+          </h2>
+          <p className="mt-4 text-zinc-300 max-w-2xl mx-auto">
+            Crie sua conta em segundos e comece a votar agora mesmo. Sem cartão, sem fricção.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to={ctaTarget}>
+              <Button size="lg" className="cursor-pointer h-12 px-8 text-base bg-white text-black hover:bg-zinc-200 gap-2">
+                Começar agora
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
+            <a href="#features">
+              <Button
+                size="lg"
+                variant="outline"
+                className="cursor-pointer h-12 px-8 text-base bg-transparent border-white/20 text-white hover:bg-white/5 hover:text-white"
+              >
+                Ver recursos
+              </Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Footer                                                                    */
+/* -------------------------------------------------------------------------- */
+
+function Footer() {
+  return (
+    <footer className="border-t border-white/5 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <img src={Discordia3dLogo} alt="discordIA" className="size-7 object-contain" />
+          <span className="font-bold text-sm">
+            discord<span className="text-blue-400">I</span><span className="text-amber-500">A</span>
+          </span>
+        </div>
+        <p className="text-xs text-zinc-500">
+          © {new Date().getFullYear()} discordIA · Feito com IA, julgado por humanos.
+        </p>
+      </div>
+    </footer>
   );
 }

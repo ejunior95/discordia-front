@@ -1,29 +1,43 @@
+import { RapBattleArena } from '@/features/rap-battle/components/RapBattleArena';
+import { RapBattleResult } from '@/features/rap-battle/components/RapBattleResult';
+import { RapBattleSetup } from '@/features/rap-battle/components/RapBattleSetup';
+import { useRapBattle } from '@/features/rap-battle/hooks/useRapBattle';
+
 export default function RapBattle() {
-    return(
-        <section className="
-            p-10
-            w-full 
-            flex 
-            flex-col 
-            items-center
-            2xl:h-[90dvh] 
-        ">
-            <h1 className="
-                font-extrabold 
-                tracking-tight 
-                text-5xl 
-                mb-5 
-                md:text-6xl 
-                md:mb-8 
-                xl:text-7xl 
-                xl:mb-8 
-                2xl:mb-10
-                w-full 
-                lg:w-[80%]
-                2xl:w-[60%] 
-                2xl:max-w-[1200px]">
-                Batalha de rima
-            </h1>
-        </section>
-    )
+  const {
+    battle,
+    isGenerating,
+    start,
+    generateRound,
+    retryVerse,
+    voteVerse,
+    nextRound,
+    finish,
+    reset,
+    abort,
+  } = useRapBattle();
+
+  return (
+    <section className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+      <div className="max-w-6xl mx-auto">
+        {!battle || battle.status === 'setup' ? (
+          <RapBattleSetup onStart={start} />
+        ) : battle.status === 'finished' ? (
+          <RapBattleResult battle={battle} onReset={reset} />
+        ) : (
+          <RapBattleArena
+            battle={battle}
+            isGenerating={isGenerating}
+            onGenerateRound={() => generateRound()}
+            onVote={(agent) => voteVerse(battle.currentRound, agent)}
+            onRetry={(agent) => retryVerse(battle.currentRound, agent)}
+            onNextRound={nextRound}
+            onFinish={finish}
+            onAbort={abort}
+            onReset={reset}
+          />
+        )}
+      </div>
+    </section>
+  );
 }

@@ -1,29 +1,44 @@
+import { RpgSetup } from '@/features/rpg/components/RpgSetup';
+import { RpgTable } from '@/features/rpg/components/RpgTable';
+import { useRpgCampaign } from '@/features/rpg/hooks/useRpgCampaign';
+
 export default function RolePlaying() {
-    return(
-        <section className="
-            p-10
-            w-full 
-            flex 
-            flex-col 
-            items-center
-            2xl:h-[90dvh] 
-        ">
-            <h1 className="
-                font-extrabold 
-                tracking-tight 
-                text-5xl 
-                mb-5 
-                md:text-6xl 
-                md:mb-8 
-                xl:text-7xl 
-                xl:mb-8 
-                2xl:mb-10
-                w-full 
-                lg:w-[80%]
-                2xl:w-[60%] 
-                2xl:max-w-[1200px]">
-                RPG
-            </h1>
-        </section>
-    )
+  const {
+    campaign,
+    isGenerating,
+    currentActor,
+    start,
+    submitUserTurn,
+    generateAITurn,
+    retryLastTurn,
+    skipTurn,
+    pause,
+    resume,
+    reset,
+    abort,
+  } = useRpgCampaign();
+
+  return (
+    <section className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+      <div className="max-w-7xl mx-auto">
+        {!campaign || campaign.status === 'setup' || !currentActor ? (
+          <RpgSetup onStart={start} />
+        ) : (
+          <RpgTable
+            campaign={campaign}
+            currentActor={currentActor}
+            isGenerating={isGenerating}
+            onSubmitUser={submitUserTurn}
+            onGenerateAI={generateAITurn}
+            onRetryLast={retryLastTurn}
+            onSkip={skipTurn}
+            onAbort={abort}
+            onPause={pause}
+            onResume={resume}
+            onReset={reset}
+          />
+        )}
+      </div>
+    </section>
+  );
 }
