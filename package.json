@@ -2,6 +2,7 @@
   "name": "discordia-front",
   "private": true,
   "version": "1.1.2",
+  "packageManager": "pnpm@10.24.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
