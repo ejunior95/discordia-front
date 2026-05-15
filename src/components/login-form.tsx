@@ -42,11 +42,7 @@ export function LoginForm({
     } catch (err: any) {
       console.error("Erro ao fazer login", err);
       toast("Erro ao fazer login", {
-        description: String(err?.response?.data.message),
-        // action: {
-        //   label: "Detalhes",
-        //   onClick: () => console.log("Undo"),
-        // },
+        description: err?.response?.data?.message ?? 'Verifique suas credenciais e tente novamente.',
       })
     }
     setLoading(false);

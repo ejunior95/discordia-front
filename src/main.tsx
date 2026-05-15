@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { CurrentIAProvider } from './contexts/CurrentIAContext.tsx'
 import { EasyChat } from '@ejunior95/easy-chat';
 import '@ejunior95/easy-chat/dist/style.css';
 
@@ -54,23 +55,25 @@ COMPORTAMENTO:
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <App />
-      <>
-        {flagPageIsCreating !== "true" && (
-        <EasyChat
-          config={{
-            title: "DiscBot 🤖",
-            position: "bottom-right",
-            primaryColor: "#F19B20",
-            theme: "dark",
-            language: "pt",
-            systemPrompt: salesSystemPrompt,
-            initialMessage: "Olá! Precisa de ajuda com o DiscordIA?",
-            licenseKey
-          }}
-        />
-        )}
-      </>
+      <CurrentIAProvider>
+        <App />
+        <>
+          {flagPageIsCreating !== "true" && (
+          <EasyChat
+            config={{
+              title: "DiscBot 🤖",
+              position: "bottom-right",
+              primaryColor: "#F19B20",
+              theme: "dark",
+              language: "pt",
+              systemPrompt: salesSystemPrompt,
+              initialMessage: "Olá! Precisa de ajuda com o DiscordIA?",
+              licenseKey
+            }}
+          />
+          )}
+        </>
+      </CurrentIAProvider>
     </AuthProvider>
   </StrictMode>,
 )

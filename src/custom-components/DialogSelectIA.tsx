@@ -10,7 +10,7 @@ import {
 import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { setCurrentIA } from "@/utils/globalFunctions";
+import { useCurrentIA, type CurrentIA } from "@/contexts/CurrentIAContext";
 
 interface DialogSelectIAProps {
   trigger: React.ReactNode;
@@ -20,9 +20,10 @@ interface DialogSelectIAProps {
 
 export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAProps) {
   const [selectedIA, setSelectedIA] = useState<string | null>(null);
-  const [currentIALink, setCurrentIALink] = useState<string>('');
+  const [currentIALink, setCurrentIALink] = useState<CurrentIA>('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { setCurrentIA } = useCurrentIA();
 
   const ias = [
     { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o', linkValue: 'chat-gpt' },
@@ -56,7 +57,7 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
           {ias.map((ia) => (
             <div
               key={ia.label}
-              onClick={() => [setSelectedIA(ia.label), setCurrentIALink(ia.linkValue)]}
+              onClick={() => [setSelectedIA(ia.label), setCurrentIALink(ia.linkValue as CurrentIA)]}
               className={`
                 flex 
                 items-center 

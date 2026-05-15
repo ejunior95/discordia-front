@@ -40,32 +40,24 @@ import {
 } from "@/components/ui/navigation-menu"
 import { navigationItems } from "@/App"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
 import { TagCurrentIA } from "./TagCurrentIA"
+import { useCurrentIA } from "@/contexts/CurrentIAContext"
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+  const { currentIA } = useCurrentIA();
   const [openSheet, setOpenSheet] = useState(false);
-  const [openTagCurrentIA, setOpenTagCurrentIA] = useState(
-    localStorage.getItem('currentIA') || ''
-  );
-
-  useEffect(() => {
-    const handleCurrentIAChange = (e: Event) => {
-      const value = (e as CustomEvent).detail;
-      setOpenTagCurrentIA(value);
-    };
-    window.addEventListener('currentIAChange', handleCurrentIAChange);
-    return () => {
-      window.removeEventListener('currentIAChange', handleCurrentIAChange);
-    };
-  }, []);
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Erro ao encerrar sessão:', err);
+    }
     setUser(null);
     navigate('/login');
   };
@@ -243,8 +235,8 @@ export const Navbar = () => {
           </div>
       </nav>
       {
-        openTagCurrentIA !== '' &&
-        <TagCurrentIA ia={openTagCurrentIA as 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'} user={user!} />
+        currentIA !== '' && user &&
+        <TagCurrentIA ia={currentIA as 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'} user={user} />
       }
     </>
   )
