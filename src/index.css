@@ -118,3 +118,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes jokenpo-shake {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  20% { transform: translateY(-12px) rotate(-8deg); }
+  40% { transform: translateY(0) rotate(0); }
+  60% { transform: translateY(-12px) rotate(8deg); }
+  80% { transform: translateY(0) rotate(0); }
+}
+
+.animate-jokenpo-shake {
+  animation: jokenpo-shake 0.45s ease-in-out infinite;
+}

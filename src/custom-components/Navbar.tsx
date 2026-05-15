@@ -43,13 +43,10 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
-import { TagCurrentIA } from "./TagCurrentIA"
-import { useCurrentIA } from "@/contexts/CurrentIAContext"
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
-  const { currentIA } = useCurrentIA();
   const [openSheet, setOpenSheet] = useState(false);
 
   const handleLogout = async () => {
@@ -234,10 +231,6 @@ export const Navbar = () => {
             </AlertDialog>
           </div>
       </nav>
-      {
-        currentIA !== '' && user &&
-        <TagCurrentIA ia={currentIA as 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'} user={user} />
-      }
     </>
   )
 

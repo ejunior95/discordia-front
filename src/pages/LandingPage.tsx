@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png';
+import DiscordiaLogo from '../assets/discordia-logo-removebg2.png';
 import questionsBg from '../assets/questions-bg.jpeg';
 import gamesBg from '../assets/games-bg.jpeg';
 import rhymeBg from '../assets/rhyme-bg.jpg';
@@ -69,7 +70,7 @@ const FEATURES = [
     bgImage: gamesBg,
     link: '/games',
     accent: 'from-emerald-500 to-teal-500',
-    badge: 'Em breve',
+    badge: 'Novo',
   },
 ] as const;
 
@@ -174,14 +175,14 @@ function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src={Discordia3dLogo} alt="discordIA" className="size-9 object-contain" />
-          <span className="font-extrabold text-lg tracking-tight">
-            discord
+          <img src={DiscordiaLogo} alt="DiscordIA" className="size-9 md:size-12 object-contain" />
+          <span className="font-extrabold text-xl md:text-2xl tracking-tight">
+            Discord
             <span className="text-blue-400">I</span>
             <span className="text-amber-500">A</span>
           </span>
         </Link>
-        <div className="hidden md:flex items-center gap-7 text-sm text-zinc-400">
+        <div className="hidden md:flex items-center gap-7 text-md text-zinc-400">
           <a href="#features" className="hover:text-white transition-colors">Recursos</a>
           <a href="#how" className="hover:text-white transition-colors">Como funciona</a>
           <a href="#pricing" className="hover:text-white transition-colors">Planos</a>
@@ -234,10 +235,10 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3 py-1 text-xs text-zinc-300 mb-8"
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3 py-1 text-sm text-zinc-300 mb-8"
         >
-          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Em beta · 4 modelos competindo agora
+          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+          Versão BETA
         </motion.div>
 
         <motion.h1
@@ -248,7 +249,7 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
         >
           As IAs competem.
           <br />
-          <span className="bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-indigo-400 via-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
             Você decide quem vence.
           </span>
         </motion.h1>
@@ -267,19 +268,18 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full"
         >
           <Link to={ctaTarget}>
-            <Button size="lg" className="cursor-pointer h-12 px-7 text-base bg-white text-black hover:bg-zinc-200 gap-2 shadow-lg shadow-white/10">
+            <Button className="cursor-pointer w-80 h-12 px-0 md:px-7 text-base bg-white text-black hover:bg-zinc-200 gap-2 shadow-lg shadow-white/10">
               Começar agora
               <ArrowRight size={16} />
             </Button>
           </Link>
           <a href="#features">
             <Button
-              size="lg"
               variant="outline"
-              className="cursor-pointer h-12 px-7 text-base bg-white/5 border-white/15 text-white hover:bg-white/10 hover:text-white"
+              className="cursor-pointer w-80 h-12 px-0 md:px-7 text-base bg-white/5 border-white/15 text-white hover:bg-white/10 hover:text-white"
             >
               Ver recursos
             </Button>
@@ -292,11 +292,11 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
           transition={{ delay: 0.5, duration: 0.8 }}
           className="mt-16 md:mt-20 relative max-w-3xl mx-auto"
         >
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-500/30 via-fuchsia-500/30 to-amber-500/30 blur-2xl rounded-full" />
+          <div className="absolute -inset-6 bg-linear-to-r from-indigo-500/30 via-fuchsia-500/30 to-amber-500/30 blur-2xl rounded-full" />
           <img
             src={Discordia3dLogo}
-            alt="discordIA"
-            className="relative w-40 sm:w-56 md:w-64 mx-auto drop-shadow-2xl"
+            alt="DiscordIA"
+            className="relative w-40 sm:w-56 md:w-84 mx-auto drop-shadow-2xl"
           />
         </motion.div>
       </div>
@@ -384,7 +384,7 @@ function FeaturesShowcase({
     <section id="features" className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Recursos</p>
+          <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Recursos</p>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             Quatro modos. Uma única arena.
           </h2>
@@ -513,10 +513,10 @@ function FeaturesShowcase({
 
 function HowItWorks() {
   return (
-    <section id="how" className="py-20 md:py-28 border-t border-white/5 bg-gradient-to-b from-zinc-950 to-black">
+    <section id="how" className="py-20 md:py-28 border-t border-white/5 bg-linear-to-b from-zinc-950 to-black">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Como funciona</p>
+          <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Como funciona</p>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             Três passos, infinitas rodadas.
           </h2>
@@ -555,7 +555,7 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
     <section id="pricing" className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-400/80 mb-3">Planos</p>
+          <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Planos</p>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             Escolha o seu nível.
           </h2>
@@ -634,18 +634,17 @@ function FinalCTA({ ctaTarget }: { ctaTarget: string }) {
           <p className="mt-4 text-zinc-300 max-w-2xl mx-auto">
             Crie sua conta em segundos e comece a votar agora mesmo. Sem cartão, sem fricção.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center w-full">
             <Link to={ctaTarget}>
-              <Button size="lg" className="cursor-pointer h-12 px-8 text-base bg-white text-black hover:bg-zinc-200 gap-2">
+              <Button className="cursor-pointer h-12 w-full px-0 md:px-6 text-base bg-white text-black hover:bg-zinc-200 gap-2">
                 Começar agora
                 <ArrowRight size={16} />
               </Button>
             </Link>
             <a href="#features">
               <Button
-                size="lg"
                 variant="outline"
-                className="cursor-pointer h-12 px-8 text-base bg-transparent border-white/20 text-white hover:bg-white/5 hover:text-white"
+                className="cursor-pointer h-12 w-full px-0 md:px-6 text-base bg-transparent border-white/20 text-white hover:bg-white/5 hover:text-white"
               >
                 Ver recursos
               </Button>
@@ -666,13 +665,13 @@ function Footer() {
     <footer className="border-t border-white/5 py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <img src={Discordia3dLogo} alt="discordIA" className="size-7 object-contain" />
-          <span className="font-bold text-sm">
-            discord<span className="text-blue-400">I</span><span className="text-amber-500">A</span>
+          <img src={DiscordiaLogo} alt="DiscordIA" className="size-9 object-contain" />
+          <span className="font-bold text-md">
+            Discord<span className="text-blue-400">I</span><span className="text-amber-500">A</span>
           </span>
         </div>
         <p className="text-xs text-zinc-500">
-          © {new Date().getFullYear()} discordIA · Feito com IA, julgado por humanos.
+          © {new Date().getFullYear()} DiscordIA · Feito com IA, julgado por humanos.
         </p>
       </div>
     </footer>
