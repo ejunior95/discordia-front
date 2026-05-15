@@ -22,17 +22,17 @@ export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: A
     <Card
       className={cn(
         'flex flex-col min-h-[16rem] transition-all',
-        isWinner && `ring-2 ring-amber-500 ${accent}`,
+        isWinner && `ring-3 ring-amber-500 ${accent}`,
       )}
       aria-live={response.status === 'loading' ? 'polite' : undefined}
     >
       <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
-        <div className={cn('rounded-full p-2 border shrink-0', iconClass)}>
+        <div className={cn('rounded-full px-4 py-2 border shrink-0 flex items-center justify-center gap-3', iconClass)}>
           <Icon size={24} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold leading-tight truncate">{label}</p>
-          <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold leading-tight truncate">{label}</p>
+            <p className="text-xs truncate">{subtitle}</p>
+          </div>
         </div>
         <StatusBadge status={response.status} isWinner={isWinner} />
       </CardHeader>

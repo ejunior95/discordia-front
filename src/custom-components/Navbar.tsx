@@ -38,7 +38,7 @@ import {
   NavigationMenuLink, 
   NavigationMenuList, 
 } from "@/components/ui/navigation-menu"
-import { navigationItems } from "@/App"
+import { navigationItems } from "@/config/navigation"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"

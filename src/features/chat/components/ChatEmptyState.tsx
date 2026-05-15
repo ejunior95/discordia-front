@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { MessageCircleQuestion, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { IA_CONFIG, SUGGESTION_CHIPS } from '../chat.constants';
 import { AGENTS } from '../types';
@@ -17,10 +17,10 @@ export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
       className="flex-1 flex flex-col justify-center items-center gap-8 py-8"
     >
       <div className="text-center max-w-2xl space-y-2">
-        <h1 className="text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight">
+        <h1 className="text-4xl mb-2 md:text-5xl xl:text-6xl font-extrabold tracking-tight">
           Faça sua pergunta
         </h1>
-        <p className="text-base md:text-lg text-muted-foreground">
+        <p className="text-sm md:text-lg text-muted-foreground">
           Veja 4 IAs disputarem pelo seu voto em tempo real.
         </p>
       </div>
@@ -60,9 +60,10 @@ export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
               key={chip}
               type="button"
               onClick={() => onSelectSuggestion(chip)}
-              className="text-sm text-left px-4 py-3 rounded-lg border bg-card hover:bg-accent hover:border-primary/50 transition-colors cursor-pointer"
+              className="text-sm flex items-center justify-between text-left px-4 py-3 rounded-lg border bg-card hover:bg-accent hover:border-primary/50 transition-colors cursor-pointer"
             >
               {chip}
+              <MessageCircleQuestion size={22} />
             </button>
           ))}
         </div>

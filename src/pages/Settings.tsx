@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Loader from "@/custom-components/Loader";
 import { useAuth } from "@/hooks/useAuth";
-import UserService from "@/services/user.service";
+import { updateUser } from "@/services/user.service";
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
@@ -54,10 +54,8 @@ export default function Settings() {
         formData.append("avatar", avatarFile);
       }
     
-      const userService = new UserService();
-    
       try {
-        await userService.update(user.id, formData);
+        await updateUser(user.id, formData);
         toast("Alterações salvas com sucesso!");
       } catch (error: any) {
         toast("Erro ao salvar alterações", {

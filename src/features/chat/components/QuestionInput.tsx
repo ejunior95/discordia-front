@@ -47,7 +47,7 @@ export function QuestionInput({
   };
 
   return (
-    <div className="w-full bg-input/60 border rounded-xl p-3 flex flex-col gap-2 shadow-sm">
+    <div className="w-full bg-input/60 border rounded-xl p-3 flex flex-col gap-2 shadow-sm mb-3">
       <label htmlFor="chat-question" className="sr-only">
         Faça sua pergunta
       </label>
@@ -55,7 +55,7 @@ export function QuestionInput({
         id="chat-question"
         ref={textareaRef}
         rows={1}
-        placeholder="O que você quer saber? (Enter envia, Shift+Enter quebra linha)"
+        placeholder="O que você quer saber?"
         value={value}
         maxLength={MAX_QUESTION_LENGTH}
         onChange={(e) => onChange(e.target.value)}

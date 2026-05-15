@@ -50,17 +50,17 @@ export function RoundsHistory({ rounds, onVote, onRetry, onClear }: RoundsHistor
           {rounds.length} {rounds.length === 1 ? 'rodada' : 'rodadas'}
         </p>
         <Button
-          variant="ghost"
+          variant="destructive"
           size="sm"
           onClick={onClear}
-          className="text-xs gap-1 cursor-pointer text-muted-foreground hover:text-destructive"
+          className="text-xs gap-1 cursor-pointer hover:scale-105 transition-transform"
         >
           <Trash2 size={14} /> Limpar
         </Button>
       </div>
       <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto border rounded-lg px-3 sm:px-4 divide-y"
+        className="flex-1 overflow-y-auto border rounded-lg p-3 sm:px-4 divide-y"
       >
         {rounds.map((round) => (
           <Round

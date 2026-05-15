@@ -13,28 +13,28 @@ export const IA_CONFIG: Record<AgentIA, IAConfig> = {
   'chat-gpt': {
     Icon: OpenAI,
     label: 'ChatGPT',
-    subtitle: 'gpt-4o',
+    subtitle: 'gpt-4.1-mini',
     iconClass: 'bg-black text-white',
     accent: 'border-zinc-500',
   },
   gemini: {
     Icon: Gemini,
     label: 'Gemini',
-    subtitle: 'gemini-2.0-flash',
+    subtitle: 'gemini-2.5-flash',
     iconClass: 'bg-white text-blue-600',
     accent: 'border-blue-500',
   },
   deepseek: {
     Icon: DeepSeek,
     label: 'DeepSeek',
-    subtitle: 'deepseek-chat',
+    subtitle: 'deepseek-v4-flash',
     iconClass: 'bg-blue-600 text-white',
     accent: 'border-indigo-500',
   },
   grok: {
     Icon: Grok,
     label: 'Grok',
-    subtitle: 'grok-3-beta',
+    subtitle: 'grok-4.3',
     iconClass: 'bg-gray-600 text-white',
     accent: 'border-amber-500',
   },
@@ -57,10 +57,10 @@ export const LOADER_MESSAGES = [
 ];
 
 export const SUGGESTION_CHIPS = [
-  'Explique computação quântica em uma frase',
-  'Escreva um haicai sobre programação',
-  'Qual a melhor estratégia para aprender inglês?',
-  'Compare React, Vue e Svelte em 2026',
+  'Qual invenção mudou mais a história humana?',
+  'Qual animal tem a habilidade mais surpreendente?',
+  'Qual mistério do espaço é mais intrigante?',
+  'Qual fato histórico parece mentira, mas é real?',
 ];
 
 export const MAX_QUESTION_LENGTH = 150;

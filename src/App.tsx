@@ -6,13 +6,7 @@ import { Layout } from './custom-components/Layout';
 import Loader from './custom-components/Loader';
 import ProtectedRoute from './custom-components/ProtectedRoute';
 import PublicRoute from './custom-components/PublicRoute';
-import { 
-  Gamepad2, 
-  House, 
-  MessagesSquare, 
-  MicVocal, 
-  Swords 
-} from 'lucide-react';
+import { ErrorBoundary } from './custom-components/ErrorBoundary';
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -31,20 +25,13 @@ const Jokenpo = lazy(() => import('./pages/Jokenpo'));
 const Hangman = lazy(() => import('./pages/Hangman'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-export const navigationItems = [
-  { label: 'Início', path: '/home', icon: House },
-  { label: 'Chat', path: '/chat', icon: MessagesSquare },
-  { label: 'Jogos', path: '/games', icon: Gamepad2 },
-  { label: 'Batalha de rima', path: '/rap-battle', icon: MicVocal },
-  { label: 'RPG', path: '/rpg', icon: Swords },
-];
-
 export default function App() {
   const flagPageIsCreating = import.meta.env.VITE_FLAG_ISWORKING;
   return (
     <ThemeProvider defaultTheme="system" storageKey="discordia-theme-select">
       <BrowserRouter>
-        <Suspense fallback={<Loader />}>
+        <ErrorBoundary>
+          <Suspense fallback={<Loader />}>
           <Routes>
             <Route element={<Layout />}>
               
@@ -144,6 +131,7 @@ export default function App() {
             </Route>
           </Routes>
         </Suspense>
+        </ErrorBoundary>
         <Toaster />
       </BrowserRouter>
     </ThemeProvider>

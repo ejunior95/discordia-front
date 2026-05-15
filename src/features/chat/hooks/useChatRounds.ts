@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import MainService from '@/services/main.service';
+import { askToAll, askToOne } from '@/services/main.service';
 import { ROUNDS_STORAGE_KEY } from '../chat.constants';
 import { AGENTS, type AgentIA, type AIResponse, type Round } from '../types';
-
-const mainService = new MainService();
 
 function createInitialResponses(): Record<AgentIA, AIResponse> {
   return AGENTS.reduce((acc, agent) => {
@@ -104,7 +102,7 @@ export function useChatRounds() {
     setIsAsking(true);
 
     try {
-      const response = await mainService.askToAll(trimmed, controller.signal);
+      const response = await askToAll(trimmed, controller.signal);
       const data = response?.data;
       if (!data) throw new Error('Resposta vazia da API');
 
@@ -148,7 +146,7 @@ export function useChatRounds() {
     }));
 
     try {
-      const response = await mainService.askToOne(round.question, agent);
+      const response = await askToOne(round.question, agent);
       const msg = response?.data?.response;
       if (!msg) throw new Error('Sem resposta');
 

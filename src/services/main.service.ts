@@ -19,27 +19,20 @@ export interface IResponseApiOneIa {
     response: string
 }
 
-export default class MainService {
+export async function askToAll(question: string, signal?: AbortSignal) {
+    return api.request<IResponseApiAllIa>({
+        method: 'POST',
+        url: 'ask-to-all',
+        data: { question },
+        signal,
+    });
+}
 
-    async askToAll(question: string, signal?: AbortSignal) {
-        if (!question?.trim()) return;
-        const response = await api.request<IResponseApiAllIa>({
-            method: 'POST',
-            url: 'ask-to-all',
-            data: { question },
-            signal,
-        });
-        return response;
-    }
-
-    async askToOne(question: string, agent: string, signal?: AbortSignal) {
-        if (!question?.trim()) return;
-        const response = await api.request<IResponseApiOneIa>({
-            method: 'POST',
-            url: 'ask-to-one',
-            data: { question, agent },
-            signal,
-        });
-        return response;
-    }
+export async function askToOne(question: string, agent: string, signal?: AbortSignal) {
+    return api.request<IResponseApiOneIa>({
+        method: 'POST',
+        url: 'ask-to-one',
+        data: { question, agent },
+        signal,
+    });
 }

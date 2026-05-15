@@ -1,28 +1,19 @@
 import { api } from "@/server/api";
 
-export default class UserService {
+export async function createUser(data: FormData) {
+    return api.request({
+        method: 'POST',
+        url: 'users',
+        data,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+}
 
-  async create(data: FormData) {
-        const response = await api.request({
-          method: 'POST',
-          url: 'users',
-          data,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        return response;
-    }
-
-    async update(id: string, data: FormData) {
-        const response = await api.request({
-          method: 'PATCH',
-          url: `users/${id}`,
-          data,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        return response;
-    }
+export async function updateUser(id: string, data: FormData) {
+    return api.request({
+        method: 'PATCH',
+        url: `users/${id}`,
+        data,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
 }

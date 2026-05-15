@@ -57,7 +57,7 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <CurrentIAProvider>
         <App />
-        <>
+        {/* <>
           {flagPageIsCreating !== "true" && (
           <EasyChat
             config={{
@@ -72,7 +72,7 @@ createRoot(document.getElementById('root')!).render(
             }}
           />
           )}
-        </>
+        </> */}
       </CurrentIAProvider>
     </AuthProvider>
   </StrictMode>,

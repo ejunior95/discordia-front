@@ -15,7 +15,7 @@ import Loader from "@/custom-components/Loader"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Eye, EyeClosed, ImagePlus } from "lucide-react"
-import UserService from "@/services/user.service"
+import { createUser } from "@/services/user.service"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
 export function RegisterForm({
@@ -57,9 +57,7 @@ export function RegisterForm({
       formData.append('avatar', avatar);
     }
   
-    const userService = new UserService();
-  
-    await userService.create(formData)
+    await createUser(formData)
       .then(() => {
         toast("Usuário criado com sucesso!", {
           description: 'Email de confirmação enviado',
