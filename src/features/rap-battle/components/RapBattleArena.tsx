@@ -51,15 +51,15 @@ export function RapBattleArena({
   return (
     <div className="flex flex-col gap-6">
       {/* Header VS */}
-      <Card className="relative overflow-hidden py-6 md:py-8">
+      <Card className="relative overflow-hidden py-5 md:py-8">
         <div className="absolute inset-0 bg-linear-to-r from-fuchsia-500/10 via-transparent to-cyan-500/10" aria-hidden />
-        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 md:px-8">
+        <div className="relative grid grid-cols-2 items-start gap-4 px-3 sm:px-4 md:grid-cols-[1fr_auto_1fr] md:items-center md:px-8">
           <ContenderHeader side="left" Icon={IconA} cfg={cfgA} score={wonByA} />
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-md uppercase tracking-widest text-muted-foreground">
+          <div className="order-first col-span-2 flex flex-col items-center gap-2 rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-center backdrop-blur-xs md:order-0 md:col-span-1 md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
+            <span className="text-xs sm:text-sm md:text-md uppercase tracking-[0.3em] text-muted-foreground">
               Round {battle.currentRound}/{TOTAL_ROUNDS}
             </span>
-            <span className="text-3xl md:text-7xl font-extrabold tracking-tight bg-linear-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+            <span className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight bg-linear-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent leading-none">
               VS
             </span>
             <RoundPips current={battle.currentRound} />
@@ -67,9 +67,9 @@ export function RapBattleArena({
           <ContenderHeader side="right" Icon={IconB} cfg={cfgB} score={wonByB} />
         </div>
         {battle.theme.trim() && (
-          <div className="relative mt-4 px-6 text-center">
+          <div className="relative mt-4 px-4 text-center md:px-6">
             <p className="text-xs text-muted-foreground">Tema</p>
-            <p className="text-sm md:text-lg font-medium italic">"{battle.theme.trim()}"</p>
+            <p className="text-sm md:text-lg font-medium italic wrap-break-word">"{battle.theme.trim()}"</p>
           </div>
         )}
       </Card>
@@ -101,12 +101,12 @@ export function RapBattleArena({
             <Volume2 size={14} />
             <span>Em breve: vozes geradas + batida de fundo.</span>
           </div>
-          <div className="flex flex-wrap items-center gap-2 justify-end">
-            <Button variant="ghost" size="sm" onClick={onReset} className="cursor-pointer">
-              Nova batalha
+          <div className="flex items-center gap-2 justify-end">
+            <Button variant="destructive" onClick={onReset} className="cursor-pointer">
+              Cancelar batalha
             </Button>
             {isGenerating ? (
-              <Button variant="destructive" size="sm" onClick={onAbort} className="cursor-pointer gap-2">
+              <Button variant="destructive" onClick={onAbort} className="cursor-pointer gap-2">
                 <Square size={14} />
                 Cancelar
               </Button>
@@ -150,26 +150,30 @@ function ContenderHeader({
   score: number;
 }) {
   return (
-    <div className={cn('flex items-center gap-3', side === 'right' && 'flex-row-reverse text-right')}>
+    <div
+      className={cn(
+        'flex min-w-0 flex-col items-center gap-3 rounded-2xl border border-border/50 bg-background/70 px-3 py-4 text-center shadow-sm backdrop-blur-xs sm:px-4 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0 md:text-left md:shadow-none md:backdrop-blur-none',
+        side === 'right' && 'md:flex-row-reverse md:text-right',
+        side === 'left' && 'md:flex-row',
+      )}
+    >
       <div className={cn('rounded-2xl p-3 md:p-4 shadow-lg', cfg.iconClass)}>
-        <Icon size={32} />
+        <Icon size={28} className="md:size-8" />
       </div>
-      <div className="min-w-0">
+      <div className="min-w-0 space-y-1">
         {side === 'left' ? (
-        <p className="text-md uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-          <Mic size={18} />
-          MC
-        </p>
-          
+          <p className="flex items-center justify-center gap-1 text-xs uppercase tracking-[0.25em] text-muted-foreground md:justify-start md:text-sm md:tracking-wider">
+            <Mic size={14} className="md:size-4" />
+            MC
+          </p>
         ) : (
-        <p className="text-md uppercase tracking-wider text-muted-foreground flex items-center justify-end w-full text-right gap-1">
-          MC
-          <Mic size={18} />
-        </p>
-          
+          <p className="flex items-center justify-center gap-1 text-xs uppercase tracking-[0.25em] text-muted-foreground md:w-full md:justify-end md:text-right md:text-sm md:tracking-wider">
+            MC
+            <Mic size={14} className="md:size-4" />
+          </p>
         )}
-        <p className="text-xl md:text-3xl font-extrabold tracking-tight truncate">{cfg.label}</p>
-        <p className="text-md text-muted-foreground tabular-nums">
+        <p className="text-base leading-tight font-extrabold tracking-tight sm:text-lg md:text-3xl truncate">{cfg.label}</p>
+        <p className="text-xs text-muted-foreground tabular-nums sm:text-sm md:text-base">
           {score} {score === 1 ? 'round vencido' : 'rounds vencidos'}
         </p>
       </div>

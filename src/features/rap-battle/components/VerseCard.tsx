@@ -69,7 +69,7 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
         </Button>
         <div className="flex items-center gap-1">
           {status === 'success' && verse && <CopyButton text={verse.content} />}
-          {(status === 'success' || status === 'error') && (
+          {(status === 'error') && (
             <Button
               variant="ghost"
               size="sm"
