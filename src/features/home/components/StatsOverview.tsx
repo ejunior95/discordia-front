@@ -46,12 +46,12 @@ export function StatsOverview() {
       {stats.map(({ label, value, icon: Icon, iconClass, hint }) => (
         <Card key={label} className="py-4 md:py-5">
           <CardContent className="px-4 md:px-5 flex items-center gap-3 md:gap-4">
-            <div className={`shrink-0 size-10 md:size-12 rounded-lg flex items-center justify-center ${iconClass}`}>
-              <Icon size={20} />
+            <div className={`shrink-0 size-16 rounded-lg flex items-center justify-center ${iconClass}`}>
+              <Icon size={30} />
             </div>
             <div className="min-w-0">
-              <p className="text-xs md:text-sm text-muted-foreground truncate">{label}</p>
-              <p className="text-xl md:text-2xl font-bold tracking-tight tabular-nums truncate">{value}</p>
+              <p className="text-md md:text-sm text-muted-foreground truncate">{label}</p>
+              <p className="text-3xl font-bold tracking-tight tabular-nums truncate">{value}</p>
               {hint && <p className="text-[11px] text-muted-foreground hidden md:block truncate">{hint}</p>}
             </div>
           </CardContent>

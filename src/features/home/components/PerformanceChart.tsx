@@ -46,8 +46,8 @@ export function PerformanceChart() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <LineChart size={18} className="text-primary" />
+        <CardTitle className="flex items-center gap-4 text-xl">
+          <LineChart size={28} className="text-primary" />
           Desempenho ao longo do tempo
         </CardTitle>
         <CardDescription>Vitórias por semana de cada IA</CardDescription>
@@ -56,7 +56,7 @@ export function PerformanceChart() {
         <div className="w-full overflow-x-auto">
           <svg
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-            className="w-full h-auto min-w-[480px]"
+            className="w-full h-auto min-w-120"
             role="img"
             aria-label="Gráfico de vitórias por semana de cada IA"
           >

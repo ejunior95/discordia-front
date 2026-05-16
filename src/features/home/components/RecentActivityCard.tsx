@@ -17,8 +17,8 @@ export function RecentActivityCard() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Clock size={18} className="text-primary" />
+        <CardTitle className="flex items-center gap-4 text-xl">
+          <Clock size={28} className="text-primary" />
           Atividade recente
         </CardTitle>
         <CardDescription>Últimas batalhas e seus vencedores</CardDescription>
@@ -32,7 +32,7 @@ export function RecentActivityCard() {
               key={battle.id}
               className="flex items-center gap-3 rounded-lg border p-3 hover:bg-accent/40 transition-colors"
             >
-              <div className={cn('rounded-full p-2 shrink-0', cfg.iconClass)}>
+              <div className={cn('rounded-full p-2 shrink-0 border', cfg.iconClass)}>
                 <Icon size={16} />
               </div>
               <div className="flex-1 min-w-0">
