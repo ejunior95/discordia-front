@@ -26,31 +26,6 @@ export function decideWinner(user: JokenpoChoice, ai: JokenpoChoice): "user" | "
   return "ai";
 }
 
-export function buildJokenpoPrompt(history: { user: JokenpoChoice; ai: JokenpoChoice }[]): string {
-  const historyLine = history.length
-    ? `\nHistórico desta partida (você é a IA):\n${history
-        .map(
-          (h, i) =>
-            `  Round ${i + 1}: usuário=${h.user} | você=${h.ai} | ${
-              decideWinner(h.user, h.ai) === "user"
-                ? "usuário venceu"
-                : decideWinner(h.user, h.ai) === "ai"
-                  ? "você venceu"
-                  : "empate"
-            }`,
-        )
-        .join("\n")}`
-    : "";
-
-  return [
-    `Você está jogando Pedra, Papel e Tesoura contra um usuário humano.`,
-    `Escolha uma jogada: rock, paper ou scissors.`,
-    `Tente vencer; varie suas jogadas de forma imprevisível.`,
-    historyLine,
-    `Responda APENAS com uma destas palavras em minúsculas: rock, paper, scissors. Sem mais nada.`,
-  ].join("\n");
-}
-
 export function parseAIChoice(raw: string): JokenpoChoice | null {
   const txt = raw.toLowerCase();
   if (txt.includes("rock") || txt.includes("pedra")) return "rock";

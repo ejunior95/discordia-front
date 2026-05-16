@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Chess } from "chess.js";
 import axios from "axios";
-import { askToOne } from "@/services/main.service";
+import { askGameAction } from "@/services/main.service";
 import type { ScoreboardAgent } from "@/custom-components/GameScoreboard";
 import {
   CHESS_STORAGE_KEY,
-  buildChessMovePrompt,
   type ChessLevel,
 } from "../chess.constants";
 import type { ChessGame, ChessSide, ChessStatus } from "../types";
@@ -127,16 +126,15 @@ export function useChessGame() {
       setGame((prev) => (prev ? { ...prev, status: "ai-thinking", aiError: undefined } : prev));
 
       const aiSide: ChessSide = current.userSide === "w" ? "b" : "w";
-      const prompt = buildChessMovePrompt({
-        fen: chess.fen(),
-        pgn: chess.pgn(),
-        side: aiSide,
-        level: current.level,
-        lastInvalid,
-      });
 
       try {
-        const res = await askToOne(prompt, current.ia, controller.signal);
+        const res = await askGameAction('chess', current.ia, {
+          fen: chess.fen(),
+          pgn: chess.pgn(),
+          side: aiSide,
+          level: current.level,
+          lastInvalid,
+        }, controller.signal);
         const raw = (res?.data?.response ?? "").trim();
         // Pega o primeiro token que parece um SAN
         const token = raw.split(/\s+/).find((t) => /^[a-zA-Z][a-zA-Z0-9+#=x/-]*$/.test(t)) ?? raw;

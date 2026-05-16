@@ -20,6 +20,14 @@ export interface IResponseApiOneIa {
     response: string
 }
 
+export type GameActionContext =
+    | 'chess'
+    | 'hangman-chooser'
+    | 'hangman-guesser'
+    | 'jokenpo'
+    | 'rpg'
+    | 'rap-battle';
+
 function asRecord(value: unknown): Record<string, unknown> | null {
     return value && typeof value === 'object' ? value as Record<string, unknown> : null;
 }
@@ -63,6 +71,25 @@ export async function askToOne(
         method: 'POST',
         url: 'ask-to-one',
         data: { question, agent },
+        signal,
+    });
+
+    return {
+        ...response,
+        data: normalizeOneIaResponse(response.data, agent),
+    };
+}
+
+export async function askGameAction(
+    context: GameActionContext,
+    agent: string,
+    payload: Record<string, unknown>,
+    signal?: AbortSignal,
+): Promise<AxiosResponse<IResponseApiOneIa>> {
+    const response = await api.request<unknown>({
+        method: 'POST',
+        url: 'ai/game-action',
+        data: { context, agent, payload },
         signal,
     });
 

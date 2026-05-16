@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askToOne } from '@/services/main.service';
+import { askGameAction } from '@/services/main.service';
 import type { AgentIA } from '@/features/chat/types';
-import { RAP_BATTLE_STORAGE_KEY, TOTAL_ROUNDS, buildRapPrompt } from '../rap.constants';
+import { RAP_BATTLE_STORAGE_KEY, TOTAL_ROUNDS } from '../rap.constants';
 import type { RapBattle, RapRound, RapVerse } from '../types';
 
 function generateId(): string {
@@ -143,22 +143,22 @@ export function useRapBattle() {
     const prevA = previousRound?.verses[a]?.content;
     const prevB = previousRound?.verses[b]?.content;
 
-    const promptA = buildRapPrompt({
+    const payloadA = {
       agent: a,
       opponent: b,
       theme: battle.theme,
       roundIndex: index,
       previousOpponentVerse: prevB,
       previousOwnVerse: prevA,
-    });
-    const promptB = buildRapPrompt({
+    };
+    const payloadB = {
       agent: b,
       opponent: a,
       theme: battle.theme,
       roundIndex: index,
       previousOpponentVerse: prevA,
       previousOwnVerse: prevB,
-    });
+    };
 
     const settle = (agent: AgentIA, result: PromiseSettledResult<string>) => {
       setBattle((current) => {
@@ -189,14 +189,14 @@ export function useRapBattle() {
       });
     };
 
-    const callOne = async (agent: AgentIA, prompt: string): Promise<string> => {
-      const response = await askToOne(prompt, agent, controller.signal);
+    const callOne = async (agent: AgentIA, payload: Record<string, unknown>): Promise<string> => {
+      const response = await askGameAction('rap-battle', agent, payload, controller.signal);
       const msg = response?.data?.response;
       if (!msg) throw new Error('Sem resposta');
       return msg.trim();
     };
 
-    const [resA, resB] = await Promise.allSettled([callOne(a, promptA), callOne(b, promptB)]);
+    const [resA, resB] = await Promise.allSettled([callOne(a, payloadA), callOne(b, payloadB)]);
     settle(a, resA);
     settle(b, resB);
 
@@ -239,15 +239,15 @@ export function useRapBattle() {
     });
 
     try {
-      const prompt = buildRapPrompt({
+      const payload = {
         agent,
         opponent,
         theme: battle.theme,
         roundIndex,
         previousOpponentVerse: prevOpponent,
         previousOwnVerse: prevOwn,
-      });
-      const response = await askToOne(prompt, agent);
+      };
+      const response = await askGameAction('rap-battle', agent, payload);
       const msg = response?.data?.response;
       if (!msg) throw new Error('Sem resposta');
       setBattle((current) => {

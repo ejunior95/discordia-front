@@ -1,8 +1,6 @@
 import { Castle, Ghost, Rocket, Wand2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { IA_CONFIG } from '@/features/chat/chat.constants';
-import type { AgentIA } from '@/features/chat/types';
-import type { ActorRef, Attributes, Character, RpgCampaign, Scenario, TurnAction } from './types';
+import type { ActorRef, Attributes, Character, Scenario, TurnAction } from './types';
 
 export const RPG_STORAGE_KEY = 'discordia-rpg-campaign';
 
@@ -110,100 +108,6 @@ export function generateCharacter(owner: ActorRef, scenario: Scenario): Characte
     maxHp,
     attributes: attrs,
   };
-}
-
-export function getActorLabel(actor: ActorRef, characters?: Character[]): string {
-  if (actor === 'user') {
-    const char = characters?.find((c) => c.owner === 'user');
-    return char ? char.name : 'Você';
-  }
-  return IA_CONFIG[actor].label;
-}
-
-// === Prompts ===
-
-const MAX_HISTORY_TURNS = 8;
-
-function formatHistory(turns: TurnAction[], characters: Character[]): string {
-  if (turns.length === 0) return '(sem histórico ainda — é o início da campanha)';
-  const recent = turns.slice(-MAX_HISTORY_TURNS);
-  return recent
-    .filter((t) => t.status === 'success' && t.content.trim())
-    .map((t) => {
-      const who = t.role === 'master' ? 'MESTRE' : getActorLabel(t.actor, characters);
-      return `[${who}]: ${t.content.trim()}`;
-    })
-    .join('\n');
-}
-
-function formatRoster(characters: Character[]): string {
-  return characters
-    .map((c) => {
-      const ownerLabel = c.owner === 'user' ? 'Jogador humano' : IA_CONFIG[c.owner as AgentIA].label;
-      return `- ${c.name} (${c.classe}, HP ${c.hp}/${c.maxHp}) — ${ownerLabel}`;
-    })
-    .join('\n');
-}
-
-interface MasterPromptInput {
-  campaign: RpgCampaign;
-}
-
-export function buildMasterPrompt({ campaign }: MasterPromptInput): string {
-  const scenarioCfg = getScenarioConfig(campaign.scenario);
-  const customLine = campaign.scenario === 'custom' && campaign.customPrompt?.trim()
-    ? `Universo definido pelo jogador: """${campaign.customPrompt.trim()}"""`
-    : `Cenário: ${scenarioCfg.label} — ${scenarioCfg.description}`;
-
-  return [
-    `Você é o MESTRE de uma campanha de RPG estilo Dungeons & Dragons em português brasileiro.`,
-    customLine,
-    scenarioCfg.toneLine,
-    `Personagens na mesa:\n${formatRoster(campaign.characters)}`,
-    `Histórico recente:\n${formatHistory(campaign.turns, campaign.characters)}`,
-    'Sua tarefa:',
-    '- Descreva a próxima cena em 3 a 5 frases vívidas.',
-    '- NÃO fale ou aja pelos personagens dos jogadores.',
-    '- Termine com uma situação, pergunta ou desafio que exija ação dos jogadores.',
-    '- Responda APENAS com a narração, sem rótulos, sem aspas externas, sem comentários.',
-  ].join('\n\n');
-}
-
-interface PlayerPromptInput {
-  campaign: RpgCampaign;
-  agent: AgentIA;
-}
-
-export function buildPlayerPrompt({ campaign, agent }: PlayerPromptInput): string {
-  const scenarioCfg = getScenarioConfig(campaign.scenario);
-  const character = campaign.characters.find((c) => c.owner === agent);
-  if (!character) throw new Error(`Personagem não encontrado para ${agent}`);
-
-  const lastMasterTurn = [...campaign.turns].reverse().find(
-    (t) => t.role === 'master' && t.status === 'success',
-  );
-
-  const customLine = campaign.scenario === 'custom' && campaign.customPrompt?.trim()
-    ? `Universo: """${campaign.customPrompt.trim()}"""`
-    : `Cenário: ${scenarioCfg.label}.`;
-
-  const attrs = character.attributes;
-  const attrsLine = `FOR ${attrs.for} · DES ${attrs.des} · CON ${attrs.con} · INT ${attrs.int} · SAB ${attrs.sab} · CAR ${attrs.car}`;
-
-  return [
-    `Você é "${character.name}", um(a) ${character.classe} em uma campanha de RPG estilo Dungeons & Dragons.`,
-    customLine,
-    `Seus atributos: ${attrsLine}. HP atual: ${character.hp}/${character.maxHp}.`,
-    `Histórico recente:\n${formatHistory(campaign.turns, campaign.characters)}`,
-    lastMasterTurn
-      ? `O Mestre acabou de narrar:\n"""${lastMasterTurn.content.trim()}"""`
-      : 'A aventura está começando.',
-    'Sua tarefa:',
-    `- Responda em primeira pessoa como ${character.name}, em 2 a 4 frases.`,
-    '- Pode misturar fala ("entre aspas") e descrição de ação.',
-    '- Seja coerente com sua classe, atributos e o histórico.',
-    '- Responda APENAS com a fala/ação, sem rótulos como "Personagem:" e sem comentários.',
-  ].join('\n\n');
 }
 
 export function makeTurn(

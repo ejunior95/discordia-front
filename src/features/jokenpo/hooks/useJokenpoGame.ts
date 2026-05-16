@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { askToOne } from "@/services/main.service";
+import { askGameAction } from "@/services/main.service";
 import type { ScoreboardAgent } from "@/custom-components/GameScoreboard";
 import {
   JOKENPO_STORAGE_KEY,
   WIN_SCORE,
-  buildJokenpoPrompt,
   decideWinner,
   parseAIChoice,
   randomChoice,
@@ -93,10 +92,9 @@ export function useJokenpoGame() {
 
       let aiChoice: JokenpoChoice;
       try {
-        const prompt = buildJokenpoPrompt(
-          game.rounds.map((r) => ({ user: r.user, ai: r.ai })),
-        );
-        const res = await askToOne(prompt, game.ia, controller.signal);
+        const res = await askGameAction('jokenpo', game.ia, {
+          history: game.rounds.map((r) => ({ user: r.user, ai: r.ai })),
+        }, controller.signal);
         aiChoice = parseAIChoice(res?.data?.response ?? "") ?? randomChoice();
       } catch (err) {
         if (axios.isCancel(err)) {

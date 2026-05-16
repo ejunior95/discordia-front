@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { askToOne } from "@/services/main.service";
+import { askGameAction } from "@/services/main.service";
 import type { ScoreboardAgent } from "@/custom-components/GameScoreboard";
 import {
   HANGMAN_STORAGE_KEY,
   MAX_WRONG,
   TOTAL_WORDS,
-  buildIAGuessPrompt,
-  buildIAWordPrompt,
-  getCategoryLabel,
   normalizeWord,
 } from "../hangman.constants";
 import type {
@@ -80,8 +77,7 @@ export function useHangmanGame() {
     async (ia: ScoreboardAgent, category: string, usedWords: string[]): Promise<string> => {
       const controller = new AbortController();
       abortRef.current = controller;
-      const prompt = buildIAWordPrompt(getCategoryLabel(category), usedWords);
-      const res = await askToOne(prompt, ia, controller.signal);
+      const res = await askGameAction('hangman-chooser', ia, { category, usedWords }, controller.signal);
       const raw = res?.data?.response ?? "";
       const word = normalizeWord(raw);
       if (word.length < 3 || word.length > 16 || /\s/.test(word)) {
@@ -211,13 +207,12 @@ export function useHangmanGame() {
     abortRef.current = controller;
 
     try {
-      const prompt = buildIAGuessPrompt({
-        categoryLabel: getCategoryLabel(game.category),
+      const res = await askGameAction('hangman-guesser', game.ia, {
+        category: game.category,
         pattern: buildPattern(round.word, round.triedLetters),
         wrongLetters: round.wrongLetters,
         triedLetters: round.triedLetters,
-      });
-      const res = await askToOne(prompt, game.ia, controller.signal);
+      }, controller.signal);
       const raw = (res?.data?.response ?? "").toUpperCase();
       const match = raw.match(/[A-Z]/);
       let letter = match?.[0] ?? "";

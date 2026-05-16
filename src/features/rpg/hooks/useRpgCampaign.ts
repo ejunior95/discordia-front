@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askToOne } from '@/services/main.service';
+import { askGameAction } from '@/services/main.service';
 import type { AgentIA } from '@/features/chat/types';
 import {
   RPG_STORAGE_KEY,
-  buildMasterPrompt,
-  buildPlayerPrompt,
   generateCharacter,
   makeTurn,
 } from '../rpg.constants';
@@ -151,11 +149,12 @@ export function useRpgCampaign() {
     });
 
     try {
-      const prompt = isMasterTurn
-        ? buildMasterPrompt({ campaign })
-        : buildPlayerPrompt({ campaign, agent: actor as AgentIA });
-
-      const response = await askToOne(prompt, actor as AgentIA, controller.signal);
+      const response = await askGameAction(
+        'rpg',
+        actor as AgentIA,
+        { campaign: campaign as unknown as Record<string, unknown> },
+        controller.signal,
+      );
       const msg = response?.data?.response?.trim();
       if (!msg) throw new Error('Sem resposta');
 
