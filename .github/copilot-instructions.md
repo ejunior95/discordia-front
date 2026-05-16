@@ -1,149 +1,234 @@
-# discordIA Frontend - AI Coding Assistant Instructions
+# discordIA Frontend - Copilot Instructions
 
 ## Project Overview
-discordIA is a competitive AI chat application where multiple AI models (ChatGPT, Gemini, DeepSeek, Grok) answer the same prompt. Users compare responses, vote on the best answer, retry individual AI responses, and track a winner per round.
 
-**Stack**: React 19 + TypeScript + Vite + TailwindCSS 4 + shadcn/ui + React Router v7
+discordIA is a competitive AI chat application where ChatGPT, Gemini, DeepSeek, and Grok answer the same prompt. Users compare responses, vote on the best answer, retry individual AI responses, and track a winner per round.
 
-## Architecture & Data Flow
+The frontend also includes protected game experiences for chess, jokenpo, hangman, RPG, and rap battles, plus profile, subscription, and settings areas.
+
+Stack: React 19, TypeScript, Vite 6, TailwindCSS 4, shadcn/ui, Radix UI, React Router 7, Axios, pnpm.
+
+## Architecture and Data Flow
 
 ### Core Application Structure
-- **Entry Point**: [src/main.tsx](src/main.tsx) wraps app with `AuthProvider` and `StrictMode`
-- **Routing**: [src/App.tsx](src/App.tsx) defines all routes with lazy-loaded page components
-- **Layout System**: [src/custom-components/Layout.tsx](src/custom-components/Layout.tsx) conditionally renders `Navbar` (hidden on `/`, `/login`, `/register`)
-- **Route Protection**: Use `ProtectedRoute` wrapper for authenticated pages, `PublicRoute` for login/register
-- **Error Handling**: [src/custom-components/ErrorBoundary.tsx](src/custom-components/ErrorBoundary.tsx) wraps the route tree
-- **Navigation Config**: [src/config/navigation.ts](src/config/navigation.ts) exports the shared navbar item list
 
-### Authentication Flow
-Cookie-based auth managed through [src/contexts/AuthContext.tsx](src/contexts/AuthContext.tsx):
-- On mount, calls `getUserInfo()` from [src/services/auth.service.ts](src/services/auth.service.ts)
-- Sets global `user` state (id, name, email, avatar, createdAt)
-- `ProtectedRoute` shows `Loader` while loading, redirects to `/login` if unauthenticated
-- Use `useAuth()` hook to access `user`, `setUser`, `isLoading` anywhere
+- Entry point: `src/main.tsx` wraps the app with `AuthProvider`, `CurrentIAProvider`, and `StrictMode`.
+- Routing: `src/App.tsx` defines lazy-loaded routes inside `Suspense`.
+- Layout: `src/custom-components/Layout.tsx` renders the app shell and hides the navbar on public routes.
+- Route protection: use `ProtectedRoute` for authenticated pages and `PublicRoute` for login/register.
+- Error handling: `src/custom-components/ErrorBoundary.tsx` wraps the route tree.
+- Navigation config: `src/config/navigation.ts` exports navbar items.
+- API instance: `src/server/api.ts` owns the shared Axios client.
 
-### API Integration
-[src/server/api.ts](src/server/api.ts) exports configured axios instance:
-```typescript
-// Requires VITE_API_BASE_URL environment variable
-// withCredentials: true for cookie-based auth
-// Redirects 401 responses to /login outside public routes
-```
+### Providers and Global State
 
-**Service Layer Pattern**:
-- [src/services/auth.service.ts](src/services/auth.service.ts): `login`, `logout`, `getUserInfo`
-- [src/services/main.service.ts](src/services/main.service.ts): `askToAll(question, signal?)`, `askToOne(question, agent, signal?)`
-- [src/services/user.service.ts](src/services/user.service.ts): `createUser`, `updateUser` using `FormData`
-- Services use exported async functions, not classes
-- API responses follow `IResponseApiAllIa` interface (chat-gpt, gemini, deepseek, grok objects)
+- `AuthContext` loads the authenticated user with `getUserInfo()` and exposes `user`, `setUser`, and `isLoading` through `useAuth()`.
+- `CurrentIAContext` stores the selected AI for game flows as `CurrentIA = '' | 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'`.
+- `CurrentIAContext` persists its value in `localStorage` under `currentIA`.
+- Protected game pages should redirect to `/games` when a selected AI is required and missing.
+- `ThemeProvider` uses storage key `discordia-theme-select` and supports light, dark, and system modes.
 
-### Main Chat Feature
-[src/features/chat/Chat.tsx](src/features/chat/Chat.tsx) implements the core competition UI:
-- Uses `useChatRounds()` from [src/features/chat/hooks/useChatRounds.ts](src/features/chat/hooks/useChatRounds.ts)
-- Sends questions to all 4 AIs via `askToAll(question, signal)`
-- Stores rounds as `{ id, question, askedAt, responses, winner? }`
-- Each AI response has `loading`, `success`, or `error` status plus vote count
-- Supports aborting the active request, retrying one agent, copying answers, clearing history, and voting
-- Persists rounds in `localStorage` with `ROUNDS_STORAGE_KEY`
-- Saved `loading` responses are converted to errors on reload instead of restarting requests
+### Routes
 
-## Development Conventions
+- Public: `/`, `/login`, `/register`.
+- Protected: `/home`, `/chat`, `/games`, `/games/chess`, `/games/jokenpo`, `/games/hangman`, `/rap-battle`, `/rpg`, `/profile`, `/settings`, `/subscription`.
+- Fallback: `*` renders `NotFound`.
+- `VITE_FLAG_ISWORKING=true` renders `PageCreating` for landing, login, and register.
+- New route pages should be imported with `lazy()` in `App.tsx` and wrapped with the correct guard.
+
+## API Integration
+
+### Axios
+
+`src/server/api.ts` exports the only Axios instance to use:
+
+- `baseURL` comes from `VITE_API_BASE_URL` and throws during startup if missing.
+- `withCredentials: true` sends cookie auth.
+- A `401` response redirects to `/login` outside public routes, except `/auth/me` bootstrap failures.
+
+Do not create a second Axios instance for app API calls.
+
+### Service Layer Pattern
+
+- Services export async functions, not classes.
+- Use `api.request<T>({ method, url, data, signal })`.
+- Accept `AbortSignal` for long-running AI calls that the UI can cancel.
+- Catch inside a service only when the caller genuinely needs a fallback there, as auth bootstrap does.
+- Normalize backend response variants in the service when the UI needs one stable shape.
+
+Current service highlights:
+
+- `src/services/auth.service.ts`: `login`, `logout`, `getUserInfo`.
+- `src/services/user.service.ts`: `createUser`, `updateUser` with `FormData`.
+- `src/services/main.service.ts`: `askToAll`, `askToOne`, `askGameAction`.
+
+`askToOne` and `askGameAction` normalize both direct `{ response }` responses and keyed `{ [agent]: { response } }` responses.
+
+### Backend Endpoints Used
+
+- `POST /auth/login`
+- `POST /auth/logout`
+- `GET /auth/me`
+- `POST /users`
+- `PATCH /users/:id`
+- `POST /ask-to-all`
+- `POST /ask-to-one`
+- `POST /ai/game-action`
+
+Keep endpoint changes synchronized with the NestJS DTOs/controllers in `discordia/`.
+
+## Feature Structure
 
 ### Component Organization
-- **UI Components**: [src/components/ui/](src/components/ui/) - shadcn/ui primitives (button, card, dialog, etc.)
-- **Custom Components**: [src/custom-components/](src/custom-components/) - app-level layout, route guards, navbar, loaders, dialogs, game cards
-- **Feature Modules**: [src/features/](src/features/) - feature-owned UI, hooks, constants, and types (currently chat)
-- **Pages**: [src/pages/](src/pages/) - route-level components loaded lazily
 
-### Styling Approach
-- **TailwindCSS 4** with Vite plugin (`@tailwindcss/vite`)
-- **Theme System**: `ThemeProvider` from [src/components/theme-provider.tsx](src/components/theme-provider.tsx) with `next-themes`
-  - Storage key: `discordia-theme-select`
-  - Supports light/dark/system modes
-- **Utility Function**: Use `cn()` from [src/lib/utils.ts](src/lib/utils.ts) to merge Tailwind classes with `clsx` + `tailwind-merge`
-- **Component Variants**: Use `class-variance-authority` for button/component styling (see [src/components/ui/button.tsx](src/components/ui/button.tsx))
+- UI primitives: `src/components/ui/` for shadcn/Radix components.
+- App-level components: `src/custom-components/` for layout, route guards, navbar, loaders, dialogs, game cards, scoreboard, and page headers.
+- Feature modules: `src/features/<feature>/` for feature-owned UI, hooks, constants, and types.
+- Route pages: `src/pages/` for lazily loaded page-level wrappers.
+- Shared interfaces: `src/interfaces/`.
+- Shared utilities: `src/utils/` and `src/lib/utils.ts`.
 
-### Path Aliases
-Configured in [tsconfig.json](tsconfig.json) and [vite.config.ts](vite.config.ts):
-```typescript
-"@/*" → "./src/*"
+Prefer keeping stateful feature logic inside `src/features/<feature>/hooks`.
+
+### Chat Feature
+
+`src/features/chat` implements the core competition UI.
+
+- `AGENTS` and `AgentIA` define `chat-gpt`, `gemini`, `deepseek`, and `grok`.
+- `useChatRounds()` controls send, abort, retry, vote, clear, winners, and `localStorage` persistence.
+- `askToAll(question, signal)` queries all four agents.
+- `askToOne(question, agent, signal)` retries one agent.
+- Responses use `loading`, `success`, or `error` states.
+- Saved `loading` responses must be converted to errors on reload instead of restarting old requests.
+- Preserve backward compatibility for stored `Round` and `AIResponse` data.
+
+### Game Features
+
+All game AI calls should use `askGameAction(context, agent, payload, signal?)` from `src/services/main.service.ts`. Payloads must stay serializable and aligned with backend `gamePromptBuilders.ts`.
+
+- Chess lives in `src/features/chess` and uses `chess.js` plus `react-chessboard`; do not reimplement chess rules.
+- Chess payload: `fen`, `pgn`, `side`, `level`, optional `lastInvalid`.
+- Jokenpo lives in `src/features/jokenpo`; history payload contains previous `{ user, ai }` choices.
+- Hangman lives in `src/features/hangman`; modes map to `hangman-chooser` and `hangman-guesser` contexts.
+- RPG lives in `src/features/rpg`; campaigns support scenarios `fantasy`, `sci-fi`, `horror`, `custom`, with master/user/AI turn order.
+- Rap battle lives in `src/features/rap-battle`; battles use two agents, three rounds, voting, retries, and previous-verse context.
+- Use feature constants for storage keys, limits, labels, and options.
+- Sanitize restored localStorage state so stale `loading` or in-progress states do not resume abandoned requests.
+
+### Account and Settings
+
+- Account-related logic lives in `src/features/account`.
+- `usePreferences()` persists user preferences in `localStorage` and deep-merges saved values with defaults.
+- Preserve compatibility when changing preference shapes.
+
+## Styling and UI
+
+- Use TailwindCSS 4 with tokens from `src/index.css`.
+- Use `cn()` from `src/lib/utils.ts` for class composition.
+- Use shadcn/Radix primitives before creating new UI primitives.
+- Use `lucide-react` for interface icons.
+- Use `@lobehub/icons` for AI brand icons.
+- Use `class-variance-authority` for component variants when matching existing components.
+- Keep text responsive and avoid layouts that overflow on mobile.
+- Prefer theme tokens over hardcoded colors.
+- Keep dark/light/system theme support intact.
+- `@ejunior95/easy-chat` is installed and its CSS is imported in `src/main.tsx`, but the widget is currently commented out; do not re-enable it without an explicit request.
+
+## Path Aliases
+
+The alias is configured in `tsconfig.json` and `vite.config.ts`:
+
+```ts
+"@/*" -> "./src/*"
 ```
-Always use `@/` imports for internal modules.
 
-### Navigation
-Export `navigationItems` from [src/config/navigation.ts](src/config/navigation.ts) for consistent nav links:
-```typescript
-[{ label, path, icon }] // Used by Navbar component
+Use `@/` imports for internal modules instead of long relative paths.
+
+## Environment Variables
+
+Required variables:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+VITE_FLAG_ISWORKING=false
 ```
 
-### Environment Variables
-Required variables (prefix with `VITE_`):
-- `VITE_API_BASE_URL` - Backend API endpoint (throws error if missing)
-- `VITE_FLAG_ISWORKING` - Feature flag to show "PageCreating" placeholder on landing
+`VITE_API_BASE_URL` is mandatory. `VITE_FLAG_ISWORKING=true` enables the temporary creating page for public entry routes.
 
-## Key Development Patterns
-
-### Adding Protected Routes
-```tsx
-<Route path="/new-page" element={
-  <ProtectedRoute>
-    <NewPage />
-  </ProtectedRoute>
-} />
-```
-
-### Creating Service Methods
-Follow the current exported-function pattern:
-```typescript
-export async function methodName(param: string, signal?: AbortSignal) {
-  return api.request<ResponseType>({ method, url, data, signal });
-}
-```
-
-Only catch errors in services when the caller genuinely needs a fallback there, as `getUserInfo()` does for auth bootstrap.
-
-### Animation Pattern
-Use `framer-motion` only where it already improves interaction. Do not add animation as a default requirement for new pages.
-
-### Icon Usage
-- Primary library: `lucide-react`
-- AI brand icons: `@lobehub/icons` (OpenAI, DeepSeek, Gemini, Grok)
+Never commit real secrets or private values. Use placeholders in examples.
 
 ## Development Workflow
 
-### Commands
+Always use `pnpm`:
+
 ```bash
-pnpm install          # Install dependencies
-pnpm run dev          # Start dev server (Vite)
-pnpm run build        # TypeScript check + production build
-pnpm run lint         # ESLint validation
-pnpm run preview      # Preview production build
+pnpm install
+pnpm run dev
+pnpm run build
+pnpm run lint
+pnpm run preview
 ```
 
-There are currently no `test`, `test:e2e`, or `test:cov` scripts in [package.json](package.json). Use build and lint for available validation unless tests are added.
+There are currently no `test`, `test:e2e`, or `test:cov` scripts in `package.json`. Use `pnpm run build` and `pnpm run lint` for available validation unless tests are added.
+
+## Common Changes
+
+### Adding a Protected Page
+
+1. Create the page in `src/pages` or route directly to a feature component.
+2. Import it with `lazy()` in `App.tsx`.
+3. Wrap it in `<ProtectedRoute>`.
+4. Add navigation in `src/config/navigation.ts` only if it belongs in the main navbar.
+5. Keep loading handled by the existing `Suspense` fallback.
+
+### Adding a Service Method
+
+```ts
+export async function methodName(param: string, signal?: AbortSignal) {
+  return api.request<ResponseType>({ method: 'POST', url: 'endpoint', data, signal });
+}
+```
+
+- Type the request and response.
+- Use the shared Axios instance.
+- Normalize backend response variants here when needed.
+- Keep auth and cookie behavior centralized.
+
+### Adding a Game Flow
+
+1. Add types, constants, hook, and components under `src/features/<game>`.
+2. Add a route page in `src/pages` when needed.
+3. Use `CurrentIAContext` or explicit agent selection consistently.
+4. Call `askGameAction` with a backend-supported context and payload.
+5. Persist only serializable state and sanitize restored state.
+6. Update backend `ALLOWED_CONTEXTS`, `GameActionDto`, and `gamePromptBuilders.ts` if adding a new context.
 
 ### Adding shadcn/ui Components
-Project uses shadcn/ui "new-york" style with configuration in [components.json](components.json). Components auto-install to `@/components/ui` with Tailwind CSS variables for theming.
 
-### Common Pitfalls
-1. **Missing Auth Context**: Always wrap new protected features with `<ProtectedRoute>`
-2. **API Errors**: Backend may return 401 if cookies expired - handle in service layer
-3. **Lazy Loading**: New pages must be imported with `lazy()` and wrapped in `<Suspense fallback={<Loader />}>`
-4. **Theme Variables**: Use CSS variables from Tailwind config, not hardcoded colors
-5. **Environment Variables**: `VITE_API_BASE_URL` is mandatory and throws during app startup if missing
-6. **Chat Persistence**: `useChatRounds` writes to `localStorage`; keep stored data backward-compatible when changing `Round` or `AIResponse`
+The project uses shadcn/ui `new-york` style with configuration in `components.json`. Components install to `@/components/ui` and use Tailwind CSS variables for theming.
 
-## File Structure Conventions
-- Hooks → [src/hooks/](src/hooks/) (e.g., `useAuth.ts`)
-- Feature hooks → `src/features/<feature>/hooks/` when state belongs to one feature
-- Interfaces → [src/interfaces/](src/interfaces/) (e.g., `user.ts`)
-- Utilities → [src/utils/](src/utils/) (global helper functions)
-- Assets → [src/assets/](src/assets/) (images, icons)
-- Route pages → [src/pages/](src/pages/)
-- Shared navigation → [src/config/navigation.ts](src/config/navigation.ts)
+## Common Pitfalls
 
-## Backend Integration Notes
-- Backend integration is HTTP-based and relies on cookie authentication
-- Endpoints: `/auth/login`, `/auth/logout`, `/auth/me`, `/users`, `/users/:id`, `/ask-to-all`, `/ask-to-one`
-- All requests use `withCredentials: true` for cookie authentication
-- Expected response format for AI queries: `{ 'chat-gpt': {...}, gemini: {...}, deepseek: {...}, grok: {...} }`
+- Missing guard: protected pages must use `<ProtectedRoute>`.
+- Missing `VITE_API_BASE_URL`: app startup throws if it is undefined.
+- Duplicate API clients: use `src/server/api.ts` only.
+- LocalStorage migrations: avoid breaking saved chat rounds, games, current IA, theme, and preferences.
+- AI response shapes: backend may return keyed-by-agent objects; rely on service normalization.
+- Stale loading state: convert persisted loading states to errors or neutral states on reload.
+- Chess rules: use `chess.js` legality instead of custom rule logic.
+
+## Quick Reference
+
+- App bootstrap: `src/main.tsx`
+- Routes: `src/App.tsx`
+- API client: `src/server/api.ts`
+- Auth: `src/contexts/AuthContext.tsx`, `src/hooks/useAuth.ts`
+- Current IA: `src/contexts/CurrentIAContext.tsx`
+- Navigation: `src/config/navigation.ts`
+- Chat: `src/features/chat`
+- Chess: `src/features/chess`
+- Hangman: `src/features/hangman`
+- Jokenpo: `src/features/jokenpo`
+- RPG: `src/features/rpg`
+- Rap battle: `src/features/rap-battle`
+- Account/settings: `src/features/account`
