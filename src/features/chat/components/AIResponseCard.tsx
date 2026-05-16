@@ -65,7 +65,7 @@ export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: A
           {response.status === 'success' && response.message && (
             <CopyButton text={response.message} />
           )}
-          {(response.status === 'error' || response.status === 'success') && (
+          {(response.status === 'error') && (
             <Button
               variant="ghost"
               size="sm"

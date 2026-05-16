@@ -37,13 +37,13 @@ export function HeroGreeting() {
           <Button asChild size="lg" className="gap-2 text-md">
             <Link to="/chat">
               <MessagesSquare size={20} />
-              Iniciar batalha
+              Iniciar chat conflituoso
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="gap-2 text-md">
             <Link to="/games">
               <Gamepad2 size={20} />
-              Ver jogos
+              Ver todos os jogos
             </Link>
           </Button>
         </div>

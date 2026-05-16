@@ -145,8 +145,8 @@ export function ActionBar({
         </Button>
         {isGenerating ? (
           <Button variant="outline" size="sm" onClick={onAbort} className="cursor-pointer gap-1.5">
-            <Square size={14} />
-            Cancelar
+            <Square className="h-4 w-4 fill-current" />
+            <span className="hidden sm:inline">Cancelar</span>
           </Button>
         ) : (
           <Button onClick={onGenerateAI} className="cursor-pointer gap-1.5">

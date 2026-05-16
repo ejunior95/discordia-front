@@ -106,10 +106,15 @@ export function RapBattleArena({
               Cancelar batalha
             </Button>
             {isGenerating ? (
-              <Button variant="destructive" onClick={onAbort} className="cursor-pointer gap-2">
-                <Square size={14} />
-                Cancelar
-              </Button>
+               <Button
+              type="button"
+              variant="destructive"
+              onClick={onAbort}
+              className="cursor-pointer gap-2"
+            >
+              <Square className="h-4 w-4 fill-current" />
+              <span className="hidden sm:inline">Cancelar</span>
+            </Button>
             ) : !roundGenerated && !anyLoading ? (
               <Button onClick={onGenerateRound} className="cursor-pointer gap-2">
                 <Wand2 size={16} />
