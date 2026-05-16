@@ -33,6 +33,7 @@ export interface TurnAction {
   status: TurnStatus;
   error?: string;
   createdAt: string;
+  audioUrl?: string;
 }
 
 export type CampaignStatus = 'setup' | 'playing' | 'paused';

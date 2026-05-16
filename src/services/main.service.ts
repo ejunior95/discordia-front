@@ -18,6 +18,11 @@ export interface IResponseApiAllIa {
 
 export interface IResponseApiOneIa {
     response: string
+    audio_url?: string
+    musicTaskId?: string
+    musicStatus?: 'pending' | 'failed' | 'ready'
+    creditsCharged?: number
+    musicError?: string
 }
 
 export type GameActionContext =
@@ -38,19 +43,42 @@ function readResponse(value: unknown): string | undefined {
     return typeof response === 'string' ? response : undefined;
 }
 
+function readAudioFields(value: unknown): Omit<IResponseApiOneIa, 'response'> {
+    const record = asRecord(value);
+    if (!record) return {};
+    const result: Omit<IResponseApiOneIa, 'response'> = {};
+    if (typeof record.audio_url === 'string') result.audio_url = record.audio_url;
+    if (typeof record.musicTaskId === 'string') result.musicTaskId = record.musicTaskId;
+    if (typeof record.musicStatus === 'string') {
+        const s = record.musicStatus;
+        if (s === 'pending' || s === 'failed' || s === 'ready') result.musicStatus = s;
+    }
+    if (typeof record.creditsCharged === 'number') result.creditsCharged = record.creditsCharged;
+    if (typeof record.musicError === 'string') result.musicError = record.musicError;
+    return result;
+}
+
 function normalizeOneIaResponse(data: unknown, agent: string): IResponseApiOneIa {
     const directResponse = readResponse(data);
-    if (directResponse !== undefined) return { response: directResponse };
+    if (directResponse !== undefined) {
+        return { response: directResponse, ...readAudioFields(data) };
+    }
 
     const record = asRecord(data);
-    const agentResponse = record ? readResponse(record[agent]) : undefined;
-    if (agentResponse !== undefined) return { response: agentResponse };
+    const agentValue = record ? record[agent] : undefined;
+    const agentResponse = readResponse(agentValue);
+    if (agentResponse !== undefined) {
+        return { response: agentResponse, ...readAudioFields(agentValue) };
+    }
 
-    const firstResponse = record
-        ? Object.values(record).map(readResponse).find((response) => response !== undefined)
+    const firstEntry = record
+        ? Object.values(record).find((value) => readResponse(value) !== undefined)
         : undefined;
+    if (firstEntry !== undefined) {
+        return { response: readResponse(firstEntry) ?? '', ...readAudioFields(firstEntry) };
+    }
 
-    return { response: firstResponse ?? '' };
+    return { response: '' };
 }
 
 export async function askToAll(question: string, signal?: AbortSignal) {

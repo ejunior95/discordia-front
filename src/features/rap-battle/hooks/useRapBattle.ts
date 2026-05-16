@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askGameAction } from '@/services/main.service';
+import { askGameAction, type IResponseApiOneIa } from '@/services/main.service';
+import { pollRapMusic } from '@/services/audio.service';
 import type { AgentIA } from '@/features/chat/types';
 import { RAP_BATTLE_STORAGE_KEY, TOTAL_ROUNDS } from '../rap.constants';
 import type { RapBattle, RapRound, RapVerse } from '../types';
+
+interface VerseResult {
+  content: string;
+  audio: Omit<IResponseApiOneIa, 'response'>;
+}
 
 function generateId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -76,6 +82,7 @@ export function useRapBattle() {
   const [battle, setBattle] = useState<RapBattle | null>(() => loadFromStorage());
   const [isGenerating, setIsGenerating] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const pollStopsRef = useRef<Map<string, () => void>>(new Map());
 
   useEffect(() => {
     try {
@@ -89,7 +96,74 @@ export function useRapBattle() {
     }
   }, [battle]);
 
-  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    pollStopsRef.current.forEach((stop) => stop());
+    pollStopsRef.current.clear();
+  }, []);
+
+  // Reativa polling de versos com áudio pendente carregados do storage
+  useEffect(() => {
+    if (!battle) return;
+    for (const round of battle.rounds) {
+      for (const agent of Object.keys(round.verses) as AgentIA[]) {
+        const verse = round.verses[agent];
+        if (
+          verse?.audioStatus === 'pending'
+          && verse.musicTaskId
+          && !pollStopsRef.current.has(`${round.index}:${agent}`)
+        ) {
+          startMusicPolling(round.index, agent, verse.musicTaskId);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updateVerseAudio = useCallback(
+    (
+      roundIndex: 1 | 2 | 3,
+      agent: AgentIA,
+      patch: Partial<Pick<RapVerse, 'audioStatus' | 'audioUrl' | 'audioError'>>,
+    ) => {
+      setBattle((current) => {
+        if (!current) return current;
+        return {
+          ...current,
+          rounds: current.rounds.map((r) => {
+            if (r.index !== roundIndex) return r;
+            const verse = r.verses[agent];
+            if (!verse) return r;
+            return {
+              ...r,
+              verses: { ...r.verses, [agent]: { ...verse, ...patch } },
+            };
+          }),
+        };
+      });
+    },
+    [],
+  );
+
+  const startMusicPolling = useCallback(
+    (roundIndex: 1 | 2 | 3, agent: AgentIA, taskId: string) => {
+      const key = `${roundIndex}:${agent}`;
+      const existing = pollStopsRef.current.get(key);
+      if (existing) existing();
+      const stop = pollRapMusic(taskId, {
+        onReady: (audioUrl) => {
+          updateVerseAudio(roundIndex, agent, { audioStatus: 'ready', audioUrl });
+          pollStopsRef.current.delete(key);
+        },
+        onError: (message) => {
+          updateVerseAudio(roundIndex, agent, { audioStatus: 'failed', audioError: message });
+          pollStopsRef.current.delete(key);
+        },
+      });
+      pollStopsRef.current.set(key, stop);
+    },
+    [updateVerseAudio],
+  );
 
   const start = useCallback(({ contenders, theme }: StartParams) => {
     abortRef.current?.abort();
@@ -160,7 +234,7 @@ export function useRapBattle() {
       previousOwnVerse: prevB,
     };
 
-    const settle = (agent: AgentIA, result: PromiseSettledResult<string>) => {
+    const settle = (agent: AgentIA, result: PromiseSettledResult<VerseResult>) => {
       setBattle((current) => {
         if (!current) return current;
         return {
@@ -172,9 +246,17 @@ export function useRapBattle() {
               result.status === 'fulfilled'
                 ? {
                     agent,
-                    content: result.value,
+                    content: result.value.content,
                     status: 'success',
                     votes: previous?.votes ?? 0,
+                    musicTaskId: result.value.audio.musicTaskId,
+                    audioStatus:
+                      result.value.audio.musicStatus === 'failed'
+                        ? 'failed'
+                        : result.value.audio.musicTaskId
+                          ? 'pending'
+                          : 'idle',
+                    audioError: result.value.audio.musicError,
                   }
                 : {
                     agent,
@@ -187,13 +269,17 @@ export function useRapBattle() {
           }),
         };
       });
+      if (result.status === 'fulfilled' && result.value.audio.musicTaskId) {
+        startMusicPolling(index, agent, result.value.audio.musicTaskId);
+      }
     };
 
-    const callOne = async (agent: AgentIA, payload: Record<string, unknown>): Promise<string> => {
+    const callOne = async (agent: AgentIA, payload: Record<string, unknown>): Promise<VerseResult> => {
       const response = await askGameAction('rap-battle', agent, payload, controller.signal);
       const msg = response?.data?.response;
       if (!msg) throw new Error('Sem resposta');
-      return msg.trim();
+      const { response: _r, ...audio } = response.data;
+      return { content: msg.trim(), audio };
     };
 
     const [resA, resB] = await Promise.allSettled([callOne(a, payloadA), callOne(b, payloadB)]);
@@ -250,6 +336,7 @@ export function useRapBattle() {
       const response = await askGameAction('rap-battle', agent, payload);
       const msg = response?.data?.response;
       if (!msg) throw new Error('Sem resposta');
+      const { response: _r, ...audio } = response.data;
       setBattle((current) => {
         if (!current) return current;
         return {
@@ -265,6 +352,14 @@ export function useRapBattle() {
                       content: msg.trim(),
                       status: 'success',
                       votes: r.verses[agent]?.votes ?? 0,
+                      musicTaskId: audio.musicTaskId,
+                      audioStatus:
+                        audio.musicStatus === 'failed'
+                          ? 'failed'
+                          : audio.musicTaskId
+                            ? 'pending'
+                            : 'idle',
+                      audioError: audio.musicError,
                     },
                   },
                 }
@@ -272,6 +367,9 @@ export function useRapBattle() {
           ),
         };
       });
+      if (audio.musicTaskId) {
+        startMusicPolling(roundIndex, agent, audio.musicTaskId);
+      }
     } catch (err) {
       const errorMsg = extractErrorMessage(err);
       setBattle((current) => {

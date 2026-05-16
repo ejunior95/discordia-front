@@ -2,6 +2,7 @@ import { Crown, RotateCcw, Sparkles, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { AudioPlayer } from '@/custom-components/AudioPlayer';
 import type { AgentIA } from '@/features/chat/types';
 import type { Character, TurnAction } from '../types';
 
@@ -60,14 +61,19 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
         </div>
       )}
       {turn.status === 'success' && (
-        <p
-          className={cn(
-            'whitespace-pre-wrap wrap-break-word',
-            isMaster ? 'font-serif text-[15px] leading-relaxed' : 'text-sm leading-relaxed',
+        <>
+          <p
+            className={cn(
+              'whitespace-pre-wrap wrap-break-word',
+              isMaster ? 'font-serif text-[15px] leading-relaxed' : 'text-sm leading-relaxed',
+            )}
+          >
+            {turn.content}
+          </p>
+          {isMaster && turn.audioUrl && (
+            <AudioPlayer status="ready" audioUrl={turn.audioUrl} />
           )}
-        >
-          {turn.content}
-        </p>
+        </>
       )}
     </article>
   );

@@ -157,11 +157,14 @@ export function useRpgCampaign() {
       );
       const msg = response?.data?.response?.trim();
       if (!msg) throw new Error('Sem resposta');
+      const audioUrl = response?.data?.audio_url;
 
       setCampaign((current) => {
         if (!current) return current;
         const turns = current.turns.map((t) =>
-          t.id === loadingTurn.id ? { ...t, status: 'success' as const, content: msg } : t,
+          t.id === loadingTurn.id
+            ? { ...t, status: 'success' as const, content: msg, audioUrl }
+            : t,
         );
         return advanceTurn({ ...current, turns });
       });

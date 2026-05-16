@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { AudioPlayer, type AudioPlayerStatus } from '@/custom-components/AudioPlayer';
 import type { AgentIA } from '@/features/chat/types';
 import type { RapVerse } from '../types';
 
@@ -51,7 +52,19 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
         {status === 'idle' && <IdleState side={side} />}
         {status === 'loading' && <LoadingState />}
         {status === 'error' && <ErrorState message={verse?.error ?? 'Erro desconhecido'} />}
-        {status === 'success' && verse && <VerseLines content={verse.content} />}
+        {status === 'success' && verse && (
+          <>
+            <VerseLines content={verse.content} />
+            {verse.audioStatus && verse.audioStatus !== 'idle' && (
+              <AudioPlayer
+                status={verse.audioStatus as AudioPlayerStatus}
+                audioUrl={verse.audioUrl}
+                error={verse.audioError}
+                label="Gerando música..."
+              />
+            )}
+          </>
+        )}
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-3 border-t gap-2">

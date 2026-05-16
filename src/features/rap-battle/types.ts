@@ -1,6 +1,7 @@
 import type { AgentIA } from '@/features/chat/types';
 
 export type RapVerseStatus = 'loading' | 'success' | 'error';
+export type RapAudioStatus = 'idle' | 'pending' | 'ready' | 'failed';
 
 export interface RapVerse {
   agent: AgentIA;
@@ -8,6 +9,10 @@ export interface RapVerse {
   status: RapVerseStatus;
   error?: string;
   votes: number;
+  musicTaskId?: string;
+  audioStatus?: RapAudioStatus;
+  audioUrl?: string;
+  audioError?: string;
 }
 
 export interface RapRound {
