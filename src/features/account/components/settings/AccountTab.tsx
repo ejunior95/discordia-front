@@ -146,7 +146,7 @@ export default function AccountTab() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={!passwordValid || saving}>
+            <Button type="submit" disabled={!passwordValid || saving} className="w-full sm:w-auto">
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -161,14 +161,14 @@ export default function AccountTab() {
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-2">
-          <div>
+        <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-2">
+          <div className="min-w-0">
             <CardTitle>Sessões ativas</CardTitle>
             <CardDescription>
               Aparelhos atualmente conectados à sua conta.
             </CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={handleRevokeAll}>
+          <Button variant="outline" size="sm" onClick={handleRevokeAll} className="w-full sm:w-auto">
             Encerrar outras
           </Button>
         </CardHeader>
@@ -178,14 +178,14 @@ export default function AccountTab() {
             return (
               <div
                 key={s.id}
-                className="flex items-center justify-between rounded-lg border p-3"
+                className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-md p-2">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="bg-muted shrink-0 rounded-md p-2">
                     <Icon className="h-4 w-4" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium wrap-break-word">
                       {s.device}{' '}
                       {s.current ? (
                         <Badge variant="secondary" className="ml-1">
@@ -203,6 +203,7 @@ export default function AccountTab() {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRevoke(s.id)}
+                    className="w-full sm:w-auto"
                   >
                     Revogar
                   </Button>
@@ -223,7 +224,7 @@ export default function AccountTab() {
         <CardFooter>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
+              <Button variant="destructive" className="w-full sm:w-auto">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Excluir minha conta
               </Button>

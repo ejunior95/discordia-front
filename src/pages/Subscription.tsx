@@ -118,26 +118,26 @@ export default function Subscription() {
   };
 
   return (
-    <section className="flex w-full flex-col items-center p-6 md:p-10">
+    <section className="flex w-full flex-col items-center p-4 sm:p-6 md:p-10">
       <PageHeader
         title="Minha assinatura"
         description="Gerencie seu plano, métodos de pagamento e veja seu uso atual."
       />
 
-      <div className="grid w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300">
+      <div className="grid w-full gap-5 sm:gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300">
         <Card className="border-primary/40">
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
+          <CardHeader className="flex flex-col items-start justify-between gap-4 px-4 sm:flex-row sm:px-6">
+            <div className="min-w-0">
               <CardDescription>Plano atual</CardDescription>
-              <CardTitle className="mt-1 flex items-center gap-2 text-3xl">
+              <CardTitle className="mt-1 flex flex-wrap items-center gap-2 text-2xl sm:text-3xl">
                 {currentPlan.name}
                 <Badge variant="secondary">
                   {mockCurrentSubscription.cycle === 'yearly' ? 'Anual' : 'Mensal'}
                 </Badge>
               </CardTitle>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold">
+            <div className="w-full text-left sm:w-auto sm:text-right">
+              <p className="text-xl font-bold sm:text-2xl">
                 {formatCurrency(
                   currentPlan.pricing[mockCurrentSubscription.cycle],
                 )}
@@ -147,9 +147,9 @@ export default function Subscription() {
               </p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 px-4 sm:px-6">
             <div>
-              <div className="mb-1 flex justify-between text-sm">
+              <div className="mb-1 flex flex-col gap-1 text-sm sm:flex-row sm:justify-between">
                 <span className="text-muted-foreground">Uso mensal</span>
                 <span className="font-medium">
                   {stats.roundsThisMonth}
@@ -162,11 +162,11 @@ export default function Subscription() {
               <Progress value={currentPlan.monthlyRoundsLimit ? usagePercent : 100} />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-wrap gap-2">
-            <Button variant="outline">Gerenciar plano</Button>
+          <CardFooter className="flex flex-col gap-2 px-4 sm:flex-row sm:flex-wrap sm:px-6">
+            <Button variant="outline" className="w-full sm:w-auto">Gerenciar plano</Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" className="text-destructive hover:text-destructive">
+                <Button variant="ghost" className="w-full text-destructive hover:text-destructive sm:w-auto">
                   Cancelar assinatura
                 </Button>
               </AlertDialogTrigger>
@@ -193,20 +193,20 @@ export default function Subscription() {
           </CardFooter>
         </Card>
 
-        <section>
+        <section className="min-w-0">
           <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">Compare os planos</h2>
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Compare os planos</h2>
               <p className="text-muted-foreground text-sm">
                 Escolha o plano que combina com seu uso.
               </p>
             </div>
-            <Tabs value={cycle} onValueChange={(v) => setCycle(v as BillingCycle)}>
-              <TabsList>
-                <TabsTrigger value="monthly">Mensal</TabsTrigger>
-                <TabsTrigger value="yearly">
+            <Tabs value={cycle} onValueChange={(v) => setCycle(v as BillingCycle)} className="w-full sm:w-auto">
+              <TabsList className="grid w-full grid-cols-2 sm:w-auto">
+                <TabsTrigger value="monthly" className="w-full">Mensal</TabsTrigger>
+                <TabsTrigger value="yearly" className="w-full">
                   Anual{' '}
-                  <Badge variant="secondary" className="ml-2">
+                  <Badge variant="secondary" className="ml-1 sm:ml-2">
                     -17%
                   </Badge>
                 </TabsTrigger>
@@ -214,7 +214,7 @@ export default function Subscription() {
             </Tabs>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {PLANS.map((plan) => {
               const isCurrent = plan.id === currentPlan.id;
               const price = plan.pricing[cycle];
@@ -236,7 +236,7 @@ export default function Subscription() {
                     <CardTitle>{plan.name}</CardTitle>
                     <CardDescription>{plan.description}</CardDescription>
                     <div className="pt-2">
-                      <span className="text-3xl font-bold">
+                      <span className="text-2xl font-bold sm:text-3xl">
                         {price === 0 ? 'Grátis' : formatCurrency(price)}
                       </span>
                       {price > 0 ? (
@@ -273,8 +273,8 @@ export default function Subscription() {
         </section>
 
         <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-2">
-            <div>
+          <CardHeader className="flex flex-col items-start justify-between gap-3 px-4 sm:flex-row sm:gap-2 sm:px-6">
+            <div className="min-w-0">
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" /> Método de pagamento
               </CardTitle>
@@ -284,9 +284,9 @@ export default function Subscription() {
             </div>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">Atualizar</Button>
+                <Button variant="outline" className="w-full sm:w-auto">Atualizar</Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:p-6">
                 <DialogHeader>
                   <DialogTitle>Atualizar cartão</DialogTitle>
                   <DialogDescription>
@@ -308,7 +308,7 @@ export default function Subscription() {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="card-exp">Validade</Label>
                       <Input id="card-exp" placeholder="MM/AA" required />
@@ -319,22 +319,22 @@ export default function Subscription() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Salvar cartão</Button>
+                    <Button type="submit" className="w-full sm:w-auto">Salvar cartão</Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4 rounded-lg border p-4">
-              <div className="bg-muted flex h-10 w-14 items-center justify-center rounded font-bold uppercase">
+          <CardContent className="px-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3 rounded-lg border p-3 sm:gap-4 sm:p-4">
+              <div className="bg-muted flex h-10 w-14 shrink-0 items-center justify-center rounded font-bold uppercase">
                 {mockPaymentMethod.brand}
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">
                   •••• •••• •••• {mockPaymentMethod.last4}
                 </p>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-foreground wrap-break-word text-xs">
                   {mockPaymentMethod.holder} · expira em{' '}
                   {String(mockPaymentMethod.expMonth).padStart(2, '0')}/
                   {mockPaymentMethod.expYear}
@@ -345,14 +345,53 @@ export default function Subscription() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="px-4 sm:px-6">
             <CardTitle>Histórico de faturas</CardTitle>
             <CardDescription>
               Baixe seus recibos para fins fiscais ou de reembolso.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Table>
+          <CardContent className="px-4 sm:px-6">
+            <div className="grid gap-3 md:hidden">
+              {mockInvoices.map((invoice) => {
+                const status = STATUS_VARIANT[invoice.status];
+                return (
+                  <div key={invoice.id} className="rounded-lg border p-3">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-mono text-xs font-medium">{invoice.id}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {formatShortDate(invoice.date)}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className={cn('shrink-0', status.className)}>
+                        {status.label}
+                      </Badge>
+                    </div>
+                    <p className="text-sm">{invoice.description}</p>
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold">
+                        {formatCurrency(invoice.amount, invoice.currency)}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        aria-label="Baixar fatura"
+                        onClick={() =>
+                          // TODO(backend): baixar PDF real da fatura.
+                          toast(`Baixando ${invoice.id} (mock).`)
+                        }
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Baixar
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden md:block">
+            <Table className="min-w-180">
               <TableHeader>
                 <TableRow>
                   <TableHead>Fatura</TableHead>
@@ -397,17 +436,18 @@ export default function Subscription() {
                 })}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="px-4 sm:px-6">
             <CardTitle>Perguntas frequentes</CardTitle>
             <CardDescription>
               Tire suas dúvidas sobre planos e cobrança.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             <Accordion type="single" collapsible className="w-full">
               {FAQ.map((item, idx) => (
                 <AccordionItem key={item.q} value={`faq-${idx}`}>

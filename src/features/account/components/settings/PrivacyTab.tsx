@@ -76,8 +76,8 @@ export default function PrivacyTab() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-0.5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 space-y-0.5">
               <Label htmlFor="telemetry" className="text-sm font-medium">
                 Telemetria anônima
               </Label>
@@ -89,6 +89,7 @@ export default function PrivacyTab() {
               id="telemetry"
               checked={preferences.anonymousTelemetry}
               onCheckedChange={(v) => update({ anonymousTelemetry: v })}
+              className="shrink-0"
             />
           </div>
         </CardContent>
@@ -103,18 +104,18 @@ export default function PrivacyTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2">
-          <Button variant="outline" onClick={handleExport}>
+          <Button variant="outline" onClick={handleExport} className="w-full">
             <Download className="mr-2 h-4 w-4" />
             Exportar meus dados (JSON)
           </Button>
-          <Button variant="outline" onClick={handleResetPreferences}>
+          <Button variant="outline" onClick={handleResetPreferences} className="w-full">
             Restaurar preferências
           </Button>
         </CardContent>
         <CardFooter>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
+              <Button variant="destructive" className="w-full sm:w-auto">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Limpar histórico do chat
               </Button>

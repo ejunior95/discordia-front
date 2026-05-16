@@ -1,3 +1,10 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/custom-components/PageHeader';
 import AccountTab from '@/features/account/components/settings/AccountTab';
@@ -14,6 +21,7 @@ import {
   User,
   UserCog,
 } from 'lucide-react';
+import { useState } from 'react';
 
 const TABS = [
   { value: 'profile', label: 'Perfil', icon: User, content: <ProfileTab /> },
@@ -25,24 +33,44 @@ const TABS = [
 ];
 
 export default function Settings() {
+  const [activeTab, setActiveTab] = useState('profile');
+
   return (
-    <section className="flex w-full flex-col items-center p-6 md:p-10">
+    <section className="flex w-full flex-col items-center p-4 sm:p-6 md:p-10">
       <PageHeader
         title="Configurações"
         description="Gerencie sua conta, aparência, notificações e preferências de IA."
       />
       <Tabs
-        defaultValue="profile"
-        className="w-full lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px]"
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300"
       >
-        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-          {TABS.map(({ value, label, icon: Icon }) => (
-            <TabsTrigger key={value} value={value} className="gap-2">
-              <Icon className="h-4 w-4" />
-              <span>{label}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="md:hidden">
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TABS.map(({ value, label, icon: Icon }) => (
+                <SelectItem key={value} value={value}>
+                  <Icon className="h-4 w-4" />
+                  <span>{label}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="hidden md:block">
+          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 lg:grid-cols-6">
+            {TABS.map(({ value, label, icon: Icon }) => (
+              <TabsTrigger key={value} value={value} className="gap-2">
+                <Icon className="h-4 w-4" />
+                <span>{label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
         {TABS.map(({ value, content }) => (
           <TabsContent key={value} value={value} className="mt-6">
             {content}

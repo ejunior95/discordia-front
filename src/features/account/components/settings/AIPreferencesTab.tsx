@@ -76,8 +76,8 @@ export default function AIPreferencesTab() {
           </Select>
         </div>
 
-        <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
-          <div className="space-y-0.5">
+        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+          <div className="min-w-0 space-y-0.5">
             <Label htmlFor="auto-vote" className="text-sm font-medium">
               Voto automático na favorita
             </Label>
@@ -90,6 +90,7 @@ export default function AIPreferencesTab() {
             checked={preferences.ai.autoVoteFavorite}
             disabled={preferences.ai.favoriteAgent === 'none'}
             onCheckedChange={(v) => setAI({ autoVoteFavorite: v })}
+            className="shrink-0"
           />
         </div>
       </CardContent>

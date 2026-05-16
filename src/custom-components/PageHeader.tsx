@@ -16,14 +16,14 @@ export default function PageHeader({ title, description, actions, className }: P
   return (
     <header
       className={cn(
-        'w-full lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px]',
+        'w-full lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300',
         'mb-5 md:mb-8 2xl:mb-10',
         'flex flex-col gap-3 md:flex-row md:items-end md:justify-between',
         className,
       )}
     >
-      <div className="flex-1">
-        <h1 className="font-extrabold tracking-tight text-5xl md:text-6xl xl:text-7xl">
+      <div className="min-w-0 flex-1">
+        <h1 className="wrap-break-word text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
           {title}
         </h1>
         {description ? (

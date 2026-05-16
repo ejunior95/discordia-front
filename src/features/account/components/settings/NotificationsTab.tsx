@@ -56,9 +56,9 @@ export default function NotificationsTab() {
         {ITEMS.map(({ key, title, description }) => (
           <div
             key={key}
-            className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
+            className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0"
           >
-            <div className="space-y-0.5">
+            <div className="min-w-0 space-y-0.5">
               <Label htmlFor={`notif-${key}`} className="text-sm font-medium">
                 {title}
               </Label>
@@ -68,6 +68,7 @@ export default function NotificationsTab() {
               id={`notif-${key}`}
               checked={preferences.notifications[key]}
               onCheckedChange={toggle(key)}
+              className="shrink-0"
             />
           </div>
         ))}
