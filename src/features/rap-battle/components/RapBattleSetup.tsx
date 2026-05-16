@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mic, MicVocal, Sparkles } from 'lucide-react';
+import { Mic, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

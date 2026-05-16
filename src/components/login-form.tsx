@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { Eye, EyeClosed } from "lucide-react"
 import Logo from "../assets/discordia-logo-removebg2.png"
 import { useAuth } from "@/hooks/useAuth"
+import { isAxiosError } from "axios"
 
 export function LoginForm({
   className,
@@ -31,27 +32,28 @@ export function LoginForm({
     setLoading(true);
     e.preventDefault();
   
-    const email = (e.currentTarget as any).email.value;
-    const password = (e.currentTarget as any).password.value;
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
   
     try {
       await login(email, password);
       const user = await getUserInfo();
       setUser(user);
       navigate("/home");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erro ao fazer login", err);
       toast("Erro ao fazer login", {
-        description: err?.response?.data?.message ?? 'Verifique suas credenciais e tente novamente.',
+        description: isAxiosError<{ message?: string }>(err)
+          ? err.response?.data?.message ?? 'Verifique suas credenciais e tente novamente.'
+          : 'Verifique suas credenciais e tente novamente.',
       })
     }
     setLoading(false);
   };
 
   const toggleVisiblePassword = () => {
-    visiblePassword === 'password' ?
-    setVisiblePassword('text') :
-    setVisiblePassword('password')
+    setVisiblePassword((currentType) => currentType === 'password' ? 'text' : 'password')
   }
 
   return (
@@ -92,7 +94,7 @@ export function LoginForm({
                       Esqueceu sua senha?
                     </a>
                   </div>
-                  <Input id="password" type={visiblePassword} name="password" className="pr-[2.5rem]" required />
+                  <Input id="password" type={visiblePassword} name="password" className="pr-10" required />
                   <Button onClick={() => toggleVisiblePassword()} type="button" variant="link" size="icon" className="cursor-pointer absolute bottom-0 right-0">
                     {
                       visiblePassword === 'password' ? 

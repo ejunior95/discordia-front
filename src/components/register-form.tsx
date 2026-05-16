@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { Eye, EyeClosed, ImagePlus } from "lucide-react"
 import { createUser } from "@/services/user.service"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { isAxiosError } from "axios"
 
 export function RegisterForm({
   className,
@@ -34,12 +35,12 @@ export function RegisterForm({
     setLoading(true);
     e.preventDefault();
   
-    const form = e.currentTarget as any;
-    const name = form.name.value;
-    const email = form.email.value;
-    const password = form.password.value;
-    const confirmPassword = form['confirm-password'].value
-    const avatar = form.avatar.files?.[0];
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get('name') ?? '');
+    const email = String(formData.get('email') ?? '');
+    const password = String(formData.get('password') ?? '');
+    const confirmPassword = String(formData.get('confirm-password') ?? '');
+    const avatar = formData.get('avatar');
 
     if(password !== confirmPassword) {
       toast("Erro ao fazer o cadastro!", {
@@ -49,24 +50,26 @@ export function RegisterForm({
       return
     }
   
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    if (avatar) {
-      formData.append('avatar', avatar);
+    const payload = new FormData();
+    payload.append('name', name);
+    payload.append('email', email);
+    payload.append('password', password);
+    if (avatar instanceof File && avatar.size > 0) {
+      payload.append('avatar', avatar);
     }
   
-    await createUser(formData)
+    await createUser(payload)
       .then(() => {
         toast("Usuário criado com sucesso!", {
           description: 'Email de confirmação enviado',
         });
         navigate("/login");
-      }).catch((error) => {
+      }).catch((error: unknown) => {
         console.error("Erro ao fazer cadastro", error);
         toast("Não foi possível criar usuário", {
-          description: error?.response?.data?.message ?? 'Erro desconhecido. Tente novamente.',
+          description: isAxiosError<{ message?: string }>(error)
+            ? error.response?.data?.message ?? 'Erro desconhecido. Tente novamente.'
+            : 'Erro desconhecido. Tente novamente.',
         });
       }).finally(() => {
         setLoading(false);
@@ -76,13 +79,9 @@ export function RegisterForm({
 
   const toggleVisiblePassword = (type: 'pass' | 'confirm-pass') => {
     if (type === 'pass') {
-      visiblePassword === 'password' ?
-      setVisiblePassword('text') :
-      setVisiblePassword('password')
+      setVisiblePassword((currentType) => currentType === 'password' ? 'text' : 'password')
     } else {
-      visibleConfirmPassword === 'password' ?
-      setVisibleConfirmPassword('text') :
-      setVisibleConfirmPassword('password')
+      setVisibleConfirmPassword((currentType) => currentType === 'password' ? 'text' : 'password')
     }
   }
 
@@ -122,6 +121,7 @@ export function RegisterForm({
                   <Input
                     id="name"
                     type="name"
+                    name="name"
                     placeholder="Seu nome completo aqui"
                     required
                   />
@@ -166,6 +166,7 @@ export function RegisterForm({
                   <Input
                     id="email"
                     type="email"
+                    name="email"
                     placeholder="email@exemplo.com"
                     required
                   />
@@ -177,7 +178,7 @@ export function RegisterForm({
                     type={visiblePassword}
                     onKeyDown={() => setVisiblePassword('password')}
                     name="password"
-                    className="pr-[2.5rem]"
+                    className="pr-10"
                     required
                   />
                   <Button
@@ -200,7 +201,8 @@ export function RegisterForm({
                     id="confirm-password"
                     type={visibleConfirmPassword}
                     onKeyDown={() => setVisibleConfirmPassword('password')}
-                    className="pr-[2.5rem]"
+                    name="confirm-password"
+                    className="pr-10"
                     required
                   />
                   <Button
