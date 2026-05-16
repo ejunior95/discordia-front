@@ -92,14 +92,14 @@ export function GameScoreboard({
         {/* faixas de acento laterais */}
         <div
           className={cn(
-            "pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r opacity-60",
+            "pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-linear-to-r opacity-60",
             userLeads ? "from-primary/25 to-transparent" : "from-muted/40 to-transparent",
           )}
           aria-hidden
         />
         <div
           className={cn(
-            "pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l opacity-60",
+            "pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-linear-to-l opacity-60",
             iaLeads ? meta.accent : "from-muted/40 to-transparent",
           )}
           aria-hidden
@@ -141,7 +141,7 @@ export function GameScoreboard({
           </div>
 
           {/* Centro: VS / Round / Pips */}
-          <div className="flex flex-col items-center gap-1 px-1 sm:px-2 min-w-[80px] sm:min-w-[120px]">
+          <div className="flex flex-col items-center gap-1 px-1 sm:px-2 min-w-20 sm:min-w-30">
             {status === "finished" ? (
               <FinishedBadge result={result ?? "draw"} />
             ) : (

@@ -98,7 +98,7 @@ export default function Hangman() {
       <div className="flex flex-col gap-5">
         <Card className="p-4 sm:p-6">
           <div className="flex flex-col lg:flex-row items-center gap-6">
-            <div className="w-40 sm:w-48 md:w-56 lg:w-64 aspect-[5/6] shrink-0">
+            <div className="w-40 sm:w-48 md:w-56 lg:w-64 aspect-5/6 shrink-0">
               <HangmanStage wrongCount={currentRound.wrongLetters.length} />
             </div>
 

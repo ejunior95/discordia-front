@@ -21,7 +21,7 @@ export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: A
   return (
     <Card
       className={cn(
-        'flex flex-col min-h-[16rem] transition-all',
+        'flex flex-col min-h-64 transition-all',
         isWinner && `ring-3 ring-amber-500 ${accent}`,
       )}
       aria-live={response.status === 'loading' ? 'polite' : undefined}
@@ -43,7 +43,7 @@ export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: A
           <ErrorState message={response.error ?? 'Erro desconhecido'} />
         )}
         {response.status === 'success' && response.message && (
-          <p className="text-sm whitespace-pre-wrap break-words max-h-[40vh] overflow-y-auto pr-1">
+          <p className="text-sm whitespace-pre-wrap wrap-break-word max-h-[40vh] overflow-y-auto pr-1">
             {response.message}
           </p>
         )}
@@ -126,7 +126,7 @@ function LoadingState() {
 
 function ErrorState({ message }: { message: string }) {
   return (
-    <p className="text-sm text-destructive break-words">
+    <p className="text-sm text-destructive wrap-break-word">
       {message}
     </p>
   );

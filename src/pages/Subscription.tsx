@@ -124,7 +124,7 @@ export default function Subscription() {
         description="Gerencie seu plano, métodos de pagamento e veja seu uso atual."
       />
 
-      <div className="grid w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px]">
+      <div className="grid w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300">
         <Card className="border-primary/40">
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
