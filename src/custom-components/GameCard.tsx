@@ -27,8 +27,8 @@ export function GameCard({ titleCard, description, imgCard, link, tag }: IGameCa
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                 {tag && (
-                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur px-2.5 py-1 text-xs font-medium border">
-                        <Sparkles className="h-3 w-3" /> {tag}
+                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur px-2.5 py-1 font-medium border">
+                        <Sparkles className="h-4 w-4" /> {tag}
                     </span>
                 )}
                 {comingSoon && (

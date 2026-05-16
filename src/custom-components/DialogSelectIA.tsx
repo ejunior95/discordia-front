@@ -26,10 +26,10 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
   const { setCurrentIA } = useCurrentIA();
 
   const ias = [
-    { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4o', linkValue: 'chat-gpt' },
-    { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-chat', linkValue: 'deepseek' },
-    { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.0-flash', linkValue: 'gemini' },
-    { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-3-beta', linkValue: 'grok' },
+    { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4.1-mini', linkValue: 'chat-gpt' },
+    { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-v4-flash', linkValue: 'deepseek' },
+    { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.5-flash', linkValue: 'gemini' },
+    { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-4.3', linkValue: 'grok' },
   ];
   
   const handleSelect = () => {
@@ -76,7 +76,7 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
               <div className="flex space-x-4 items-center">
                 {ia.icon}
                 <div className="flex flex-col">
-                  <p className="text-sm font-medium leading-none">{ia.label}</p>
+                  <p className="text-md font-medium leading-none">{ia.label}</p>
                   <p className="text-sm text-muted-foreground">{ia.sub}</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
           <Button
             disabled={!selectedIA}
             onClick={handleSelect}
-            className="cursor-pointer p-6 mb-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer p-6 mb-4 bg-blue-600 text-white text-lg font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Vamos lá!
           </Button>
