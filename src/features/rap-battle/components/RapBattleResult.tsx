@@ -21,7 +21,7 @@ export function RapBattleResult({ battle, onReset }: RapBattleResultProps) {
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
       <Card className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/15 via-transparent to-fuchsia-500/10" aria-hidden />
+        <div className="absolute inset-0 bg-linear-to-br from-amber-500/15 via-transparent to-fuchsia-500/10" aria-hidden />
         <div className="absolute -top-12 -right-12 size-48 rounded-full bg-amber-500/20 blur-3xl" aria-hidden />
         <CardContent className="relative px-6 md:px-10 py-8 md:py-12 flex flex-col items-center text-center gap-5">
           <div className="size-16 md:size-20 rounded-full bg-amber-500/15 border-2 border-amber-500/40 flex items-center justify-center">
@@ -153,7 +153,7 @@ function VerseColumn({ agent, content, isWinner }: { agent: AgentIA; content?: s
       {lines.length === 0 ? (
         <p className="text-xs text-muted-foreground italic">Sem verso registrado.</p>
       ) : (
-        <div className="font-serif text-sm leading-relaxed space-y-0.5">
+        <div className="text-sm leading-relaxed space-y-0.5">
           {lines.map((line, i) => (
             <p key={i}>{line}</p>
           ))}

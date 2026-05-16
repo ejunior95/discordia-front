@@ -52,14 +52,14 @@ export function RapBattleArena({
     <div className="flex flex-col gap-6">
       {/* Header VS */}
       <Card className="relative overflow-hidden py-6 md:py-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/10 via-transparent to-cyan-500/10" aria-hidden />
+        <div className="absolute inset-0 bg-linear-to-r from-fuchsia-500/10 via-transparent to-cyan-500/10" aria-hidden />
         <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 md:px-8">
           <ContenderHeader side="left" Icon={IconA} cfg={cfgA} score={wonByA} />
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            <span className="text-md uppercase tracking-widest text-muted-foreground">
               Round {battle.currentRound}/{TOTAL_ROUNDS}
             </span>
-            <span className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+            <span className="text-3xl md:text-7xl font-extrabold tracking-tight bg-linear-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
               VS
             </span>
             <RoundPips current={battle.currentRound} />
@@ -69,7 +69,7 @@ export function RapBattleArena({
         {battle.theme.trim() && (
           <div className="relative mt-4 px-6 text-center">
             <p className="text-xs text-muted-foreground">Tema</p>
-            <p className="text-sm md:text-base font-medium italic">"{battle.theme.trim()}"</p>
+            <p className="text-sm md:text-lg font-medium italic">"{battle.theme.trim()}"</p>
           </div>
         )}
       </Card>
@@ -106,7 +106,7 @@ export function RapBattleArena({
               Nova batalha
             </Button>
             {isGenerating ? (
-              <Button variant="outline" size="sm" onClick={onAbort} className="cursor-pointer gap-2">
+              <Button variant="destructive" size="sm" onClick={onAbort} className="cursor-pointer gap-2">
                 <Square size={14} />
                 Cancelar
               </Button>
@@ -155,12 +155,21 @@ function ContenderHeader({
         <Icon size={32} />
       </div>
       <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-          <Mic size={11} />
+        {side === 'left' ? (
+        <p className="text-md uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+          <Mic size={18} />
           MC
         </p>
-        <p className="text-lg md:text-xl font-extrabold tracking-tight truncate">{cfg.label}</p>
-        <p className="text-xs text-muted-foreground tabular-nums">
+          
+        ) : (
+        <p className="text-md uppercase tracking-wider text-muted-foreground flex items-center justify-end w-full text-right gap-1">
+          MC
+          <Mic size={18} />
+        </p>
+          
+        )}
+        <p className="text-xl md:text-3xl font-extrabold tracking-tight truncate">{cfg.label}</p>
+        <p className="text-md text-muted-foreground tabular-nums">
           {score} {score === 1 ? 'round vencido' : 'rounds vencidos'}
         </p>
       </div>
@@ -175,7 +184,7 @@ function RoundPips({ current }: { current: 1 | 2 | 3 }) {
         <span
           key={n}
           className={cn(
-            'size-2 rounded-full transition-colors',
+            'size-3 rounded-full transition-colors',
             n < current && 'bg-primary',
             n === current && 'bg-primary scale-125',
             n > current && 'bg-muted',

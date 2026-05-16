@@ -49,11 +49,11 @@ export function buildRapPrompt({
     `Este é o ROUND ${roundIndex} de ${TOTAL_ROUNDS}.`,
     history.join('\n\n'),
     'Regras:',
-    '- Escreva EXATAMENTE 8 versos (linhas) em português brasileiro.',
+    '- Escreva EXATAMENTE 3 estrofes de 8 versos (linhas) em português brasileiro.',
     '- Rimas obrigatórias em pares (AABB ou ABAB).',
     '- Tom provocador, criativo, com punchlines; evite clichês e rimas fáceis.',
     '- Mencione qualidades suas e fraquezas do oponente.',
-    '- Não inclua título, numeração, comentários nem explicações. Apenas os 8 versos, um por linha.',
+    '- Não inclua título, numeração, comentários nem explicações. Apenas as 3 estrofes de 8 versos, um por linha.',
   ]
     .filter(Boolean)
     .join('\n\n');

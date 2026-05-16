@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MessagesSquare, Gamepad2, Sparkles } from 'lucide-react';
+import { MessagesSquare, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { verifyDayOrNight } from '@/utils/globalFunctions';

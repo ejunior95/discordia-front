@@ -26,18 +26,18 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
   return (
     <Card
       className={cn(
-        'flex flex-col min-h-[18rem] transition-all border-2',
+        'flex flex-col min-h-72 transition-all border-2',
         side === 'left' ? 'border-fuchsia-500/30' : 'border-cyan-500/30',
         voted && 'ring-2 ring-amber-500',
         isWinner && 'ring-4 ring-amber-500 shadow-lg shadow-amber-500/20',
       )}
     >
-      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 pb-3">
-        <div className={cn('rounded-full px-4 py-2 border shrink-0 flex items-center gap-3', cfg.iconClass)}>
-          <Icon size={22} />
+      <CardHeader className="flex w-full items-center justify-between gap-3 space-y-0 pb-3">
+        <div className={cn('rounded-full px-4 py-2 border w-full flex items-center gap-3', cfg.iconClass)}>
+          <Icon size={30} />
           <div className="min-w-0">
-            <p className="text-sm font-semibold leading-tight truncate">{cfg.label}</p>
-            <p className="text-[11px] truncate opacity-80">{cfg.subtitle}</p>
+            <p className="text-md font-semibold leading-tight truncate">{cfg.label}</p>
+            <p className="text-sm truncate opacity-80">{cfg.subtitle}</p>
           </div>
         </div>
         {isWinner && (
@@ -64,8 +64,8 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
           aria-label={`Votar em ${cfg.label}`}
           aria-pressed={voted}
         >
-          <ThumbsUp size={14} />
           {voted ? 'Voto registrado' : 'Votar'}
+          <ThumbsUp size={14} />
         </Button>
         <div className="flex items-center gap-1">
           {status === 'success' && verse && <CopyButton text={verse.content} />}
@@ -89,9 +89,9 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
 
 function IdleState({ side }: { side: 'left' | 'right' }) {
   return (
-    <div className="h-full min-h-[10rem] flex items-center justify-center text-center text-sm text-muted-foreground px-4">
+    <div className="h-full min-h-40 flex items-center justify-center text-center text-sm text-muted-foreground px-4">
       <p>
-        Aguardando o microfone {side === 'left' ? 'da esquerda' : 'da direita'}…
+        {side === 'left' ? 'MC da esquerda esquentando as cordas vocais digitais' : 'MC da direita organizando as rimas afiadas'}…
         <br />
         Clique em "Gerar round" para começar.
       </p>
@@ -109,19 +109,19 @@ function LoadingState() {
           style={{ width: `${60 + ((i * 7) % 35)}%` }}
         />
       ))}
-      <p className="text-xs italic text-muted-foreground pt-2">Compondo rimas…</p>
+      <p className="text-sm italic text-muted-foreground pt-2">Compondo rimas…</p>
     </div>
   );
 }
 
 function ErrorState({ message }: { message: string }) {
-  return <p className="text-sm text-destructive break-words">{message}</p>;
+  return <p className="text-sm text-destructive wrap-break-word">{message}</p>;
 }
 
 function VerseLines({ content }: { content: string }) {
   const lines = content.split('\n').map((l) => l.trim()).filter(Boolean);
   return (
-    <div className="font-serif text-[15px] leading-relaxed space-y-1 max-h-[40vh] overflow-y-auto pr-1">
+    <div className="text-md leading-relaxed space-y-1 max-h-[40vh] overflow-y-auto pr-1">
       {lines.map((line, i) => (
         <p
           key={i}
