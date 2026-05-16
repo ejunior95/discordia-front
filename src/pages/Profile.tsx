@@ -1,29 +1,354 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import PageHeader from '@/custom-components/PageHeader';
+import {
+  BADGES_CATALOG,
+  PLANS,
+  mockCurrentSubscription,
+} from '@/features/account/account.constants';
+import { useChatStats } from '@/features/account/hooks/useChatStats';
+import { usePreferences } from '@/features/account/hooks/usePreferences';
+import { formatLongDate, formatShortDate } from '@/features/account/format';
+import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAuth } from '@/hooks/useAuth';
+import { formatFallbackAvatarStr } from '@/utils/globalFunctions';
+import { cn } from '@/lib/utils';
+import {
+  Award,
+  Github,
+  Linkedin,
+  Lock,
+  MessagesSquare,
+  Pencil,
+  Sparkles,
+  ThumbsUp,
+  Trophy,
+  Twitter,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+
 export default function Profile() {
-    return(
-        <section className="
-            p-10
-            w-full 
-            flex 
-            flex-col 
-            items-center
-            2xl:h-[90dvh] 
-        ">
-            <h1 className="
-                font-extrabold 
-                tracking-tight 
-                text-5xl 
-                mb-5 
-                md:text-6xl 
-                md:mb-8 
-                xl:text-7xl 
-                xl:mb-8 
-                2xl:mb-10
-                w-full 
-                lg:w-[80%]
-                2xl:w-[60%] 
-                2xl:max-w-[1200px]">
-                Meu perfil
-            </h1>
-        </section>
-    )
+  const { user } = useAuth();
+  const stats = useChatStats();
+  const { preferences, update } = usePreferences();
+
+  const [bio, setBio] = useState(preferences.profile.bio);
+  const [socials, setSocials] = useState(preferences.profile.socials);
+
+  // sincroniza se preferências mudarem por outro lugar
+  useEffect(() => {
+    setBio(preferences.profile.bio);
+    setSocials(preferences.profile.socials);
+  }, [preferences.profile.bio, preferences.profile.socials]);
+
+  const currentPlan = PLANS.find((p) => p.id === mockCurrentSubscription.planId) ?? PLANS[0];
+  const favorite = stats.topAgent ? IA_CONFIG[stats.topAgent] : null;
+  const favoriteShare = stats.totalVotes > 0 ? Math.round(stats.topAgentShare * 100) : 0;
+
+  const badgeContext = {
+    totalRounds: stats.totalRounds,
+    totalVotes: stats.totalVotes,
+    uniqueAgentsVoted: stats.uniqueAgentsVoted,
+    topAgent: stats.topAgent,
+    topAgentVotes: stats.topAgentVotes,
+  };
+
+  const bioChanged =
+    bio !== preferences.profile.bio ||
+    socials.twitter !== preferences.profile.socials.twitter ||
+    socials.github !== preferences.profile.socials.github ||
+    socials.linkedin !== preferences.profile.socials.linkedin;
+
+  const handleSaveBio = () => {
+    update({ profile: { bio, socials } });
+    toast.success('Bio atualizada.');
+  };
+
+  const statCards = [
+    {
+      label: 'Rodadas jogadas',
+      value: stats.totalRounds,
+      icon: MessagesSquare,
+    },
+    {
+      label: 'Votos dados',
+      value: stats.totalVotes,
+      icon: ThumbsUp,
+    },
+    {
+      label: 'IA favorita',
+      value: favorite ? favorite.label : '—',
+      icon: Sparkles,
+    },
+    {
+      label: 'Domínio da favorita',
+      value: favorite ? `${favoriteShare}%` : '—',
+      icon: Trophy,
+    },
+  ];
+
+  return (
+    <section className="flex w-full flex-col items-center p-6 md:p-10">
+      <PageHeader
+        title="Meu perfil"
+        description="Acompanhe seu progresso, suas conquistas e personalize sua presença no discordIA."
+        actions={
+          <Button variant="outline" asChild>
+            <Link to="/settings">
+              <Pencil className="mr-2 h-4 w-4" />
+              Editar perfil
+            </Link>
+          </Button>
+        }
+      />
+
+      <div className="grid w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px]">
+        <Card>
+          <CardContent className="flex flex-col items-center gap-6 pt-6 sm:flex-row sm:items-center">
+            <Avatar className="h-28 w-28 rounded-full">
+              <AvatarImage
+                src={user?.avatar}
+                alt={user?.name}
+                className="object-cover object-center"
+              />
+              <AvatarFallback className="text-4xl">
+                {user ? formatFallbackAvatarStr(user) : '?'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 space-y-1 text-center sm:text-left">
+              <h2 className="text-3xl font-bold tracking-tight">{user?.name ?? 'Usuário'}</h2>
+              <p className="text-muted-foreground">{user?.email}</p>
+              <p className="text-muted-foreground text-sm">
+                Membro desde {formatLongDate(user?.createdAt)}
+              </p>
+              <div className="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start">
+                <Badge variant="secondary">Plano {currentPlan.name}</Badge>
+                {favorite ? (
+                  <Badge variant="outline" className="gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    Fã de {favorite.label}
+                  </Badge>
+                ) : null}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {statCards.map(({ label, value, icon: Icon }) => (
+            <Card key={label}>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-muted-foreground text-sm font-medium">{label}</p>
+                  <Icon className="text-muted-foreground h-4 w-4" />
+                </div>
+                <p className="mt-2 text-2xl font-bold">{value}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Sobre mim</CardTitle>
+              <CardDescription>
+                Conte um pouco sobre você e adicione links pra suas redes.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Curioso por IA, café e jogos de tabuleiro…"
+                  rows={3}
+                  maxLength={280}
+                />
+                <p className="text-muted-foreground text-right text-xs">
+                  {bio.length}/280
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="twitter" className="flex items-center gap-2">
+                    <Twitter className="h-4 w-4" /> Twitter / X
+                  </Label>
+                  <Input
+                    id="twitter"
+                    value={socials.twitter}
+                    onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
+                    placeholder="@seuusuario"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="github" className="flex items-center gap-2">
+                    <Github className="h-4 w-4" /> GitHub
+                  </Label>
+                  <Input
+                    id="github"
+                    value={socials.github}
+                    onChange={(e) => setSocials({ ...socials, github: e.target.value })}
+                    placeholder="seuusuario"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="linkedin" className="flex items-center gap-2">
+                    <Linkedin className="h-4 w-4" /> LinkedIn
+                  </Label>
+                  <Input
+                    id="linkedin"
+                    value={socials.linkedin}
+                    onChange={(e) => setSocials({ ...socials, linkedin: e.target.value })}
+                    placeholder="in/seuusuario"
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button onClick={handleSaveBio} disabled={!bioChanged}>
+                Salvar
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Plano atual</CardTitle>
+              <CardDescription>{currentPlan.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-3xl font-bold">{currentPlan.name}</p>
+              <p className="text-muted-foreground text-sm">
+                {currentPlan.monthlyRoundsLimit
+                  ? `${stats.roundsThisMonth} / ${currentPlan.monthlyRoundsLimit} rodadas este mês`
+                  : 'Rodadas ilimitadas'}
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild className="w-full">
+                <Link to="/subscription">Gerenciar assinatura</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5" /> Conquistas
+            </CardTitle>
+            <CardDescription>
+              Desbloqueie conquistas conforme usa o discordIA.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {BADGES_CATALOG.map((badge) => {
+                const unlocked = badge.check(badgeContext);
+                return (
+                  <div
+                    key={badge.id}
+                    className={cn(
+                      'flex items-start gap-3 rounded-lg border p-3 transition-colors',
+                      unlocked
+                        ? 'bg-primary/5 border-primary/40'
+                        : 'bg-muted/30 opacity-70',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                        unlocked ? 'bg-primary text-primary-foreground' : 'bg-muted',
+                      )}
+                    >
+                      {unlocked ? (
+                        <Award className="h-5 w-5" />
+                      ) : (
+                        <Lock className="h-4 w-4" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{badge.name}</p>
+                      <p className="text-muted-foreground text-xs">{badge.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Rodadas recentes</CardTitle>
+            <CardDescription>Suas últimas comparações de IA.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stats.recentRounds.length === 0 ? (
+              <div className="text-muted-foreground flex flex-col items-center gap-2 py-8 text-center text-sm">
+                <MessagesSquare className="h-8 w-8" />
+                <p>Você ainda não fez nenhuma rodada.</p>
+                <Button asChild variant="link">
+                  <Link to="/chat">Iniciar uma comparação</Link>
+                </Button>
+              </div>
+            ) : (
+              <ul className="divide-y">
+                {stats.recentRounds.map((round) => {
+                  const winner = round.winner ? IA_CONFIG[round.winner] : null;
+                  return (
+                    <li
+                      key={round.id}
+                      className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{round.question}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {formatShortDate(round.askedAt)}
+                        </p>
+                      </div>
+                      {winner ? (
+                        <Badge variant="secondary" className="shrink-0">
+                          <Trophy className="mr-1 h-3 w-3" />
+                          {winner.label}
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="shrink-0">
+                          Sem vencedor
+                        </Badge>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </CardContent>
+          {stats.recentRounds.length > 0 ? (
+            <CardFooter className="justify-end">
+              <Button asChild variant="ghost">
+                <Link to="/chat">Ver todas</Link>
+              </Button>
+            </CardFooter>
+          ) : null}
+        </Card>
+      </div>
+    </section>
+  );
 }

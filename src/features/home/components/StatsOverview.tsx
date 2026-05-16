@@ -42,7 +42,7 @@ export function StatsOverview() {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
       {stats.map(({ label, value, icon: Icon, iconClass, hint }) => (
         <Card key={label} className="py-4 md:py-5">
           <CardContent className="px-4 md:px-5 flex items-center gap-3 md:gap-4">

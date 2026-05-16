@@ -312,24 +312,24 @@ function AgentsStrip() {
   return (
     <section className="relative border-y border-white/5 bg-zinc-950/60 backdrop-blur">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <p className="text-center text-xs uppercase tracking-[0.2em] text-zinc-500 mb-6">
+        <p className="text-center text-md uppercase tracking-[0.2em] text-zinc-500 mb-6">
           Os competidores
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-6">
           {AGENTS.map((agent) => {
             const cfg = IA_CONFIG[agent];
             const Icon = cfg.Icon;
             return (
               <div
                 key={agent}
-                className="group flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-4 transition-all hover:border-white/15 hover:bg-white/[0.06]"
+                className="group flex items-center justify-start gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-4 transition-all hover:border-white/15 hover:bg-white/[0.06]"
               >
-                <div className={cn('size-9 rounded-full flex items-center justify-center shrink-0', cfg.iconClass)}>
-                  <Icon size={18} />
+                <div className={cn('size-14 rounded-xl flex items-center justify-center shrink-0', cfg.iconClass)}>
+                  <Icon size={30} />
                 </div>
                 <div className="text-left">
-                  <p className="font-semibold text-sm">{cfg.label}</p>
-                  <p className="text-[11px] text-zinc-500">{cfg.subtitle}</p>
+                  <p className="font-semibold text-md">{cfg.label}</p>
+                  <p className="text-sm text-zinc-500">{cfg.subtitle}</p>
                 </div>
               </div>
             );
@@ -381,7 +381,7 @@ function FeaturesShowcase({
   const Icon = feat.icon;
 
   return (
-    <section id="features" className="py-20 md:py-28">
+    <section id="features">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Recursos</p>
@@ -513,7 +513,7 @@ function FeaturesShowcase({
 
 function HowItWorks() {
   return (
-    <section id="how" className="py-20 md:py-28 border-t border-white/5 bg-linear-to-b from-zinc-950 to-black">
+    <section id="how" className="py-12 md:py-20 border-t border-white/5 bg-linear-to-b from-zinc-950 to-black">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Como funciona</p>
@@ -552,7 +552,7 @@ function HowItWorks() {
 
 function Pricing({ ctaTarget }: { ctaTarget: string }) {
   return (
-    <section id="pricing" className="py-20 md:py-28">
+    <section id="pricing" className="py-12 md:py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Planos</p>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mic, Sparkles, Swords } from 'lucide-react';
+import { Mic, MicVocal, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,8 +34,8 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
   return (
     <div className="max-w-3xl mx-auto w-full flex flex-col gap-8">
       <header className="flex flex-col gap-3 text-center">
-        <span className="inline-flex w-fit mx-auto items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground">
-          <Mic size={14} className="text-fuchsia-500" />
+        <span className="inline-flex w-fit mx-auto items-center gap-2 rounded-full border bg-background px-3 py-1 text-md font-medium text-muted-foreground">
+          <Mic size={18} className="text-fuchsia-500" />
           Modo 8 Mile · 3 rounds
         </span>
         <h1 className="font-extrabold tracking-tight text-3xl md:text-5xl">
@@ -131,9 +131,9 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
           size="lg"
           onClick={handleStart}
           disabled={!canStart}
-          className="gap-2 px-8"
+          className="gap-2 px-8 w-full md:w-auto text-md"
         >
-          <Swords size={18} />
+          <Mic size={24} />
           Iniciar batalha
         </Button>
       </div>

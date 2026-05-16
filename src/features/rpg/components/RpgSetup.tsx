@@ -52,8 +52,8 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
       <header className="flex flex-col gap-3 text-center">
-        <span className="inline-flex w-fit mx-auto items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground">
-          <Swords size={14} className="text-amber-500" />
+        <span className="inline-flex w-fit mx-auto items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs md:text-md font-medium text-muted-foreground">
+          <Swords size={18} className="text-amber-500" />
           Mesa de D&amp;D · campanha solo ou cooperativa
         </span>
         <h1 className="font-extrabold tracking-tight text-3xl md:text-5xl">
@@ -204,8 +204,8 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
       </Card>
 
       <div className="flex justify-center">
-        <Button size="lg" onClick={handleStart} disabled={!canStart} className="gap-2 px-8">
-          <Swords size={18} />
+        <Button size="lg" onClick={handleStart} disabled={!canStart} className="gap-2 w-full md:w-auto px-8 text-md">
+          <Swords size={24} />
           Iniciar campanha
         </Button>
       </div>

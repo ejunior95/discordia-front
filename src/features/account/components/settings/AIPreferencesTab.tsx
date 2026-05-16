@@ -1,0 +1,98 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { AGENTS, type AgentIA } from '@/features/chat/types';
+import { usePreferences } from '@/features/account/hooks/usePreferences';
+import type { AIPreferences } from '@/features/account/types';
+
+export default function AIPreferencesTab() {
+  const { preferences, update } = usePreferences();
+
+  const setAI = (patch: Partial<AIPreferences>) =>
+    update({ ai: { ...preferences.ai, ...patch } });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Preferências de IA</CardTitle>
+        <CardDescription>
+          Personalize como o chat se comporta com seus modelos favoritos.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-2">
+          <Label>IA favorita</Label>
+          <Select
+            value={preferences.ai.favoriteAgent}
+            onValueChange={(v) => setAI({ favoriteAgent: v as AgentIA | 'none' })}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Nenhuma preferência</SelectItem>
+              {AGENTS.map((a) => (
+                <SelectItem key={a} value={a}>
+                  {IA_CONFIG[a].label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-muted-foreground text-xs">
+            {/* TODO(chat): destacar visualmente a IA favorita nas próximas rodadas. */}
+            Sua IA favorita ganhará destaque visual nos próximos rounds.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Modo de comparação</Label>
+          <Select
+            value={preferences.ai.comparisonMode}
+            onValueChange={(v) =>
+              setAI({ comparisonMode: v as AIPreferences['comparisonMode'] })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="parallel">Paralelo (todas ao mesmo tempo)</SelectItem>
+              <SelectItem value="sequential">Sequencial (uma por vez)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <Label htmlFor="auto-vote" className="text-sm font-medium">
+              Voto automático na favorita
+            </Label>
+            <p className="text-muted-foreground text-xs">
+              Se a IA favorita responder primeiro, atribui um voto automaticamente.
+            </p>
+          </div>
+          <Switch
+            id="auto-vote"
+            checked={preferences.ai.autoVoteFavorite}
+            disabled={preferences.ai.favoriteAgent === 'none'}
+            onCheckedChange={(v) => setAI({ autoVoteFavorite: v })}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
