@@ -131,7 +131,7 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
           size="lg"
           onClick={handleStart}
           disabled={!canStart}
-          className="gap-2 px-8 w-full md:w-auto text-md"
+          className="gap-2 px-8 w-full md:w-auto text-md cursor-pointer"
         >
           <Mic size={24} />
           Iniciar batalha

@@ -204,7 +204,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
       </Card>
 
       <div className="flex justify-center">
-        <Button size="lg" onClick={handleStart} disabled={!canStart} className="gap-2 w-full md:w-auto px-8 text-md">
+        <Button size="lg" onClick={handleStart} disabled={!canStart} className="gap-2 w-full md:w-auto px-8 text-md cursor-pointer">
           <Swords size={24} />
           Iniciar campanha
         </Button>
