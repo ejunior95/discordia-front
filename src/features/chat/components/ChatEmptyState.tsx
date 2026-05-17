@@ -3,6 +3,7 @@ import { MessageCircleQuestion, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { IA_CONFIG, SUGGESTION_CHIPS } from '../chat.constants';
 import { AGENTS } from '../types';
+import { pageMotion } from '@/utils/pageMotion';
 
 interface ChatEmptyStateProps {
   onSelectSuggestion: (text: string) => void;
@@ -11,9 +12,7 @@ interface ChatEmptyStateProps {
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      {...pageMotion}
       className="flex-1 flex flex-col justify-center items-center gap-8 py-8"
     >
       <div className="text-center max-w-2xl space-y-2">

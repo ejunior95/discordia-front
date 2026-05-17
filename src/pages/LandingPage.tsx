@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
+import { pageMotion } from '@/utils/pageMotion';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png';
 import DiscordiaLogo from '../assets/discordia-logo-removebg2.png';
 import questionsBg from '../assets/questions-bg.jpeg';
@@ -141,7 +142,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <motion.div {...pageMotion} className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
       <TopNav scrolled={scrolled} user={!!user} />
       <Hero ctaTarget={ctaTarget} />
       <AgentsStrip />
@@ -155,7 +156,7 @@ export default function LandingPage() {
       <Pricing ctaTarget={ctaTarget} />
       <FinalCTA ctaTarget={ctaTarget} />
       <Footer />
-    </div>
+    </motion.div>
   );
 }
 

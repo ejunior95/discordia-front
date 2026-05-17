@@ -1,7 +1,9 @@
+import { motion } from 'framer-motion';
 import { GameCard } from "@/custom-components/GameCard";
 import ThumbJokenpo from '../assets/thumb_jokenpo.png';
 import ThumbForca from '../assets/thumb_forca.png';
 import ThumbXadrez from '../assets/thumb-xadrez.jpg';
+import { pageMotion } from '@/utils/pageMotion';
 
 interface Game {
     title: string;
@@ -38,7 +40,7 @@ const GAMES: Game[] = [
 export default function Games() {
     return (
         <section className="w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-            <div className="max-w-6xl mx-auto">
+            <motion.div {...pageMotion} className="max-w-6xl mx-auto">
                 <header className="mb-8 md:mb-12">
                     <h1 className="font-extrabold tracking-tight text-4xl md:text-5xl xl:text-6xl">
                         Jogos com IA
@@ -60,7 +62,7 @@ export default function Games() {
                         />
                     ))}
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

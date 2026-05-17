@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -31,6 +32,7 @@ import {
   normalizeWord,
 } from "@/features/hangman/hangman.constants";
 import { toast } from "sonner";
+import { pageMotion } from "@/utils/pageMotion";
 
 export default function Hangman() {
   const { user } = useAuth();
@@ -246,7 +248,7 @@ export default function Hangman() {
 
   return (
     <section className="w-full px-3 sm:px-6 lg:px-8 pt-4 pb-12">
-      <div className="max-w-4xl mx-auto flex flex-col gap-5">
+      <motion.div {...pageMotion} className="max-w-4xl mx-auto flex flex-col gap-5">
         {game && (
           <GameScoreboard
             user={user}
@@ -332,7 +334,7 @@ export default function Hangman() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </motion.div>
     </section>
   );
 }

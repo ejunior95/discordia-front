@@ -1,6 +1,8 @@
+import { motion } from 'framer-motion';
 import { RpgSetup } from '@/features/rpg/components/RpgSetup';
 import { RpgTable } from '@/features/rpg/components/RpgTable';
 import { useRpgCampaign } from '@/features/rpg/hooks/useRpgCampaign';
+import { pageMotion } from '@/utils/pageMotion';
 
 export default function RolePlaying() {
   const {
@@ -20,7 +22,7 @@ export default function RolePlaying() {
 
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-      <div className="max-w-7xl mx-auto">
+      <motion.div {...pageMotion} className="max-w-7xl mx-auto">
         {!campaign || campaign.status === 'setup' || !currentActor ? (
           <RpgSetup onStart={start} />
         ) : (
@@ -38,7 +40,7 @@ export default function RolePlaying() {
             onReset={reset}
           />
         )}
-      </div>
+      </motion.div>
     </section>
   );
 }

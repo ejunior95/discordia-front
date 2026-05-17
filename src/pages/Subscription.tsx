@@ -58,8 +58,10 @@ import { formatCurrency, formatShortDate } from '@/features/account/format';
 import type { BillingCycle, PlanId } from '@/features/account/types';
 import { cn } from '@/lib/utils';
 import { Check, CreditCard, Download, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { pageMotion } from '@/utils/pageMotion';
 
 const FAQ = [
   {
@@ -118,7 +120,8 @@ export default function Subscription() {
   };
 
   return (
-    <section className="flex w-full flex-col items-center p-4 sm:p-6 md:p-10">
+    <section className="w-full p-4 sm:p-6 md:p-10">
+      <motion.div {...pageMotion} className="flex w-full flex-col items-center">
       <PageHeader
         title="Minha assinatura"
         description="Gerencie seu plano, métodos de pagamento e veja seu uso atual."
@@ -459,6 +462,7 @@ export default function Subscription() {
           </CardContent>
         </Card>
       </div>
+      </motion.div>
     </section>
   );
 }

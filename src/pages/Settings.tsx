@@ -21,7 +21,9 @@ import {
   User,
   UserCog,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { pageMotion } from '@/utils/pageMotion';
 
 const TABS = [
   { value: 'profile', label: 'Perfil', icon: User, content: <ProfileTab /> },
@@ -36,7 +38,8 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
 
   return (
-    <section className="flex w-full flex-col items-center p-4 sm:p-6 md:p-10">
+    <section className="w-full p-4 sm:p-6 md:p-10">
+      <motion.div {...pageMotion} className="flex w-full flex-col items-center">
       <PageHeader
         title="Configurações"
         description="Gerencie sua conta, aparência, notificações e preferências de IA."
@@ -77,6 +80,7 @@ export default function Settings() {
           </TabsContent>
         ))}
       </Tabs>
+      </motion.div>
     </section>
   );
 }

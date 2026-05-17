@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { pageMotion } from '@/utils/pageMotion';
 
 export default function NotFound() {
     const { user } = useAuth();
@@ -9,9 +10,7 @@ export default function NotFound() {
     return (
         <div className="flex h-[90dvh] lg:h-[80dvh] items-center justify-center px-6">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            {...pageMotion}
             className="text-center max-w-md border p-8 rounded-2xl shadow-xl"
           >
             <motion.h1

@@ -1,5 +1,6 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import { JokenpoArena } from "@/features/jokenpo/components/JokenpoArena";
 import { JokenpoChoices } from "@/features/jokenpo/components/JokenpoChoices";
 import { JokenpoHistory } from "@/features/jokenpo/components/JokenpoHistory";
 import { MAX_ROUNDS, WIN_SCORE } from "@/features/jokenpo/jokenpo.constants";
+import { pageMotion } from "@/utils/pageMotion";
 
 export default function Jokenpo() {
   const { user } = useAuth();
@@ -50,7 +52,7 @@ export default function Jokenpo() {
 
   return (
     <section className="w-full px-3 sm:px-6 lg:px-8 pt-4 pb-12">
-      <div className="max-w-5xl mx-auto flex flex-col gap-5">
+      <motion.div {...pageMotion} className="max-w-5xl mx-auto flex flex-col gap-5">
         {game && (
           <GameScoreboard
             user={user}
@@ -155,7 +157,7 @@ export default function Jokenpo() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </motion.div>
     </section>
   );
 }

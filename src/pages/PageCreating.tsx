@@ -1,15 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { Construction } from "lucide-react"
+import { pageMotion } from "@/utils/pageMotion"
 
 export default function PageCreating() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center p-4">
       <title>Site em Construção</title>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        {...pageMotion}
       >
         <Card className="max-w-md w-full rounded-2xl shadow-xl bg-gray-950 border-gray-800">
           <CardContent className="p-8 text-center">

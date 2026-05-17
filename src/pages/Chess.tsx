@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { RotateCcw, Trophy } from "lucide-react";
 import { GameScoreboard, type ScoreboardAgent } from "@/custom-components/GameScoreboard";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +22,7 @@ import { ChessSetup } from "@/features/chess/components/ChessSetup";
 import { ChessBoardView } from "@/features/chess/components/ChessBoardView";
 import { ChessSidePanel } from "@/features/chess/components/ChessSidePanel";
 import { CHESS_LEVELS } from "@/features/chess/chess.constants";
+import { pageMotion } from "@/utils/pageMotion";
 
 export default function Chess() {
   const { user } = useAuth();
@@ -43,7 +45,7 @@ export default function Chess() {
 
   return (
     <section className="w-full px-3 sm:px-6 lg:px-8 pt-4 pb-12">
-      <div className="max-w-6xl mx-auto flex flex-col gap-5">
+      <motion.div {...pageMotion} className="max-w-6xl mx-auto flex flex-col gap-5">
         {game && (
           <GameScoreboard
             user={user}
@@ -119,7 +121,7 @@ export default function Chess() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </motion.div>
     </section>
   );
 }

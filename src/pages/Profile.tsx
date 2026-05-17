@@ -24,6 +24,7 @@ import { formatLongDate, formatShortDate } from '@/features/account/format';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import { useAuth } from '@/hooks/useAuth';
 import { formatFallbackAvatarStr } from '@/utils/globalFunctions';
+import { pageMotion } from '@/utils/pageMotion';
 import { cn } from '@/lib/utils';
 import {
   Award,
@@ -38,6 +39,7 @@ import {
   Twitter,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -102,7 +104,8 @@ export default function Profile() {
   ];
 
   return (
-    <section className="flex w-full flex-col items-center p-6 md:p-10">
+    <section className="w-full p-6 md:p-10">
+      <motion.div {...pageMotion} className="flex w-full flex-col items-center">
       <PageHeader
         title="Meu perfil"
         description="Acompanhe seu progresso, suas conquistas e personalize sua presença no discordIA."
@@ -349,6 +352,7 @@ export default function Profile() {
           ) : null}
         </Card>
       </div>
+      </motion.div>
     </section>
   );
 }
