@@ -140,7 +140,7 @@ export function RapBattleArena({
             ) : (
               <>
                 <Volume2 size={14} />
-                <span>Em breve: vozes geradas + batida de fundo.</span>
+                <span>Após a geração dos versos, aguarde o término da reprodução do áudio.</span>
               </>
             )}
           </div>
