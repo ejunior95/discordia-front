@@ -65,7 +65,7 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
           <p
             className={cn(
               'whitespace-pre-wrap wrap-break-word',
-              isMaster ? 'font-serif text-[15px] leading-relaxed' : 'text-sm leading-relaxed',
+              isMaster ? 'text-[15px] leading-relaxed' : 'text-sm leading-relaxed',
             )}
           >
             {turn.content}
