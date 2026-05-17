@@ -3,7 +3,8 @@ import { Copy, RotateCcw, ThumbsUp, Trophy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { IA_CONFIG, LOADER_MESSAGES } from '../chat.constants';
+import { LOADER_MESSAGES } from '../chat.constants';
+import { useAgentDisplay } from '@/hooks/useAgentDisplay';
 import type { AgentIA, AIResponse } from '../types';
 
 interface AIResponseCardProps {
@@ -17,8 +18,7 @@ interface AIResponseCardProps {
 }
 
 export function AIResponseCard({ agent, response, isWinner, hasVoted, votingDisabled, onVote, onRetry }: AIResponseCardProps) {
-  const config = IA_CONFIG[agent];
-  const { Icon, label, subtitle, iconClass, accent } = config;
+  const { Icon, label, model, iconClass, accent } = useAgentDisplay(agent);
 
   return (
     <Card
@@ -33,7 +33,7 @@ export function AIResponseCard({ agent, response, isWinner, hasVoted, votingDisa
           <Icon size={24} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold leading-tight truncate">{label}</p>
-            <p className="text-xs truncate">{subtitle}</p>
+            <p className="text-xs truncate">{model}</p>
           </div>
         </div>
         <StatusBadge status={response.status} isWinner={isWinner} />

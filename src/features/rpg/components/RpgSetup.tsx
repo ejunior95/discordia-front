@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import { AGENTS, type AgentIA } from '@/features/chat/types';
 import { SCENARIOS } from '../rpg.constants';
 import type { ActorRef, Scenario } from '../types';
@@ -15,6 +15,7 @@ interface RpgSetupProps {
 }
 
 export function RpgSetup({ onStart }: RpgSetupProps) {
+  const agentsDisplay = useAgentsDisplay();
   const [master, setMaster] = useState<ActorRef>('user');
   const [aiPlayers, setAiPlayers] = useState<AgentIA[]>([]);
   const [scenario, setScenario] = useState<Scenario>('fantasy');
@@ -83,7 +84,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
               iconClass="bg-primary text-primary-foreground"
             />
             {AGENTS.map((agent) => {
-              const cfg = IA_CONFIG[agent];
+              const cfg = agentsDisplay[agent];
               const Icon = cfg.Icon;
               return (
                 <MasterCard
@@ -91,7 +92,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
                   isSelected={master === agent}
                   onSelect={() => setMaster(agent)}
                   label={cfg.label}
-                  subtitle={cfg.subtitle}
+                  subtitle={cfg.model}
                   icon={<Icon size={24} />}
                   iconClass={cfg.iconClass}
                 />
@@ -122,7 +123,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {availableAIPlayers.map((agent) => {
-              const cfg = IA_CONFIG[agent];
+              const cfg = agentsDisplay[agent];
               const Icon = cfg.Icon;
               const isSelected = aiPlayers.includes(agent);
               return (

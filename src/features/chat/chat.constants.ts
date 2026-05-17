@@ -3,8 +3,8 @@ import type { AgentIA } from './types';
 
 export interface IAConfig {
   Icon: React.ElementType;
+  /** Fallback label/model. Use `useAgentDisplay(name)` to read live DB values. */
   label: string;
-  subtitle: string;
   iconClass: string;
   accent: string;
 }
@@ -13,28 +13,24 @@ export const IA_CONFIG: Record<AgentIA, IAConfig> = {
   'chat-gpt': {
     Icon: OpenAI,
     label: 'ChatGPT',
-    subtitle: 'gpt-4.1-mini',
     iconClass: 'bg-black text-white',
     accent: 'border-zinc-500',
   },
   gemini: {
     Icon: Gemini,
     label: 'Gemini',
-    subtitle: 'gemini-2.5-flash',
     iconClass: 'bg-white text-blue-600',
     accent: 'border-blue-500',
   },
   deepseek: {
     Icon: DeepSeek,
     label: 'DeepSeek',
-    subtitle: 'deepseek-v4-flash',
     iconClass: 'bg-blue-600 text-white',
     accent: 'border-indigo-500',
   },
   grok: {
     Icon: Grok,
     label: 'Grok',
-    subtitle: 'grok-4.3',
     iconClass: 'bg-gray-600 text-white',
     accent: 'border-amber-500',
   },

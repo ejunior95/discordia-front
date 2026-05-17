@@ -7,10 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCurrentIA, type CurrentIA } from "@/contexts/CurrentIAContext";
+import { useAgentsDisplay } from "@/hooks/useAgentDisplay";
+import { AGENTS } from "@/features/chat/types";
 
 interface DialogSelectIAProps {
   trigger: React.ReactNode;
@@ -24,14 +25,18 @@ export function DialogSelectIA({ trigger, titleDialog, link }: DialogSelectIAPro
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { setCurrentIA } = useCurrentIA();
+  const agentsDisplay = useAgentsDisplay();
 
-  const ias = [
-    { icon: <OpenAI size={30} />, label: 'Chat GPT', sub: 'gpt-4.1-mini', linkValue: 'chat-gpt' },
-    { icon: <DeepSeek size={30} />, label: 'Deepseek', sub: 'deepseek-v4-flash', linkValue: 'deepseek' },
-    { icon: <Gemini size={30} />, label: 'Gemini', sub: 'gemini-2.5-flash', linkValue: 'gemini' },
-    { icon: <Grok size={30} />, label: 'Grok', sub: 'grok-4.3', linkValue: 'grok' },
-  ];
-  
+  const ias = AGENTS.map((agent) => {
+    const cfg = agentsDisplay[agent];
+    return {
+      icon: <cfg.Icon size={30} />,
+      label: cfg.label,
+      sub: cfg.model,
+      linkValue: agent,
+    };
+  });
+
   const handleSelect = () => {
     setCurrentIA(currentIALink);
     if(link) {

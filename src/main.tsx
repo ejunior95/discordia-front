@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import { CurrentIAProvider } from './contexts/CurrentIAContext.tsx'
+import { AgentsProvider } from './contexts/AgentsContext.tsx'
 import '@ejunior95/easy-chat/dist/style.css';
 // import { EasyChat } from '@ejunior95/easy-chat';
 
@@ -56,7 +57,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <CurrentIAProvider>
-        <App />
+        <AgentsProvider>
+          <App />
+        </AgentsProvider>
         {/* <>
           {flagPageIsCreating !== "true" && (
           <EasyChat

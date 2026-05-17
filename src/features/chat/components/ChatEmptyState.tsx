@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { MessageCircleQuestion, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { IA_CONFIG, SUGGESTION_CHIPS } from '../chat.constants';
+import { SUGGESTION_CHIPS } from '../chat.constants';
 import { AGENTS } from '../types';
+import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import { pageMotion } from '@/utils/pageMotion';
 
 interface ChatEmptyStateProps {
@@ -10,6 +11,7 @@ interface ChatEmptyStateProps {
 }
 
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
+  const agentsDisplay = useAgentsDisplay();
   return (
     <motion.div
       {...pageMotion}
@@ -30,7 +32,7 @@ export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {AGENTS.map((agent) => {
-            const { Icon, label, subtitle, iconClass } = IA_CONFIG[agent];
+            const { Icon, label, model, iconClass } = agentsDisplay[agent];
             return (
               <Card
                 key={agent}
@@ -41,7 +43,7 @@ export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium leading-none truncate">{label}</p>
-                  <p className="text-xs text-muted-foreground truncate mt-1">{subtitle}</p>
+                  <p className="text-xs text-muted-foreground truncate mt-1">{model}</p>
                 </div>
               </Card>
             );

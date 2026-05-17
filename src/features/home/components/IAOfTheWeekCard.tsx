@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Flame, Sparkles, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentDisplay } from '@/hooks/useAgentDisplay';
 import type { IAOfWeek } from '../home.types';
 
 interface IAOfTheWeekCardProps {
@@ -10,6 +10,7 @@ interface IAOfTheWeekCardProps {
 }
 
 export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
+  const config = useAgentDisplay(data?.agent ?? 'chat-gpt');
   if (!data) {
     return (
       <Card className="h-full overflow-hidden relative">
@@ -33,7 +34,6 @@ export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
     );
   }
 
-  const config = IA_CONFIG[data.agent];
   const Icon = config.Icon;
 
   return (
@@ -51,7 +51,7 @@ export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
           </div>
           <div className="min-w-0">
             <p className="text-2xl md:text-5xl font-extrabold tracking-tight truncate">{config.label}</p>
-            <p className="text-lg text-muted-foreground truncate">{config.subtitle}</p>
+            <p className="text-lg text-muted-foreground truncate">{config.model}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full">

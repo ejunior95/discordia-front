@@ -1,46 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { CurrentUser } from "@/contexts/AuthContext";
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions";
-import { DeepSeek, Gemini, Grok, OpenAI } from "@lobehub/icons";
 import { Crown, Minus, Swords, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAgentDisplay } from "@/hooks/useAgentDisplay";
 
 export type ScoreboardAgent = "gemini" | "grok" | "deepseek" | "chat-gpt";
 export type ScoreboardStatus = "idle" | "playing" | "finished";
 export type ScoreboardResult = "win" | "lose" | "draw";
 
-interface IAMeta {
-  title: string;
-  sub: string;
-  Icon: React.ComponentType<{ size?: number; className?: string }>;
-  accent: string; // tailwind class for the side accent gradient/border
-}
-
-const IA_META: Record<ScoreboardAgent, IAMeta> = {
-  gemini: {
-    title: "Gemini",
-    sub: "gemini-2.5-flash",
-    Icon: Gemini,
-    accent: "from-blue-500/30 to-blue-500/0",
-  },
-  grok: {
-    title: "Grok",
-    sub: "grok-4.3",
-    Icon: Grok,
-    accent: "from-amber-500/30 to-amber-500/0",
-  },
-  deepseek: {
-    title: "DeepSeek",
-    sub: "deepseek-v4-flash",
-    Icon: DeepSeek,
-    accent: "from-indigo-500/30 to-indigo-500/0",
-  },
-  "chat-gpt": {
-    title: "ChatGPT",
-    sub: "gpt-4.1-mini",
-    Icon: OpenAI,
-    accent: "from-emerald-500/30 to-emerald-500/0",
-  },
+const IA_ACCENT: Record<ScoreboardAgent, string> = {
+  gemini: "from-blue-500/30 to-blue-500/0",
+  grok: "from-amber-500/30 to-amber-500/0",
+  deepseek: "from-indigo-500/30 to-indigo-500/0",
+  "chat-gpt": "from-emerald-500/30 to-emerald-500/0",
 };
 
 export interface GameScoreboardProps {
@@ -72,8 +45,9 @@ export function GameScoreboard({
   gameLabel,
   className,
 }: GameScoreboardProps) {
-  const meta = IA_META[ia];
+  const meta = useAgentDisplay(ia);
   const IAIcon = meta.Icon;
+  const accent = IA_ACCENT[ia];
 
   const safeTotal = Math.max(totalRounds, 1);
   const safeRound = Math.min(Math.max(round, 1), safeTotal);
@@ -100,7 +74,7 @@ export function GameScoreboard({
         <div
           className={cn(
             "pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-linear-to-l opacity-60",
-            iaLeads ? meta.accent : "from-muted/40 to-transparent",
+            iaLeads ? accent : "from-muted/40 to-transparent",
           )}
           aria-hidden
         />
@@ -173,10 +147,10 @@ export function GameScoreboard({
                 {iaLeads && status === "playing" && (
                   <Crown size={12} className="text-amber-500 shrink-0" />
                 )}
-                {meta.title}
+                {meta.label}
               </span>
               <span className="text-[10px] sm:text-xs text-muted-foreground truncate hidden sm:block">
-                {meta.sub}
+                {meta.model}
               </span>
             </div>
             <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-muted flex items-center justify-center ring-2 ring-muted-foreground/20 shrink-0">

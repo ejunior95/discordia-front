@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentDisplay } from '@/hooks/useAgentDisplay';
 import { AudioPlayer, type AudioPlayerStatus } from '@/custom-components/AudioPlayer';
 import type { AgentIA } from '@/features/chat/types';
 import type { RapVerse } from '../types';
@@ -31,7 +31,7 @@ export function VerseCard({
   onVote,
   onRetry,
 }: VerseCardProps) {
-  const cfg = IA_CONFIG[agent];
+  const cfg = useAgentDisplay(agent);
   const Icon = cfg.Icon;
   const status = verse?.status ?? 'idle';
   const voted = (verse?.votes ?? 0) > 0;
@@ -50,7 +50,7 @@ export function VerseCard({
           <Icon size={30} />
           <div className="min-w-0">
             <p className="text-md font-semibold leading-tight truncate">{cfg.label}</p>
-            <p className="text-sm truncate opacity-80">{cfg.subtitle}</p>
+            <p className="text-sm truncate opacity-80">{cfg.model}</p>
           </div>
         </div>
         {isWinner && (

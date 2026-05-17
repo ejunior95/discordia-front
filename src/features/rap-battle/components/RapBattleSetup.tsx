@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import { AGENTS, type AgentIA } from '@/features/chat/types';
 import { RAP_THEME_SUGGESTIONS } from '../rap.constants';
 
@@ -13,6 +13,7 @@ interface RapBattleSetupProps {
 }
 
 export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
+  const agentsDisplay = useAgentsDisplay();
   const [selected, setSelected] = useState<AgentIA[]>([]);
   const [theme, setTheme] = useState('');
 
@@ -59,7 +60,7 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {AGENTS.map((agent) => {
-              const cfg = IA_CONFIG[agent];
+              const cfg = agentsDisplay[agent];
               const Icon = cfg.Icon;
               const isSelected = selected.includes(agent);
               const slot = selected.indexOf(agent);
@@ -85,7 +86,7 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
                   </div>
                   <div className="text-center min-w-0 w-full">
                     <p className="font-semibold truncate">{cfg.label}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{cfg.subtitle}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{cfg.model}</p>
                   </div>
                 </button>
               );

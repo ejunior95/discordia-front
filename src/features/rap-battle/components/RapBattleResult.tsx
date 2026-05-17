@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentDisplay } from '@/hooks/useAgentDisplay';
 import type { AgentIA } from '@/features/chat/types';
 import type { RapBattle } from '../types';
 
@@ -104,7 +105,7 @@ export function RapBattleResult({ battle, onReset }: RapBattleResultProps) {
 }
 
 function WinnerDisplay({ winner }: { winner: AgentIA }) {
-  const cfg = IA_CONFIG[winner];
+  const cfg = useAgentDisplay(winner);
   const Icon = cfg.Icon;
   return (
     <div className="flex flex-col items-center gap-3">
@@ -112,7 +113,7 @@ function WinnerDisplay({ winner }: { winner: AgentIA }) {
         <Icon size={48} />
       </div>
       <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight">{cfg.label}</h2>
-      <p className="text-sm text-muted-foreground">{cfg.subtitle}</p>
+      <p className="text-sm text-muted-foreground">{cfg.model}</p>
     </div>
   );
 }

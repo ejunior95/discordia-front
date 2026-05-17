@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
+import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import type { AgentIA } from '@/features/chat/types';
 import { pageMotion } from '@/utils/pageMotion';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png';
@@ -310,6 +311,7 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
 /* -------------------------------------------------------------------------- */
 
 function AgentsStrip() {
+  const agentsDisplay = useAgentsDisplay();
   return (
     <section className="relative border-y border-white/5 bg-zinc-950/60 backdrop-blur">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -318,7 +320,7 @@ function AgentsStrip() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-6">
           {AGENTS.map((agent) => {
-            const cfg = IA_CONFIG[agent];
+            const cfg = agentsDisplay[agent];
             const Icon = cfg.Icon;
             return (
               <div
@@ -330,7 +332,7 @@ function AgentsStrip() {
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-md">{cfg.label}</p>
-                  <p className="text-sm text-zinc-500">{cfg.subtitle}</p>
+                  <p className="text-sm text-zinc-500">{cfg.model}</p>
                 </div>
               </div>
             );
