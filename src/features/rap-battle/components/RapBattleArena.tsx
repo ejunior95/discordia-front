@@ -1,11 +1,12 @@
 import { ArrowRight, Flag, Loader2, Mic, Square, Volume2, Wand2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
 import { TOTAL_ROUNDS } from '../rap.constants';
-import type { RapBattle } from '../types';
+import type { RapBattle, RapVerse } from '../types';
 import { VerseCard } from './VerseCard';
 
 interface RapBattleArenaProps {
@@ -44,6 +45,31 @@ export function RapBattleArena({
   const anyLoading = verseA?.status === 'loading' || verseB?.status === 'loading';
   const isFinalRound = battle.currentRound === TOTAL_ROUNDS;
 
+  const [playingAgent, setPlayingAgent] = useState<AgentIA | null>(null);
+
+  useEffect(() => {
+    setPlayingAgent(null);
+  }, [battle.currentRound]);
+
+  const handlePlayingChange = (agent: AgentIA, isPlaying: boolean) => {
+    setPlayingAgent((current) => {
+      if (isPlaying) return agent;
+      if (current === agent) return null;
+      return current;
+    });
+  };
+
+  const isAudioPending = (v?: RapVerse) => v?.audioStatus === 'pending';
+  const musicDone = roundGenerated && !isAudioPending(verseA) && !isAudioPending(verseB);
+  const hasVote = (verseA?.votes ?? 0) > 0 || (verseB?.votes ?? 0) > 0;
+  const canAdvance = roundGenerated && musicDone && hasVote && !isGenerating;
+
+  let advanceHint: string | null = null;
+  if (roundGenerated && !isGenerating) {
+    if (!musicDone) advanceHint = 'Aguardando a música terminar de gerar…';
+    else if (!hasVote) advanceHint = 'Vote em um MC para continuar.';
+  }
+
   // placar por rounds vencidos
   const wonByA = battle.rounds.filter((r) => (r.verses[a]?.votes ?? 0) > (r.verses[b]?.votes ?? 0)).length;
   const wonByB = battle.rounds.filter((r) => (r.verses[b]?.votes ?? 0) > (r.verses[a]?.votes ?? 0)).length;
@@ -81,6 +107,8 @@ export function RapBattleArena({
           verse={verseA}
           side="left"
           canVote={roundGenerated && !isGenerating}
+          audioDisabled={playingAgent !== null && playingAgent !== a}
+          onAudioPlayingChange={(isPlaying) => handlePlayingChange(a, isPlaying)}
           onVote={() => onVote(a)}
           onRetry={() => onRetry(a)}
         />
@@ -89,6 +117,8 @@ export function RapBattleArena({
           verse={verseB}
           side="right"
           canVote={roundGenerated && !isGenerating}
+          audioDisabled={playingAgent !== null && playingAgent !== b}
+          onAudioPlayingChange={(isPlaying) => handlePlayingChange(b, isPlaying)}
           onVote={() => onVote(b)}
           onRetry={() => onRetry(b)}
         />
@@ -98,8 +128,21 @@ export function RapBattleArena({
       <Card className="py-4">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 px-4 md:px-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Volume2 size={14} />
-            <span>Em breve: vozes geradas + batida de fundo.</span>
+            {advanceHint ? (
+              <>
+                {!musicDone ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Volume2 size={14} />
+                )}
+                <span>{advanceHint}</span>
+              </>
+            ) : (
+              <>
+                <Volume2 size={14} />
+                <span>Em breve: vozes geradas + batida de fundo.</span>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2 justify-end">
             <Button variant="destructive" onClick={onReset} className="cursor-pointer">
@@ -121,12 +164,20 @@ export function RapBattleArena({
                 Gerar round {battle.currentRound}
               </Button>
             ) : roundGenerated && !isFinalRound ? (
-              <Button onClick={onNextRound} className="cursor-pointer gap-2">
+              <Button
+                onClick={onNextRound}
+                disabled={!canAdvance}
+                className="cursor-pointer gap-2"
+              >
                 Próximo round
                 <ArrowRight size={16} />
               </Button>
             ) : roundGenerated && isFinalRound ? (
-              <Button onClick={onFinish} className="cursor-pointer gap-2">
+              <Button
+                onClick={onFinish}
+                disabled={!canAdvance}
+                className="cursor-pointer gap-2"
+              >
                 <Flag size={16} />
                 Finalizar batalha
               </Button>

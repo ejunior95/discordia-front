@@ -11,7 +11,22 @@ interface AudioPlayerProps {
     error?: string;
     label?: string;
     className?: string;
+    disabled?: boolean;
+    onPlayingChange?: (isPlaying: boolean) => void;
 }
+
+const PENDING_MESSAGES = [
+    'Procurando a batida perfeita…',
+    'Afinando o autotune…',
+    'Sincronizando rimas com o BPM…',
+    'Trocando ideia com o produtor…',
+    'Ajustando os graves no estúdio…',
+    'Aquecendo o microfone…',
+    'Mixando vocais e instrumentais…',
+    'Polindo a faixa final…',
+    'Negociando com as musas do hip hop…',
+    'Quase lá, mantenha o flow…',
+];
 
 function formatTime(seconds: number): string {
     if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
@@ -20,13 +35,35 @@ function formatTime(seconds: number): string {
     return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function AudioPlayer({ status, audioUrl, error, label, className }: AudioPlayerProps) {
+export function AudioPlayer({ status, audioUrl, error, label, className, disabled, onPlayingChange }: AudioPlayerProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isMuted, setIsMuted] = useState(false);
+    const [pendingMsgIndex, setPendingMsgIndex] = useState(0);
+    const onPlayingChangeRef = useRef(onPlayingChange);
+    useEffect(() => {
+        onPlayingChangeRef.current = onPlayingChange;
+    }, [onPlayingChange]);
+
+    useEffect(() => {
+        if (status !== 'pending') return;
+        setPendingMsgIndex(Math.floor(Math.random() * PENDING_MESSAGES.length));
+        const id = setInterval(() => {
+            setPendingMsgIndex((i) => (i + 1) % PENDING_MESSAGES.length);
+        }, 3500);
+        return () => clearInterval(id);
+    }, [status]);
+
+    useEffect(() => {
+        if (!disabled) return;
+        const audio = audioRef.current;
+        if (audio && !audio.paused) {
+            audio.pause();
+        }
+    }, [disabled]);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -34,9 +71,18 @@ export function AudioPlayer({ status, audioUrl, error, label, className }: Audio
 
         const onTime = () => setCurrentTime(audio.currentTime);
         const onLoaded = () => setDuration(audio.duration || 0);
-        const onPlay = () => setIsPlaying(true);
-        const onPause = () => setIsPlaying(false);
-        const onEnded = () => setIsPlaying(false);
+        const onPlay = () => {
+            setIsPlaying(true);
+            onPlayingChangeRef.current?.(true);
+        };
+        const onPause = () => {
+            setIsPlaying(false);
+            onPlayingChangeRef.current?.(false);
+        };
+        const onEnded = () => {
+            setIsPlaying(false);
+            onPlayingChangeRef.current?.(false);
+        };
         const onVolume = () => {
             setVolume(audio.volume);
             setIsMuted(audio.muted);
@@ -65,6 +111,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className }: Audio
         const audio = audioRef.current;
         if (!audio) return;
         if (audio.paused) {
+            if (disabled) return;
             void audio.play();
         } else {
             audio.pause();
@@ -94,10 +141,39 @@ export function AudioPlayer({ status, audioUrl, error, label, className }: Audio
     };
 
     if (status === 'pending') {
+        const message = label ?? PENDING_MESSAGES[pendingMsgIndex];
         return (
-            <div className={cn("flex items-center gap-2 text-xs text-muted-foreground py-2", className)}>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>{label ?? 'Gerando áudio...'}</span>
+            <div
+                className={cn(
+                    "flex flex-col gap-2 rounded-lg border border-dashed bg-card/40 px-3 py-2.5",
+                    className,
+                )}
+                role="status"
+                aria-live="polite"
+            >
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin shrink-0 text-primary" />
+                    <Music2 className="h-4 w-4 shrink-0 text-primary/70" aria-hidden="true" />
+                    <span
+                        key={message}
+                        className="min-w-0 truncate animate-[audioPendingFade_0.5s_ease-out]"
+                    >
+                        {message}
+                    </span>
+                </div>
+                <div className="relative h-1 overflow-hidden rounded-full bg-muted">
+                    <div className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-fuchsia-500 via-primary to-cyan-500 animate-[audioPendingShimmer_1.6s_ease-in-out_infinite]" />
+                </div>
+                <style>{`
+                    @keyframes audioPendingFade {
+                        from { opacity: 0; transform: translateY(-2px); }
+                        to   { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes audioPendingShimmer {
+                        0%   { transform: translateX(-100%); }
+                        100% { transform: translateX(400%); }
+                    }
+                `}</style>
             </div>
         );
     }
@@ -129,8 +205,10 @@ export function AudioPlayer({ status, audioUrl, error, label, className }: Audio
                     size="icon"
                     variant="default"
                     onClick={togglePlay}
+                    disabled={disabled && !isPlaying}
                     className="h-8 w-8 rounded-full shrink-0"
                     aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}
+                    title={disabled && !isPlaying ? 'Pause o outro player para reproduzir' : undefined}
                 >
                     {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-px" />}
                 </Button>

@@ -14,11 +14,23 @@ interface VerseCardProps {
   side: 'left' | 'right';
   canVote: boolean;
   isWinner?: boolean;
+  audioDisabled?: boolean;
+  onAudioPlayingChange?: (isPlaying: boolean) => void;
   onVote: () => void;
   onRetry: () => void;
 }
 
-export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRetry }: VerseCardProps) {
+export function VerseCard({
+  agent,
+  verse,
+  side,
+  canVote,
+  isWinner,
+  audioDisabled,
+  onAudioPlayingChange,
+  onVote,
+  onRetry,
+}: VerseCardProps) {
   const cfg = IA_CONFIG[agent];
   const Icon = cfg.Icon;
   const status = verse?.status ?? 'idle';
@@ -60,7 +72,8 @@ export function VerseCard({ agent, verse, side, canVote, isWinner, onVote, onRet
                 status={verse.audioStatus as AudioPlayerStatus}
                 audioUrl={verse.audioUrl}
                 error={verse.audioError}
-                label="Gerando música..."
+                disabled={audioDisabled}
+                onPlayingChange={onAudioPlayingChange}
               />
             )}
           </>
