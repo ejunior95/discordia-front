@@ -40,6 +40,8 @@ export function Round({ round, onVote, onRetry }: RoundProps) {
             agent={agent}
             response={round.responses[agent]}
             isWinner={round.winner === agent}
+            hasVoted={round.votedAgent === agent}
+            votingDisabled={Boolean(round.votedAgent) || !round.roundId}
             onVote={() => onVote(agent)}
             onRetry={() => onRetry(agent)}
           />

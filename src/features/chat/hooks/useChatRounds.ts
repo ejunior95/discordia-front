@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askToAll, askToOne } from '@/services/main.service';
+import { askToAll, askToOne, voteOnRound } from '@/services/main.service';
 import { ROUNDS_STORAGE_KEY } from '../chat.constants';
 import { AGENTS, type AgentIA, type AIResponse, type Round } from '../types';
 
 function createInitialResponses(): Record<AgentIA, AIResponse> {
   return AGENTS.reduce((acc, agent) => {
-    acc[agent] = { agent, status: 'loading', votes: 0 };
+    acc[agent] = { agent, status: 'loading' };
     return acc;
   }, {} as Record<AgentIA, AIResponse>);
 }
@@ -32,7 +32,7 @@ function loadRoundsFromStorage(): Round[] {
         if (existing?.status === 'loading') {
           acc[agent] = { ...existing, status: 'error', error: 'Sessão encerrada antes da resposta.' };
         } else {
-          acc[agent] = existing ?? { agent, status: 'error', votes: 0, error: 'Resposta não encontrada' };
+          acc[agent] = existing ?? { agent, status: 'error', error: 'Resposta não encontrada' };
         }
         return acc;
       }, {} as Record<AgentIA, AIResponse>),
@@ -40,22 +40,6 @@ function loadRoundsFromStorage(): Round[] {
   } catch {
     return [];
   }
-}
-
-function computeWinner(responses: Record<AgentIA, AIResponse>): AgentIA | undefined {
-  let winner: AgentIA | undefined;
-  let max = 0;
-  for (const agent of AGENTS) {
-    const v = responses[agent].votes;
-    if (v > max) {
-      max = v;
-      winner = agent;
-    } else if (v === max && v > 0) {
-      // empate → ninguém é vencedor
-      winner = undefined;
-    }
-  }
-  return max > 0 ? winner : undefined;
 }
 
 export function useChatRounds() {
@@ -108,11 +92,12 @@ export function useChatRounds() {
 
       updateRound(newRound.id, (r) => ({
         ...r,
+        roundId: data.roundId,
         responses: AGENTS.reduce((acc, agent) => {
-          const msg = data[agent]?.response;
+          const msg = data.responses?.[agent]?.response;
           acc[agent] = msg
-            ? { agent, status: 'success', message: msg, votes: 0 }
-            : { agent, status: 'error', error: 'Sem resposta', votes: 0 };
+            ? { agent, status: 'success', message: msg }
+            : { agent, status: 'error', error: 'Sem resposta' };
           return acc;
         }, {} as Record<AgentIA, AIResponse>),
       }));
@@ -126,7 +111,7 @@ export function useChatRounds() {
       updateRound(newRound.id, (r) => ({
         ...r,
         responses: AGENTS.reduce((acc, agent) => {
-          acc[agent] = { agent, status: 'error', error: errorMsg, votes: 0 };
+          acc[agent] = { agent, status: 'error', error: errorMsg };
           return acc;
         }, {} as Record<AgentIA, AIResponse>),
       }));
@@ -154,7 +139,7 @@ export function useChatRounds() {
         ...r,
         responses: {
           ...r.responses,
-          [agent]: { agent, status: 'success', message: msg, votes: r.responses[agent].votes },
+          [agent]: { agent, status: 'success', message: msg },
         },
       }));
     } catch (err) {
@@ -170,16 +155,29 @@ export function useChatRounds() {
     }
   }, [rounds, updateRound]);
 
-  const vote = useCallback((roundId: string, agent: AgentIA) => {
-    setRounds((prev) => prev.map((r) => {
-      if (r.id !== roundId) return r;
-      const newResponses = {
-        ...r.responses,
-        [agent]: { ...r.responses[agent], votes: r.responses[agent].votes + 1 },
-      };
-      return { ...r, responses: newResponses, winner: computeWinner(newResponses) };
-    }));
-  }, []);
+  const vote = useCallback(async (roundId: string, agent: AgentIA) => {
+    const round = rounds.find((r) => r.id === roundId);
+    if (!round || round.votedAgent || !round.roundId) return;
+
+    // optimistic
+    setRounds((prev) => prev.map((r) =>
+      r.id === roundId ? { ...r, votedAgent: agent, winner: agent } : r,
+    ));
+
+    try {
+      await voteOnRound(round.roundId, agent);
+    } catch (err) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 409) {
+        // alguém já votou: mantém o estado local apenas se 409 indica voto duplicado
+        return;
+      }
+      // reverte
+      setRounds((prev) => prev.map((r) =>
+        r.id === roundId ? { ...r, votedAgent: undefined, winner: undefined } : r,
+      ));
+    }
+  }, [rounds]);
 
   const abort = useCallback(() => {
     abortRef.current?.abort();

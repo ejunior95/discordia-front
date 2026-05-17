@@ -34,10 +34,10 @@ function computeStats(rounds: Round[]): ChatStats {
 
   let totalVotes = 0;
   for (const round of rounds) {
-    for (const agent of AGENTS) {
-      const v = round.responses?.[agent]?.votes ?? 0;
-      votesByAgent[agent] += v;
-      totalVotes += v;
+    const voted = round.votedAgent;
+    if (voted && AGENTS.includes(voted)) {
+      votesByAgent[voted] += 1;
+      totalVotes += 1;
     }
   }
 

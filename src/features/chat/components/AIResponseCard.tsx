@@ -10,11 +10,13 @@ interface AIResponseCardProps {
   agent: AgentIA;
   response: AIResponse;
   isWinner: boolean;
+  hasVoted: boolean;
+  votingDisabled: boolean;
   onVote: () => void;
   onRetry: () => void;
 }
 
-export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: AIResponseCardProps) {
+export function AIResponseCard({ agent, response, isWinner, hasVoted, votingDisabled, onVote, onRetry }: AIResponseCardProps) {
   const config = IA_CONFIG[agent];
   const { Icon, label, subtitle, iconClass, accent } = config;
 
@@ -51,15 +53,16 @@ export function AIResponseCard({ agent, response, isWinner, onVote, onRetry }: A
 
       <CardFooter className="flex items-center justify-between pt-3 border-t gap-2">
         <Button
-          variant="ghost"
+          variant={hasVoted ? 'default' : 'ghost'}
           size="sm"
           onClick={onVote}
-          disabled={response.status !== 'success'}
+          disabled={response.status !== 'success' || votingDisabled}
           className="cursor-pointer gap-1"
-          aria-label={`Votar em ${label}`}
+          aria-label={hasVoted ? `Voto registrado em ${label}` : `Votar em ${label}`}
+          title={votingDisabled && !hasVoted ? 'Voto já registrado neste round' : undefined}
         >
-          <ThumbsUp size={16} />
-          <span className="text-xs tabular-nums">{response.votes}</span>
+          {hasVoted ? <Check size={16} /> : <ThumbsUp size={16} />}
+          <span className="text-xs">{hasVoted ? 'Seu voto' : 'Votar'}</span>
         </Button>
         <div className="flex items-center gap-1">
           {response.status === 'success' && response.message && (

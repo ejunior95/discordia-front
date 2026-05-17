@@ -2,9 +2,10 @@ import { Clock, Trophy } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
-import { RECENT_BATTLES } from '../home.mocks';
+import type { RecentRound } from '../home.types';
 
-function formatRelativeTime(minutes: number): string {
+function formatRelativeTime(iso: string): string {
+  const minutes = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000));
   if (minutes < 1) return 'agora';
   if (minutes < 60) return `há ${minutes} min`;
   const hours = Math.floor(minutes / 60);
@@ -13,7 +14,11 @@ function formatRelativeTime(minutes: number): string {
   return `há ${days}d`;
 }
 
-export function RecentActivityCard() {
+interface RecentActivityCardProps {
+  rounds: RecentRound[];
+}
+
+export function RecentActivityCard({ rounds }: RecentActivityCardProps) {
   return (
     <Card className="h-full">
       <CardHeader>
@@ -24,9 +29,13 @@ export function RecentActivityCard() {
         <CardDescription>Últimas batalhas e seus vencedores</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        {RECENT_BATTLES.map((battle) => {
+        {rounds.length === 0 && (
+          <p className="text-sm text-muted-foreground italic">Nenhuma batalha registrada ainda.</p>
+        )}
+        {rounds.map((battle) => {
           const cfg = IA_CONFIG[battle.winner];
           const Icon = cfg.Icon;
+          const when = battle.votedAt ?? battle.createdAt;
           return (
             <div
               key={battle.id}
@@ -43,7 +52,7 @@ export function RecentActivityCard() {
                   <Trophy size={11} className="text-amber-500" />
                   {cfg.label}
                   <span aria-hidden>·</span>
-                  <span>{formatRelativeTime(battle.minutesAgo)}</span>
+                  <span>{formatRelativeTime(when)}</span>
                 </p>
               </div>
             </div>

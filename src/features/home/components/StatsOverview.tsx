@@ -1,7 +1,8 @@
 import { Crown, MessageSquare, Swords, ThumbsUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
-import { GLOBAL_STATS } from '../home.mocks';
+import type { AgentIA } from '@/features/chat/types';
+import type { HomeTotals } from '../home.types';
 
 interface StatItem {
   label: string;
@@ -11,33 +12,38 @@ interface StatItem {
   hint?: string;
 }
 
-export function StatsOverview() {
-  const leader = IA_CONFIG[GLOBAL_STATS.leader];
+interface StatsOverviewProps {
+  totals: HomeTotals;
+  leader: AgentIA | null;
+}
+
+export function StatsOverview({ totals, leader }: StatsOverviewProps) {
+  const leaderConfig = leader ? IA_CONFIG[leader] : null;
   const stats: StatItem[] = [
     {
       label: 'Rounds disputados',
-      value: GLOBAL_STATS.totalRounds.toLocaleString('pt-BR'),
+      value: totals.rounds.toLocaleString('pt-BR'),
       icon: Swords,
       iconClass: 'bg-primary/10 text-primary',
     },
     {
       label: 'Perguntas feitas',
-      value: GLOBAL_STATS.totalQuestions.toLocaleString('pt-BR'),
+      value: totals.questions.toLocaleString('pt-BR'),
       icon: MessageSquare,
       iconClass: 'bg-blue-500/10 text-blue-500',
     },
     {
       label: 'Votos computados',
-      value: GLOBAL_STATS.totalVotes.toLocaleString('pt-BR'),
+      value: totals.votes.toLocaleString('pt-BR'),
       icon: ThumbsUp,
       iconClass: 'bg-emerald-500/10 text-emerald-500',
     },
     {
       label: 'IA líder',
-      value: leader.label,
+      value: leaderConfig?.label ?? '—',
       icon: Crown,
       iconClass: 'bg-amber-500/10 text-amber-500',
-      hint: 'No topo do ranking geral',
+      hint: leaderConfig ? 'No topo do ranking geral' : 'Sem votos ainda',
     },
   ];
 

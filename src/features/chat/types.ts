@@ -7,15 +7,16 @@ export interface AIResponse {
   status: AIResponseStatus;
   message?: string;
   error?: string;
-  votes: number;
 }
 
 export interface Round {
   id: string;
+  roundId?: string;
   question: string;
   askedAt: string;
   responses: Record<AgentIA, AIResponse>;
   winner?: AgentIA;
+  votedAgent?: AgentIA;
 }
 
 export const AGENTS: AgentIA[] = ['chat-gpt', 'gemini', 'deepseek', 'grok'];

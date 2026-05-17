@@ -2,18 +2,13 @@ import type { AxiosResponse } from "axios";
 import { api } from "@/server/api";
 
 export interface IResponseApiAllIa {
-    'chat-gpt': {
-        response: string
-    },
-    gemini: {
-        response: string
-    },
-    deepseek: {
-        response: string
-    },
-    grok: {
-        response: string
-    }
+    roundId: string;
+    responses: {
+        'chat-gpt': { response: string };
+        gemini: { response: string };
+        deepseek: { response: string };
+        grok: { response: string };
+    };
 }
 
 export interface IResponseApiOneIa {
@@ -86,6 +81,15 @@ export async function askToAll(question: string, signal?: AbortSignal) {
         method: 'POST',
         url: 'ask-to-all',
         data: { question },
+        signal,
+    });
+}
+
+export async function voteOnRound(roundId: string, agent: string, signal?: AbortSignal) {
+    return api.request<{ roundId: string; winner: string; votedAt: string }>({
+        method: 'POST',
+        url: `rounds/${roundId}/vote`,
+        data: { agent },
         signal,
     });
 }

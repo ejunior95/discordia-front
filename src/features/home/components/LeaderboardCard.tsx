@@ -2,10 +2,14 @@ import { Trophy, Medal, Flame } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
-import { IA_STATS } from '../home.mocks';
+import type { LeaderboardEntry } from '../home.types';
 
-export function LeaderboardCard() {
-  const ranked = [...IA_STATS].sort((a, b) => b.wins - a.wins);
+interface LeaderboardCardProps {
+  entries: LeaderboardEntry[];
+}
+
+export function LeaderboardCard({ entries }: LeaderboardCardProps) {
+  const ranked = [...entries].sort((a, b) => b.wins - a.wins);
   const maxWins = ranked[0]?.wins ?? 1;
 
   return (
@@ -22,7 +26,7 @@ export function LeaderboardCard() {
           const config = IA_CONFIG[stat.agent];
           const Icon = config.Icon;
           const winRate = stat.rounds ? Math.round((stat.wins / stat.rounds) * 100) : 0;
-          const barWidth = Math.max(8, Math.round((stat.wins / maxWins) * 100));
+          const barWidth = Math.max(8, Math.round((stat.wins / Math.max(maxWins, 1)) * 100));
           const position = index + 1;
 
           return (
