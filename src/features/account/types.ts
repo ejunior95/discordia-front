@@ -86,20 +86,10 @@ export interface AIPreferences {
   comparisonMode: 'parallel' | 'sequential';
 }
 
-export interface ProfileExtras {
-  bio: string;
-  socials: {
-    twitter: string;
-    github: string;
-    linkedin: string;
-  };
-}
-
 export interface UserPreferences {
   density: DensityMode;
   language: LanguageCode;
   anonymousTelemetry: boolean;
   notifications: NotificationPreferences;
   ai: AIPreferences;
-  profile: ProfileExtras;
 }

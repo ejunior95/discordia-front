@@ -1,8 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ROUNDS_STORAGE_KEY } from '@/features/chat/chat.constants';
-import { AGENTS, type AgentIA, type Round } from '@/features/chat/types';
+import { useEffect, useState } from 'react';
+import { AGENTS, type AgentIA } from '@/features/chat/types';
+import {
+  fetchMyRecentRounds,
+  fetchMyStats,
+  type MyRoundEntry,
+} from '@/services/stats.service';
 
-interface ChatStats {
+export interface RecentRoundEntry {
+  id: string;
+  question: string;
+  askedAt: string;
+  winner: AgentIA | null;
+  votedAt: string | null;
+}
+
+export interface ChatStats {
   totalRounds: number;
   totalVotes: number;
   uniqueAgentsVoted: number;
@@ -10,84 +22,83 @@ interface ChatStats {
   topAgent?: AgentIA;
   topAgentVotes: number;
   topAgentShare: number;
-  recentRounds: Round[];
-  /** rodadas no mês corrente (útil pra limite mensal) */
+  recentRounds: RecentRoundEntry[];
   roundsThisMonth: number;
+  loading: boolean;
+  error: string | null;
 }
 
-function loadRounds(): Round[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(ROUNDS_STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as Round[];
-  } catch {
-    return [];
-  }
+function emptyVotesByAgent(): Record<AgentIA, number> {
+  return AGENTS.reduce(
+    (acc, a) => {
+      acc[a] = 0;
+      return acc;
+    },
+    {} as Record<AgentIA, number>,
+  );
 }
 
-function computeStats(rounds: Round[]): ChatStats {
-  const votesByAgent = AGENTS.reduce((acc, a) => {
-    acc[a] = 0;
-    return acc;
-  }, {} as Record<AgentIA, number>);
+const INITIAL_STATS: ChatStats = {
+  totalRounds: 0,
+  totalVotes: 0,
+  uniqueAgentsVoted: 0,
+  votesByAgent: emptyVotesByAgent(),
+  topAgent: undefined,
+  topAgentVotes: 0,
+  topAgentShare: 0,
+  recentRounds: [],
+  roundsThisMonth: 0,
+  loading: true,
+  error: null,
+};
 
-  let totalVotes = 0;
-  for (const round of rounds) {
-    const voted = round.votedAgent;
-    if (voted && AGENTS.includes(voted)) {
-      votesByAgent[voted] += 1;
-      totalVotes += 1;
-    }
-  }
-
-  let topAgent: AgentIA | undefined;
-  let topAgentVotes = 0;
-  for (const agent of AGENTS) {
-    if (votesByAgent[agent] > topAgentVotes) {
-      topAgentVotes = votesByAgent[agent];
-      topAgent = agent;
-    }
-  }
-
-  const uniqueAgentsVoted = AGENTS.filter((a) => votesByAgent[a] > 0).length;
-  const topAgentShare = totalVotes > 0 ? topAgentVotes / totalVotes : 0;
-
-  const now = new Date();
-  const roundsThisMonth = rounds.filter((r) => {
-    const d = new Date(r.askedAt);
-    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-  }).length;
-
-  const recentRounds = [...rounds]
-    .sort((a, b) => new Date(b.askedAt).getTime() - new Date(a.askedAt).getTime())
-    .slice(0, 5);
-
+function normalizeRound(r: MyRoundEntry): RecentRoundEntry {
   return {
-    totalRounds: rounds.length,
-    totalVotes,
-    uniqueAgentsVoted,
-    votesByAgent,
-    topAgent,
-    topAgentVotes,
-    topAgentShare,
-    recentRounds,
-    roundsThisMonth,
+    id: r.id,
+    question: r.question,
+    askedAt: r.askedAt,
+    winner: r.winner,
+    votedAt: r.votedAt,
   };
 }
 
-export function useChatStats() {
-  const [rounds, setRounds] = useState<Round[]>(loadRounds);
+export function useChatStats(): ChatStats {
+  const [state, setState] = useState<ChatStats>(INITIAL_STATS);
 
   useEffect(() => {
-    function handleStorage(e: StorageEvent) {
-      if (e.key === ROUNDS_STORAGE_KEY) {
-        setRounds(loadRounds());
-      }
-    }
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    let cancelled = false;
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+
+    Promise.all([fetchMyStats(), fetchMyRecentRounds(5)])
+      .then(([stats, rounds]) => {
+        if (cancelled) return;
+        setState({
+          totalRounds: stats.totalRounds,
+          totalVotes: stats.totalVotes,
+          uniqueAgentsVoted: stats.uniqueAgentsVoted,
+          votesByAgent: { ...emptyVotesByAgent(), ...stats.votesByAgent },
+          topAgent: stats.topAgent ?? undefined,
+          topAgentVotes: stats.topAgentVotes,
+          topAgentShare: stats.topAgentShare,
+          recentRounds: rounds.map(normalizeRound),
+          roundsThisMonth: stats.roundsThisMonth,
+          loading: false,
+          error: null,
+        });
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: (err as Error)?.message ?? 'Erro ao carregar estatísticas',
+        }));
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  return useMemo(() => computeStats(rounds), [rounds]);
+  return state;
 }

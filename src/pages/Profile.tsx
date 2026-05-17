@@ -13,16 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import PageHeader from '@/custom-components/PageHeader';
-import {
-  BADGES_CATALOG,
-  PLANS,
-  mockCurrentSubscription,
-} from '@/features/account/account.constants';
+import { BADGES_CATALOG } from '@/features/account/account.constants';
 import { useChatStats } from '@/features/account/hooks/useChatStats';
-import { usePreferences } from '@/features/account/hooks/usePreferences';
+import { useBilling } from '@/features/account/hooks/useBilling';
 import { formatLongDate, formatShortDate } from '@/features/account/format';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import { useAuth } from '@/hooks/useAuth';
+import { updateUserProfile } from '@/services/user.service';
 import { formatFallbackAvatarStr } from '@/utils/globalFunctions';
 import { pageMotion } from '@/utils/pageMotion';
 import { cn } from '@/lib/utils';
@@ -30,6 +27,7 @@ import {
   Award,
   Github,
   Linkedin,
+  Loader2,
   Lock,
   MessagesSquare,
   Pencil,
@@ -44,20 +42,30 @@ import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const stats = useChatStats();
-  const { preferences, update } = usePreferences();
+  const billing = useBilling();
 
-  const [bio, setBio] = useState(preferences.profile.bio);
-  const [socials, setSocials] = useState(preferences.profile.socials);
+  const [bio, setBio] = useState(user?.bio ?? '');
+  const [socials, setSocials] = useState({
+    twitter: user?.socials?.twitter ?? '',
+    github: user?.socials?.github ?? '',
+    linkedin: user?.socials?.linkedin ?? '',
+  });
+  const [saving, setSaving] = useState(false);
 
-  // sincroniza se preferências mudarem por outro lugar
   useEffect(() => {
-    setBio(preferences.profile.bio);
-    setSocials(preferences.profile.socials);
-  }, [preferences.profile.bio, preferences.profile.socials]);
+    setBio(user?.bio ?? '');
+    setSocials({
+      twitter: user?.socials?.twitter ?? '',
+      github: user?.socials?.github ?? '',
+      linkedin: user?.socials?.linkedin ?? '',
+    });
+  }, [user?.bio, user?.socials?.twitter, user?.socials?.github, user?.socials?.linkedin]);
 
-  const currentPlan = PLANS.find((p) => p.id === mockCurrentSubscription.planId) ?? PLANS[0];
+  const currentPlan = billing.subscription
+    ? billing.plans.find((p) => p.slug === billing.subscription?.planSlug) ?? null
+    : null;
   const favorite = stats.topAgent ? IA_CONFIG[stats.topAgent] : null;
   const favoriteShare = stats.totalVotes > 0 ? Math.round(stats.topAgentShare * 100) : 0;
 
@@ -69,15 +77,36 @@ export default function Profile() {
     topAgentVotes: stats.topAgentVotes,
   };
 
+  const userBio = user?.bio ?? '';
+  const userSocials = user?.socials ?? {};
   const bioChanged =
-    bio !== preferences.profile.bio ||
-    socials.twitter !== preferences.profile.socials.twitter ||
-    socials.github !== preferences.profile.socials.github ||
-    socials.linkedin !== preferences.profile.socials.linkedin;
+    bio !== userBio ||
+    socials.twitter !== (userSocials.twitter ?? '') ||
+    socials.github !== (userSocials.github ?? '') ||
+    socials.linkedin !== (userSocials.linkedin ?? '');
 
-  const handleSaveBio = () => {
-    update({ profile: { bio, socials } });
-    toast.success('Bio atualizada.');
+  const handleSaveBio = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await updateUserProfile(user.id, {
+        bio,
+        socials: {
+          twitter: socials.twitter || undefined,
+          github: socials.github || undefined,
+          linkedin: socials.linkedin || undefined,
+        },
+      });
+      setUser({ ...user, bio, socials });
+      toast.success('Bio atualizada.');
+    } catch (err) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        'Erro ao atualizar bio';
+      toast.error(msg);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const statCards = [
@@ -139,7 +168,11 @@ export default function Profile() {
                 Membro desde {formatLongDate(user?.createdAt)}
               </p>
               <div className="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start">
-                <Badge variant="secondary">Plano {currentPlan.name}</Badge>
+                {currentPlan ? (
+                  <Badge variant="secondary">Plano {currentPlan.name}</Badge>
+                ) : billing.loading ? (
+                  <Badge variant="outline">Carregando plano…</Badge>
+                ) : null}
                 {favorite ? (
                   <Badge variant="outline" className="gap-1">
                     <Sparkles className="h-3 w-3" />
@@ -225,8 +258,15 @@ export default function Profile() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button onClick={handleSaveBio} disabled={!bioChanged}>
-                Salvar
+              <Button onClick={handleSaveBio} disabled={!bioChanged || saving}>
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Salvando…
+                  </>
+                ) : (
+                  'Salvar'
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -234,14 +274,18 @@ export default function Profile() {
           <Card>
             <CardHeader>
               <CardTitle>Plano atual</CardTitle>
-              <CardDescription>{currentPlan.description}</CardDescription>
+              <CardDescription>
+                {currentPlan?.description ?? (billing.loading ? 'Carregando…' : 'Plano indisponível')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-3xl font-bold">{currentPlan.name}</p>
+              <p className="text-3xl font-bold">{currentPlan?.name ?? '—'}</p>
               <p className="text-muted-foreground text-sm">
-                {currentPlan.monthlyRoundsLimit
+                {currentPlan?.monthlyRoundsLimit
                   ? `${stats.roundsThisMonth} / ${currentPlan.monthlyRoundsLimit} rodadas este mês`
-                  : 'Rodadas ilimitadas'}
+                  : currentPlan
+                    ? 'Rodadas ilimitadas'
+                    : '—'}
               </p>
             </CardContent>
             <CardFooter>
@@ -304,7 +348,12 @@ export default function Profile() {
             <CardDescription>Suas últimas comparações de IA.</CardDescription>
           </CardHeader>
           <CardContent>
-            {stats.recentRounds.length === 0 ? (
+            {stats.loading ? (
+              <div className="text-muted-foreground flex flex-col items-center gap-2 py-8 text-center text-sm">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <p>Carregando rodadas…</p>
+              </div>
+            ) : stats.recentRounds.length === 0 ? (
               <div className="text-muted-foreground flex flex-col items-center gap-2 py-8 text-center text-sm">
                 <MessagesSquare className="h-8 w-8" />
                 <p>Você ainda não fez nenhuma rodada.</p>

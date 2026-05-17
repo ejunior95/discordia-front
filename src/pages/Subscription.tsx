@@ -47,21 +47,18 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/custom-components/PageHeader';
-import {
-  PLANS,
-  mockCurrentSubscription,
-  mockInvoices,
-  mockPaymentMethod,
-} from '@/features/account/account.constants';
+import { useBilling } from '@/features/account/hooks/useBilling';
+import type { BillingInvoice, BillingPlan } from '@/services/billing.service';
 import { useChatStats } from '@/features/account/hooks/useChatStats';
 import { formatCurrency, formatShortDate } from '@/features/account/format';
-import type { BillingCycle, PlanId } from '@/features/account/types';
 import { cn } from '@/lib/utils';
-import { Check, CreditCard, Download, Sparkles } from 'lucide-react';
+import { Check, CreditCard, Download, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { pageMotion } from '@/utils/pageMotion';
+
+type BillingCycle = 'monthly' | 'yearly';
 
 const FAQ = [
   {
@@ -79,7 +76,7 @@ const FAQ = [
 ];
 
 const STATUS_VARIANT: Record<
-  (typeof mockInvoices)[number]['status'],
+  BillingInvoice['status'],
   { label: string; className: string }
 > = {
   paid: { label: 'Pago', className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30' },
@@ -89,34 +86,39 @@ const STATUS_VARIANT: Record<
 
 export default function Subscription() {
   const stats = useChatStats();
-  const [cycle, setCycle] = useState<BillingCycle>(mockCurrentSubscription.cycle);
+  const billing = useBilling();
+  const { plans, subscription, invoices, paymentMethod, loading: billingLoading } = billing;
 
-  const currentPlan = useMemo(
-    () => PLANS.find((p) => p.id === mockCurrentSubscription.planId) ?? PLANS[0],
-    [],
+  const currentPlan: BillingPlan | null = subscription
+    ? plans.find((p) => p.slug === subscription.planSlug) ?? null
+    : null;
+
+  const [cycle, setCycle] = useState<BillingCycle>(
+    (subscription?.cycle as BillingCycle | undefined) ?? 'monthly',
   );
 
-  const usagePercent = currentPlan.monthlyRoundsLimit
+  useEffect(() => {
+    if (subscription?.cycle) setCycle(subscription.cycle as BillingCycle);
+  }, [subscription?.cycle]);
+
+  const usagePercent = currentPlan?.monthlyRoundsLimit
     ? Math.min(100, Math.round((stats.roundsThisMonth / currentPlan.monthlyRoundsLimit) * 100))
     : 0;
 
-  const handleSelectPlan = (planId: PlanId) => {
-    if (planId === currentPlan.id) return;
-    // TODO(backend): redirecionar para checkout (Stripe/Pagar.me).
-    toast.success(`Solicitação para o plano ${planId} enviada.`, {
-      description: 'Integração de pagamento ainda não implementada.',
+  const handleSelectPlan = (planSlug: string) => {
+    if (currentPlan && planSlug === currentPlan.slug) return;
+    toast.info('Pagamentos ainda não estão disponíveis.', {
+      description: 'A assinatura paga estará disponível em breve.',
     });
   };
 
   const handleCancel = () => {
-    // TODO(backend): chamar POST /billing/cancel
-    toast('Assinatura cancelada ao fim do ciclo (mock).');
+    toast.info('Cancelamento ainda não está disponível.');
   };
 
   const handleUpdatePayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO(backend): tokenizar via Stripe Elements e atualizar.
-    toast.success('Método de pagamento atualizado (mock).');
+    toast.info('Atualização de cartão ainda não está disponível.');
   };
 
   return (
@@ -133,20 +135,26 @@ export default function Subscription() {
             <div className="min-w-0">
               <CardDescription>Plano atual</CardDescription>
               <CardTitle className="mt-1 flex flex-wrap items-center gap-2 text-2xl sm:text-3xl">
-                {currentPlan.name}
-                <Badge variant="secondary">
-                  {mockCurrentSubscription.cycle === 'yearly' ? 'Anual' : 'Mensal'}
-                </Badge>
+                {currentPlan?.name ?? (billingLoading ? 'Carregando…' : '—')}
+                {subscription ? (
+                  <Badge variant="secondary">
+                    {subscription.cycle === 'yearly' ? 'Anual' : 'Mensal'}
+                  </Badge>
+                ) : null}
               </CardTitle>
             </div>
             <div className="w-full text-left sm:w-auto sm:text-right">
               <p className="text-xl font-bold sm:text-2xl">
-                {formatCurrency(
-                  currentPlan.pricing[mockCurrentSubscription.cycle],
-                )}
+                {currentPlan && subscription
+                  ? formatCurrency(
+                      currentPlan.pricing[subscription.cycle as BillingCycle],
+                    )
+                  : '—'}
               </p>
               <p className="text-muted-foreground text-xs">
-                Renova em {formatShortDate(mockCurrentSubscription.renewsAt)}
+                {subscription
+                  ? `Renova em ${formatShortDate(subscription.renewsAt)}`
+                  : 'Sem assinatura ativa'}
               </p>
             </div>
           </CardHeader>
@@ -156,20 +164,26 @@ export default function Subscription() {
                 <span className="text-muted-foreground">Uso mensal</span>
                 <span className="font-medium">
                   {stats.roundsThisMonth}
-                  {currentPlan.monthlyRoundsLimit
+                  {currentPlan?.monthlyRoundsLimit
                     ? ` / ${currentPlan.monthlyRoundsLimit}`
                     : ' / ∞'}{' '}
                   rodadas
                 </span>
               </div>
-              <Progress value={currentPlan.monthlyRoundsLimit ? usagePercent : 100} />
+              <Progress value={currentPlan?.monthlyRoundsLimit ? usagePercent : 100} />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2 px-4 sm:flex-row sm:flex-wrap sm:px-6">
-            <Button variant="outline" className="w-full sm:w-auto">Gerenciar plano</Button>
+            <Button variant="outline" className="w-full sm:w-auto" disabled>
+              Gerenciar plano
+            </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" className="w-full text-destructive hover:text-destructive sm:w-auto">
+                <Button
+                  variant="ghost"
+                  className="w-full text-destructive hover:text-destructive sm:w-auto"
+                  disabled={!subscription || currentPlan?.slug === 'free'}
+                >
                   Cancelar assinatura
                 </Button>
               </AlertDialogTrigger>
@@ -177,9 +191,9 @@ export default function Subscription() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Você manterá acesso até{' '}
-                    {formatShortDate(mockCurrentSubscription.renewsAt)} e não será
-                    cobrado novamente.
+                    {subscription
+                      ? `Você manterá acesso até ${formatShortDate(subscription.renewsAt)} e não será cobrado novamente.`
+                      : 'Você ainda não tem uma assinatura ativa.'}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -218,60 +232,66 @@ export default function Subscription() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            {PLANS.map((plan) => {
-              const isCurrent = plan.id === currentPlan.id;
-              const price = plan.pricing[cycle];
-              return (
-                <Card
-                  key={plan.id}
-                  className={cn(
-                    'relative flex flex-col',
-                    plan.highlight && 'border-primary shadow-md',
-                  )}
-                >
-                  {plan.highlight ? (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Sparkles className="mr-1 h-3 w-3" />
-                      Mais popular
-                    </Badge>
-                  ) : null}
-                  <CardHeader>
-                    <CardTitle>{plan.name}</CardTitle>
-                    <CardDescription>{plan.description}</CardDescription>
-                    <div className="pt-2">
-                      <span className="text-2xl font-bold sm:text-3xl">
-                        {price === 0 ? 'Grátis' : formatCurrency(price)}
-                      </span>
-                      {price > 0 ? (
-                        <span className="text-muted-foreground text-sm">
-                          /{cycle === 'yearly' ? 'ano' : 'mês'}
+            {billingLoading && plans.length === 0 ? (
+              <div className="text-muted-foreground col-span-full flex items-center justify-center gap-2 py-12 text-sm">
+                <Loader2 className="h-5 w-5 animate-spin" /> Carregando planos…
+              </div>
+            ) : (
+              plans.map((plan) => {
+                const isCurrent = currentPlan?.slug === plan.slug;
+                const price = plan.pricing[cycle];
+                return (
+                  <Card
+                    key={plan.id}
+                    className={cn(
+                      'relative flex flex-col',
+                      plan.highlight && 'border-primary shadow-md',
+                    )}
+                  >
+                    {plan.highlight ? (
+                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <Sparkles className="mr-1 h-3 w-3" />
+                        Mais popular
+                      </Badge>
+                    ) : null}
+                    <CardHeader>
+                      <CardTitle>{plan.name}</CardTitle>
+                      <CardDescription>{plan.description}</CardDescription>
+                      <div className="pt-2">
+                        <span className="text-2xl font-bold sm:text-3xl">
+                          {price === 0 ? 'Grátis' : formatCurrency(price)}
                         </span>
-                      ) : null}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <ul className="space-y-2 text-sm">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2">
-                          <Check className="text-primary mt-0.5 h-4 w-4 shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full"
-                      variant={isCurrent ? 'outline' : plan.highlight ? 'default' : 'secondary'}
-                      disabled={isCurrent}
-                      onClick={() => handleSelectPlan(plan.id)}
-                    >
-                      {isCurrent ? 'Plano atual' : plan.cta}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })}
+                        {price > 0 ? (
+                          <span className="text-muted-foreground text-sm">
+                            /{cycle === 'yearly' ? 'ano' : 'mês'}
+                          </span>
+                        ) : null}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <ul className="space-y-2 text-sm">
+                        {plan.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <Check className="text-primary mt-0.5 h-4 w-4 shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        className="w-full"
+                        variant={isCurrent ? 'outline' : plan.highlight ? 'default' : 'secondary'}
+                        disabled={isCurrent}
+                        onClick={() => handleSelectPlan(plan.slug)}
+                      >
+                        {isCurrent ? 'Plano atual' : plan.cta}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </section>
 
@@ -329,21 +349,29 @@ export default function Subscription() {
             </Dialog>
           </CardHeader>
           <CardContent className="px-4 sm:px-6">
-            <div className="flex min-w-0 items-center gap-3 rounded-lg border p-3 sm:gap-4 sm:p-4">
-              <div className="bg-muted flex h-10 w-14 shrink-0 items-center justify-center rounded font-bold uppercase">
-                {mockPaymentMethod.brand}
+            {paymentMethod ? (
+              <div className="flex min-w-0 items-center gap-3 rounded-lg border p-3 sm:gap-4 sm:p-4">
+                <div className="bg-muted flex h-10 w-14 shrink-0 items-center justify-center rounded font-bold uppercase">
+                  {paymentMethod.brand}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">
+                    •••• •••• •••• {paymentMethod.last4}
+                  </p>
+                  <p className="text-muted-foreground wrap-break-word text-xs">
+                    {paymentMethod.holder} · expira em{' '}
+                    {String(paymentMethod.exp_month).padStart(2, '0')}/
+                    {paymentMethod.exp_year}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">
-                  •••• •••• •••• {mockPaymentMethod.last4}
-                </p>
-                <p className="text-muted-foreground wrap-break-word text-xs">
-                  {mockPaymentMethod.holder} · expira em{' '}
-                  {String(mockPaymentMethod.expMonth).padStart(2, '0')}/
-                  {mockPaymentMethod.expYear}
-                </p>
+            ) : (
+              <div className="text-muted-foreground flex flex-col items-center gap-2 rounded-lg border border-dashed p-6 text-center text-sm">
+                <CreditCard className="h-6 w-6" />
+                <p>Nenhum método de pagamento cadastrado.</p>
+                <p className="text-xs">No plano Free você não precisa de cartão.</p>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -355,14 +383,25 @@ export default function Subscription() {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-4 sm:px-6">
+            {billingLoading && invoices.length === 0 ? (
+              <div className="text-muted-foreground flex items-center justify-center gap-2 py-8 text-sm">
+                <Loader2 className="h-5 w-5 animate-spin" /> Carregando faturas…
+              </div>
+            ) : invoices.length === 0 ? (
+              <div className="text-muted-foreground flex flex-col items-center gap-2 rounded-lg border border-dashed p-6 text-center text-sm">
+                <Download className="h-6 w-6" />
+                <p>Você ainda não tem faturas.</p>
+              </div>
+            ) : (
+              <>
             <div className="grid gap-3 md:hidden">
-              {mockInvoices.map((invoice) => {
+              {invoices.map((invoice) => {
                 const status = STATUS_VARIANT[invoice.status];
                 return (
                   <div key={invoice.id} className="rounded-lg border p-3">
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="font-mono text-xs font-medium">{invoice.id}</p>
+                        <p className="font-mono text-xs font-medium">{invoice.external_id}</p>
                         <p className="text-muted-foreground text-xs">
                           {formatShortDate(invoice.date)}
                         </p>
@@ -381,8 +420,7 @@ export default function Subscription() {
                         size="sm"
                         aria-label="Baixar fatura"
                         onClick={() =>
-                          // TODO(backend): baixar PDF real da fatura.
-                          toast(`Baixando ${invoice.id} (mock).`)
+                          toast.info('Download de faturas em breve.')
                         }
                       >
                         <Download className="mr-2 h-4 w-4" />
@@ -406,11 +444,11 @@ export default function Subscription() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockInvoices.map((invoice) => {
+                {invoices.map((invoice) => {
                   const status = STATUS_VARIANT[invoice.status];
                   return (
                     <TableRow key={invoice.id}>
-                      <TableCell className="font-mono text-xs">{invoice.id}</TableCell>
+                      <TableCell className="font-mono text-xs">{invoice.external_id}</TableCell>
                       <TableCell>{formatShortDate(invoice.date)}</TableCell>
                       <TableCell>{invoice.description}</TableCell>
                       <TableCell>
@@ -427,8 +465,7 @@ export default function Subscription() {
                           size="icon"
                           aria-label="Baixar fatura"
                           onClick={() =>
-                            // TODO(backend): baixar PDF real da fatura.
-                            toast(`Baixando ${invoice.id} (mock).`)
+                            toast.info('Download de faturas em breve.')
                           }
                         >
                           <Download className="h-4 w-4" />
@@ -440,6 +477,8 @@ export default function Subscription() {
               </TableBody>
             </Table>
             </div>
+              </>
+            )}
           </CardContent>
         </Card>
 

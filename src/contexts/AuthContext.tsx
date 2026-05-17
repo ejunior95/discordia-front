@@ -1,11 +1,20 @@
 import { getUserInfo } from "@/services/auth.service";
 import { createContext, useEffect, useState } from "react";
 
+export type UserSocials = {
+  twitter?: string;
+  github?: string;
+  linkedin?: string;
+};
+
 export type CurrentUser = {
   id: string;
   name: string;
   email: string;
   avatar: string;
+  bio?: string;
+  socials?: UserSocials;
+  termsAcceptedAt?: Date | string | null;
   createdAt: Date;
 };
 
