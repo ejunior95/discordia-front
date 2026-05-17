@@ -53,7 +53,7 @@ export const PLANS: Plan[] = [
     id: 'pro',
     name: 'Pro',
     description: 'Para quem usa IA com frequência e quer mais poder.',
-    pricing: { monthly: 29.9, yearly: 299 },
+    pricing: { monthly: 49.9, yearly: 399 },
     highlight: true,
     features: [
       '1.000 rodadas por mês',
@@ -69,7 +69,7 @@ export const PLANS: Plan[] = [
     id: 'premium',
     name: 'Premium',
     description: 'Para times e usuários avançados que precisam do máximo.',
-    pricing: { monthly: 79.9, yearly: 799 },
+    pricing: { monthly: 79.9, yearly: 699 },
     features: [
       'Rodadas ilimitadas',
       'Todos os modelos topo de linha',

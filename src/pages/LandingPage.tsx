@@ -111,7 +111,7 @@ const PRICES = [
   },
   {
     name: 'Basic',
-    price: 'R$ 29,99',
+    price: 'R$ 49,99',
     period: 'por mês',
     perks: ['200 créditos por mês', 'Chat conflituoso', 'Jogos contra IA'],
     cta: 'Assinar Basic',
@@ -120,7 +120,7 @@ const PRICES = [
   },
   {
     name: 'Premium',
-    price: 'R$ 49,99',
+    price: 'R$ 79,99',
     period: 'por mês',
     perks: ['Créditos ilimitados', 'Chat conflituoso', 'Jogos contra IA', 'Batalha de rima', 'RPG colaborativo', 'Acesso antecipado a novos modos'],
     cta: 'Assinar Premium',
