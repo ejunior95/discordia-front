@@ -7,6 +7,7 @@ import Loader from './custom-components/Loader';
 import ProtectedRoute from './custom-components/ProtectedRoute';
 import PublicRoute from './custom-components/PublicRoute';
 import { ErrorBoundary } from './custom-components/ErrorBoundary';
+import { FeatureGate } from './custom-components/FeatureGate';
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -50,25 +51,25 @@ export default function App() {
 
               <Route path="/games" element={
                 <ProtectedRoute>
-                  <Games />
+                  <FeatureGate capability="games"><Games /></FeatureGate>
                 </ProtectedRoute>
               } />
 
               <Route path="/games/chess" element={
                 <ProtectedRoute>
-                  <Chess />
+                  <FeatureGate capability="games"><Chess /></FeatureGate>
                 </ProtectedRoute>
               } />
 
               <Route path="/games/jokenpo" element={
                 <ProtectedRoute>
-                  <Jokenpo />
+                  <FeatureGate capability="games"><Jokenpo /></FeatureGate>
                 </ProtectedRoute>
               } />
               
               <Route path="/games/hangman" element={
                 <ProtectedRoute>
-                  <Hangman />
+                  <FeatureGate capability="games"><Hangman /></FeatureGate>
                 </ProtectedRoute>
               } />
  
@@ -82,14 +83,14 @@ export default function App() {
 
               <Route path="/rap-battle" element={
                 <ProtectedRoute>
-                  <RapBattle />
+                  <FeatureGate capability="games"><RapBattle /></FeatureGate>
                 </ProtectedRoute>
               } />
  
 
               <Route path="/rpg" element={
                 <ProtectedRoute>
-                  <RolePlaying />
+                  <FeatureGate capability="audio"><RolePlaying /></FeatureGate>
                 </ProtectedRoute>
               } />
  
@@ -108,7 +109,7 @@ export default function App() {
  
               <Route path="/chat" element={
                 <ProtectedRoute>
-                  <Chat />
+                  <FeatureGate capability="chat"><Chat /></FeatureGate>
                 </ProtectedRoute>
               } />
 

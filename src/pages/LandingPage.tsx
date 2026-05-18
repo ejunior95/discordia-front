@@ -21,6 +21,7 @@ import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import type { AgentIA } from '@/features/chat/types';
 import { pageMotion } from '@/utils/pageMotion';
 import { DiscordiaLogo3D } from '@/custom-components/DiscordiaLogo3D';
+import { fetchPlans, type BillingPlan } from '@/services/billing.service';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png';
 import DiscordiaLogo from '../assets/discordia-logo-removebg2.png';
 import questionsBg from '../assets/questions-bg.jpeg';
@@ -102,33 +103,11 @@ const HOW_STEPS = [
   },
 ];
 
-const PRICES = [
-  {
-    name: 'Grátis',
-    price: 'R$ 0',
-    period: 'pra sempre',
-    perks: ['10 créditos por mês', 'Chat conflituoso'],
-    cta: 'Começar grátis',
-    highlight: false,
-  },
-  {
-    name: 'Basic',
-    price: 'R$ 49,99',
-    period: 'por mês',
-    perks: ['200 créditos por mês', 'Chat conflituoso', 'Jogos contra IA'],
-    cta: 'Assinar Basic',
-    highlight: true,
-    badge: 'Recomendado',
-  },
-  {
-    name: 'Premium',
-    price: 'R$ 79,99',
-    period: 'por mês',
-    perks: ['Créditos ilimitados', 'Chat conflituoso', 'Jogos contra IA', 'Batalha de rima', 'RPG colaborativo', 'Acesso antecipado a novos modos'],
-    cta: 'Assinar Premium',
-    highlight: false,
-  },
-];
+const PRICE_FORMATTER = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+  minimumFractionDigits: 2,
+});
 
 export default function LandingPage() {
   const { user } = useAuth();
@@ -549,7 +528,40 @@ function HowItWorks() {
 /*  Pricing                                                                   */
 /* -------------------------------------------------------------------------- */
 
+function formatPlanPrice(monthly: number): { price: string; period: string } {
+  if (monthly <= 0) {
+    return { price: 'R$ 0', period: 'pra sempre' };
+  }
+  return { price: PRICE_FORMATTER.format(monthly), period: 'por mês' };
+}
+
 function Pricing({ ctaTarget }: { ctaTarget: string }) {
+  const [plans, setPlans] = useState<BillingPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchPlans()
+      .then((data) => {
+        if (cancelled) return;
+        const sorted = [...data].sort((a, b) => a.order - b.order);
+        setPlans(sorted);
+        setError(null);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError('Não foi possível carregar os planos. Tente novamente em instantes.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section id="pricing" className="py-12 md:py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -562,53 +574,83 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
             Comece grátis. Suba quando quiser mais créditos e modelos premium.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {PRICES.map((plan) => (
-            <motion.div
-              key={plan.name}
-              whileHover={{ y: -4 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className={cn(
-                'relative rounded-2xl border p-7 flex flex-col',
-                plan.highlight
-                  ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/[0.08] to-transparent shadow-2xl shadow-amber-500/10'
-                  : 'border-white/5 bg-white/[0.03]',
-              )}
-            >
-              {plan.highlight && plan.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-wide px-3 py-1 rounded-full bg-amber-500 text-black font-semibold flex items-center gap-1 shadow-lg">
-                  <Trophy size={11} />
-                  {plan.badge}
-                </span>
-              )}
-              <h3 className="text-lg font-semibold text-zinc-300">{plan.name}</h3>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-4xl md:text-5xl font-extrabold tracking-tight">{plan.price}</span>
-                <span className="text-sm text-zinc-500">/ {plan.period}</span>
-              </div>
-              <ul className="mt-6 space-y-3 flex-1">
-                {plan.perks.map((perk) => (
-                  <li key={perk} className="flex items-start gap-2 text-sm text-zinc-300">
-                    <Check size={16} className={cn('mt-0.5 shrink-0', plan.highlight ? 'text-amber-400' : 'text-emerald-400')} />
-                    <span>{perk}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link to={ctaTarget} className="mt-7">
-                <Button
+
+        {loading && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-white/5 bg-white/[0.03] p-7 h-[420px] animate-pulse"
+              />
+            ))}
+          </div>
+        )}
+
+        {!loading && error && (
+          <p className="text-center text-sm text-red-400">{error}</p>
+        )}
+
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {plans.map((plan) => {
+              const { price, period } = formatPlanPrice(plan.pricing.monthly);
+              return (
+                <motion.div
+                  key={plan.id}
+                  whileHover={{ y: -4 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                   className={cn(
-                    'w-full cursor-pointer h-11',
+                    'relative rounded-2xl border p-7 flex flex-col',
                     plan.highlight
-                      ? 'bg-amber-500 text-black hover:bg-amber-400'
-                      : 'bg-white/10 text-white hover:bg-white/15 border border-white/10',
+                      ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/[0.08] to-transparent shadow-2xl shadow-amber-500/10'
+                      : 'border-white/5 bg-white/[0.03]',
                   )}
                 >
-                  {plan.cta}
-                </Button>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                  {plan.highlight && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-wide px-3 py-1 rounded-full bg-amber-500 text-black font-semibold flex items-center gap-1 shadow-lg">
+                      <Trophy size={11} />
+                      Recomendado
+                    </span>
+                  )}
+                  <h3 className="text-lg font-semibold text-zinc-300">{plan.name}</h3>
+                  <div className="mt-3 flex items-baseline gap-2">
+                    <span className="text-4xl md:text-5xl font-extrabold tracking-tight">{price}</span>
+                    <span className="text-sm text-zinc-500">/ {period}</span>
+                  </div>
+                  {plan.description && (
+                    <p className="mt-2 text-sm text-zinc-400">{plan.description}</p>
+                  )}
+                  <ul className="mt-6 space-y-3 flex-1">
+                    {plan.features.map((perk) => (
+                      <li key={perk} className="flex items-start gap-2 text-sm text-zinc-300">
+                        <Check
+                          size={16}
+                          className={cn(
+                            'mt-0.5 shrink-0',
+                            plan.highlight ? 'text-amber-400' : 'text-emerald-400',
+                          )}
+                        />
+                        <span>{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link to={ctaTarget} className="mt-7">
+                    <Button
+                      className={cn(
+                        'w-full cursor-pointer h-11',
+                        plan.highlight
+                          ? 'bg-amber-500 text-black hover:bg-amber-400'
+                          : 'bg-white/10 text-white hover:bg-white/15 border border-white/10',
+                      )}
+                    >
+                      {plan.cta}
+                    </Button>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

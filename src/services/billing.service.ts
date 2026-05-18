@@ -1,12 +1,18 @@
 import { api } from '@/server/api';
 
+export type PlanSlug = 'free' | 'basic' | 'premium';
+export type PlanCapability = 'chat' | 'games' | 'audio' | 'music';
+
 export interface BillingPlan {
   id: string;
-  slug: 'free' | 'pro' | 'premium';
+  slug: PlanSlug;
   name: string;
   description: string;
   pricing: { monthly: number; yearly: number };
   features: string[];
+  capabilities: PlanCapability[];
+  monthlyCredits: number;
+  unlimitedSoftCap?: number | null;
   monthlyRoundsLimit: number | null;
   highlight: boolean;
   cta: string;
@@ -15,7 +21,7 @@ export interface BillingPlan {
 
 export interface BillingSubscription {
   id: string;
-  planSlug: 'free' | 'pro' | 'premium';
+  planSlug: PlanSlug;
   planId: string;
   cycle: 'monthly' | 'yearly';
   status: 'active' | 'canceled' | 'past_due';

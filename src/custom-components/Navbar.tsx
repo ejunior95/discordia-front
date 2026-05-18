@@ -38,17 +38,26 @@ import {
   NavigationMenuLink, 
   NavigationMenuList, 
 } from "@/components/ui/navigation-menu"
-import { navigationItems } from "@/config/navigation"
+import { navigationItems, filterNavigationByCapabilities } from "@/config/navigation"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
+import { CreditsBadge } from "@/custom-components/CreditsBadge"
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, setUser } = useAuth();
   const [openSheet, setOpenSheet] = useState(false);
+
+  const visibleNavItems = useMemo(() => {
+    if (!user) return navigationItems;
+    // admin e beta_tester veem tudo.
+    if (user.role === 'admin' || user.role === 'beta_tester') return navigationItems;
+    const caps = user.plan?.capabilities ?? [];
+    return filterNavigationByCapabilities(navigationItems, caps);
+  }, [user]);
 
   useEffect(() => {
     setOpenSheet(false);
@@ -82,7 +91,7 @@ export const Navbar = () => {
           <div className="hidden lg:flex gap-4 justify-center items-center">
             <NavigationMenu>
               <NavigationMenuList  className="items-center flex justify-center gap-2 xl:gap-4">
-                {navigationItems.map((item) => (
+                {visibleNavItems.map((item) => (
                   <NavigationMenuItem key={item.path}>
                     <Link to={item.path}>
                       <NavigationMenuLink className="
@@ -129,6 +138,7 @@ export const Navbar = () => {
               :
               <>
                 
+                <CreditsBadge />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer border-2" title={user?.name}>
@@ -167,6 +177,7 @@ export const Navbar = () => {
 
           {/* Exibição Mobile */}
           <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:hidden">
+            {user && <CreditsBadge />}
             <Sheet 
               open={openSheet} 
               onOpenChange={setOpenSheet}
@@ -193,7 +204,7 @@ export const Navbar = () => {
                 </div>
                 <ScrollArea className="max-h-[calc(100dvh-11rem)] overflow-auto px-4 py-4">
                   <div className="mx-auto min-h-dvh flex w-full max-w-md flex-col justify-evenly gap-2">
-                    {navigationItems.map((item) => (
+                    {visibleNavItems.map((item) => (
                       <Link 
                         key={item.path} 
                         to={item.path} 

@@ -2,7 +2,7 @@ import type { AgentIA } from '@/features/chat/types';
 
 export type BillingCycle = 'monthly' | 'yearly';
 
-export type PlanId = 'free' | 'pro' | 'premium';
+export type PlanId = 'free' | 'basic' | 'premium';
 
 export interface PlanPricing {
   monthly: number;

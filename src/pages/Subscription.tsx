@@ -49,8 +49,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/custom-components/PageHeader';
 import { useBilling } from '@/features/account/hooks/useBilling';
 import type { BillingInvoice, BillingPlan } from '@/services/billing.service';
-import { useChatStats } from '@/features/account/hooks/useChatStats';
 import { formatCurrency, formatShortDate } from '@/features/account/format';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { Check, CreditCard, Download, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -85,9 +85,24 @@ const STATUS_VARIANT: Record<
 };
 
 export default function Subscription() {
-  const stats = useChatStats();
+  const { user, refreshCredits } = useAuth();
   const billing = useBilling();
   const { plans, subscription, invoices, paymentMethod, loading: billingLoading } = billing;
+
+  useEffect(() => {
+    refreshCredits();
+  }, [refreshCredits]);
+
+  const isExemptRole = user?.role === 'admin' || user?.role === 'beta_tester';
+  const credits = user?.credits;
+  const monthlyAllowance = credits?.monthlyAllowance ?? 0;
+  const balance = credits?.balance ?? 0;
+  const creditsUsed = Math.max(0, monthlyAllowance - balance);
+  const usagePercent = isExemptRole
+    ? 0
+    : monthlyAllowance > 0
+      ? Math.min(100, Math.round((creditsUsed / monthlyAllowance) * 100))
+      : 0;
 
   const currentPlan: BillingPlan | null = subscription
     ? plans.find((p) => p.slug === subscription.planSlug) ?? null
@@ -100,10 +115,6 @@ export default function Subscription() {
   useEffect(() => {
     if (subscription?.cycle) setCycle(subscription.cycle as BillingCycle);
   }, [subscription?.cycle]);
-
-  const usagePercent = currentPlan?.monthlyRoundsLimit
-    ? Math.min(100, Math.round((stats.roundsThisMonth / currentPlan.monthlyRoundsLimit) * 100))
-    : 0;
 
   const handleSelectPlan = (planSlug: string) => {
     if (currentPlan && planSlug === currentPlan.slug) return;
@@ -161,16 +172,19 @@ export default function Subscription() {
           <CardContent className="space-y-3 px-4 sm:px-6">
             <div>
               <div className="mb-1 flex flex-col gap-1 text-sm sm:flex-row sm:justify-between">
-                <span className="text-muted-foreground">Uso mensal</span>
+                <span className="text-muted-foreground">Créditos usados (mês atual)</span>
                 <span className="font-medium">
-                  {stats.roundsThisMonth}
-                  {currentPlan?.monthlyRoundsLimit
-                    ? ` / ${currentPlan.monthlyRoundsLimit}`
-                    : ' / ∞'}{' '}
-                  rodadas
+                  {isExemptRole
+                    ? 'Ilimitado'
+                    : `${creditsUsed.toLocaleString('pt-BR')} / ${monthlyAllowance.toLocaleString('pt-BR')}`}
                 </span>
               </div>
-              <Progress value={currentPlan?.monthlyRoundsLimit ? usagePercent : 100} />
+              <Progress value={isExemptRole ? 100 : usagePercent} />
+              {!isExemptRole && (
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Saldo restante: {balance.toLocaleString('pt-BR')} créditos
+                </p>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2 px-4 sm:flex-row sm:flex-wrap sm:px-6">
