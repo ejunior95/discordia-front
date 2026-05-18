@@ -238,7 +238,7 @@ export default function Subscription() {
                 <TabsTrigger value="yearly" className="w-full">
                   Anual{' '}
                   <Badge variant="secondary" className="ml-1 sm:ml-2">
-                    -17%
+                    -10%
                   </Badge>
                 </TabsTrigger>
               </TabsList>

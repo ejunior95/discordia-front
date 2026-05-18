@@ -48,7 +48,7 @@ export function LeaderboardCard({ entries }: LeaderboardCardProps) {
                   <span className="text-lg font-semibold text-muted-foreground tabular-nums">#{position}</span>
                 )}
               </div>
-              <div className={cn('rounded-full p-2 shrink-0', config.iconClass)}>
+              <div className={cn('rounded-full p-2 border shrink-0', config.iconClass)}>
                 <Icon size={18} />
               </div>
               <div className="flex-1 min-w-0">

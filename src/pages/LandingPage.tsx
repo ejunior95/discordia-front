@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
@@ -30,6 +31,8 @@ import rhymeBg from '../assets/rhyme-bg.jpg';
 import rpgBg from '../assets/rpg-bg.png';
 
 const AGENTS: AgentIA[] = ['chat-gpt', 'gemini', 'deepseek', 'grok'];
+
+type BillingCycle = 'monthly' | 'yearly';
 
 const FEATURES = [
   {
@@ -528,17 +531,21 @@ function HowItWorks() {
 /*  Pricing                                                                   */
 /* -------------------------------------------------------------------------- */
 
-function formatPlanPrice(monthly: number): { price: string; period: string } {
-  if (monthly <= 0) {
+function formatPlanPrice(amount: number, cycle: BillingCycle): { price: string; period: string } {
+  if (amount <= 0) {
     return { price: 'R$ 0', period: 'pra sempre' };
   }
-  return { price: PRICE_FORMATTER.format(monthly), period: 'por mês' };
+  return {
+    price: PRICE_FORMATTER.format(amount),
+    period: cycle === 'yearly' ? 'por ano' : 'por mês',
+  };
 }
 
 function Pricing({ ctaTarget }: { ctaTarget: string }) {
   const [plans, setPlans] = useState<BillingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cycle, setCycle] = useState<BillingCycle>('monthly');
 
   useEffect(() => {
     let cancelled = false;
@@ -565,7 +572,7 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
   return (
     <section id="pricing" className="py-12 md:py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="max-w-2xl mx-auto mb-14 flex flex-col items-center text-center">
           <p className="text-md uppercase tracking-[0.2em] text-amber-400/80 mb-3">Planos</p>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             Escolha o seu nível.
@@ -573,6 +580,23 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
           <p className="mt-4 text-zinc-400">
             Comece grátis. Suba quando quiser mais créditos e modelos premium.
           </p>
+          <Tabs
+            value={cycle}
+            onValueChange={(value) => setCycle(value as BillingCycle)}
+            className="mt-7 w-full sm:w-auto"
+          >
+            <TabsList className="grid w-full grid-cols-2 border border-white/10 bg-white/4 sm:w-auto">
+              <TabsTrigger value="monthly" className="w-full cursor-pointer data-[state=active]:bg-white data-[state=active]:text-black">
+                Mensal
+              </TabsTrigger>
+              <TabsTrigger value="yearly" className="w-full cursor-pointer data-[state=active]:bg-white data-[state=active]:text-black">
+                Anual{' '}
+                <span className="ml-1 rounded-full border border-white/10 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">
+                  -10%
+                </span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {loading && (
@@ -580,7 +604,7 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-white/5 bg-white/[0.03] p-7 h-[420px] animate-pulse"
+                className="rounded-2xl border border-white/5 bg-white/3 p-7 h-105 animate-pulse"
               />
             ))}
           </div>
@@ -593,7 +617,7 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {plans.map((plan) => {
-              const { price, period } = formatPlanPrice(plan.pricing.monthly);
+              const { price, period } = formatPlanPrice(plan.pricing[cycle], cycle);
               return (
                 <motion.div
                   key={plan.id}
@@ -602,8 +626,8 @@ function Pricing({ ctaTarget }: { ctaTarget: string }) {
                   className={cn(
                     'relative rounded-2xl border p-7 flex flex-col',
                     plan.highlight
-                      ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/[0.08] to-transparent shadow-2xl shadow-amber-500/10'
-                      : 'border-white/5 bg-white/[0.03]',
+                      ? 'border-amber-500/40 bg-linear-to-b from-amber-500/8 to-transparent shadow-2xl shadow-amber-500/10'
+                      : 'border-white/5 bg-white/3',
                   )}
                 >
                   {plan.highlight && (
