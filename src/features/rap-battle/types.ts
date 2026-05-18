@@ -1,4 +1,5 @@
 import type { AgentIA } from '@/features/chat/types';
+import type { VoiceGender } from '@/features/account/types';
 
 export type RapVerseStatus = 'loading' | 'success' | 'error';
 export type RapAudioStatus = 'idle' | 'pending' | 'ready' | 'failed';
@@ -26,6 +27,7 @@ export interface RapBattle {
   id: string;
   contenders: [AgentIA, AgentIA];
   theme: string;
+  voiceGender: VoiceGender;
   rounds: RapRound[];
   currentRound: 1 | 2 | 3;
   status: RapBattleStatus;

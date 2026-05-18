@@ -80,10 +80,13 @@ export interface NotificationPreferences {
   soundEnabled: boolean;
 }
 
+export type VoiceGender = 'male' | 'female';
+
 export interface AIPreferences {
   favoriteAgent: AgentIA | 'none';
   autoVoteFavorite: boolean;
   comparisonMode: 'parallel' | 'sequential';
+  voiceGender: VoiceGender;
 }
 
 export interface UserPreferences {

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { askGameAction, type IResponseApiOneIa } from '@/services/main.service';
 import { pollRapMusic } from '@/services/audio.service';
 import type { AgentIA } from '@/features/chat/types';
+import type { VoiceGender } from '@/features/account/types';
 import { RAP_BATTLE_STORAGE_KEY, TOTAL_ROUNDS } from '../rap.constants';
 import type { RapBattle, RapRound, RapVerse } from '../types';
 
@@ -41,7 +42,9 @@ function sanitizeLoadedBattle(battle: RapBattle | null): RapBattle | null {
     }
     return { ...r, verses };
   });
-  return { ...battle, rounds };
+  // Compat: batalhas antigas no localStorage podem não ter voiceGender.
+  const voiceGender: VoiceGender = battle.voiceGender ?? 'male';
+  return { ...battle, voiceGender, rounds };
 }
 
 function loadFromStorage(): RapBattle | null {
@@ -76,6 +79,7 @@ function createEmptyRound(index: 1 | 2 | 3): RapRound {
 interface StartParams {
   contenders: [AgentIA, AgentIA];
   theme: string;
+  voiceGender: VoiceGender;
 }
 
 export function useRapBattle() {
@@ -165,12 +169,13 @@ export function useRapBattle() {
     [updateVerseAudio],
   );
 
-  const start = useCallback(({ contenders, theme }: StartParams) => {
+  const start = useCallback(({ contenders, theme, voiceGender }: StartParams) => {
     abortRef.current?.abort();
     const fresh: RapBattle = {
       id: generateId(),
       contenders,
       theme,
+      voiceGender,
       rounds: [createEmptyRound(1), createEmptyRound(2), createEmptyRound(3)],
       currentRound: 1,
       status: 'in-progress',
@@ -224,6 +229,7 @@ export function useRapBattle() {
       roundIndex: index,
       previousOpponentVerse: prevB,
       previousOwnVerse: prevA,
+      voiceGender: battle.voiceGender,
     };
     const payloadB = {
       agent: b,
@@ -232,6 +238,7 @@ export function useRapBattle() {
       roundIndex: index,
       previousOpponentVerse: prevA,
       previousOwnVerse: prevB,
+      voiceGender: battle.voiceGender,
     };
 
     const settle = (agent: AgentIA, result: PromiseSettledResult<VerseResult>) => {
@@ -332,6 +339,7 @@ export function useRapBattle() {
         roundIndex,
         previousOpponentVerse: prevOpponent,
         previousOwnVerse: prevOwn,
+        voiceGender: battle.voiceGender,
       };
       const response = await askGameAction('rap-battle', agent, payload);
       const msg = response?.data?.response;

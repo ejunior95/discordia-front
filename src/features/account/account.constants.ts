@@ -19,6 +19,7 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
     favoriteAgent: 'none',
     autoVoteFavorite: false,
     comparisonMode: 'parallel',
+    voiceGender: 'male',
   },
 };
 

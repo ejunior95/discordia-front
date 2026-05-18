@@ -18,6 +18,7 @@ import { IA_CONFIG } from '@/features/chat/chat.constants';
 import { AGENTS, type AgentIA } from '@/features/chat/types';
 import { usePreferences } from '@/features/account/hooks/usePreferences';
 import type { AIPreferences } from '@/features/account/types';
+import { VoiceGenderSwitch } from '@/features/account/components/VoiceGenderSwitch';
 
 export default function AIPreferencesTab() {
   const { preferences, update } = usePreferences();
@@ -91,6 +92,23 @@ export default function AIPreferencesTab() {
             disabled={preferences.ai.favoriteAgent === 'none'}
             onCheckedChange={(v) => setAI({ autoVoteFavorite: v })}
             className="shrink-0"
+          />
+        </div>
+
+        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+          <div className="min-w-0 space-y-0.5">
+            <Label htmlFor="voice-gender" className="text-sm font-medium">
+              Voz padrão para músicas
+            </Label>
+            <p className="text-muted-foreground text-xs">
+              Define se a voz cantada nas batalhas de rap será masculina (azul)
+              ou feminina (rosa). Pode ser alterada antes de iniciar cada batalha.
+            </p>
+          </div>
+          <VoiceGenderSwitch
+            id="voice-gender"
+            value={preferences.ai.voiceGender}
+            onChange={(voiceGender) => setAI({ voiceGender })}
           />
         </div>
       </CardContent>

@@ -6,16 +6,27 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import { AGENTS, type AgentIA } from '@/features/chat/types';
+import { usePreferences } from '@/features/account/hooks/usePreferences';
+import { VoiceGenderSwitch } from '@/features/account/components/VoiceGenderSwitch';
+import type { VoiceGender } from '@/features/account/types';
 import { RAP_THEME_SUGGESTIONS } from '../rap.constants';
 
 interface RapBattleSetupProps {
-  onStart: (params: { contenders: [AgentIA, AgentIA]; theme: string }) => void;
+  onStart: (params: {
+    contenders: [AgentIA, AgentIA];
+    theme: string;
+    voiceGender: VoiceGender;
+  }) => void;
 }
 
 export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
   const agentsDisplay = useAgentsDisplay();
+  const { preferences } = usePreferences();
   const [selected, setSelected] = useState<AgentIA[]>([]);
   const [theme, setTheme] = useState('');
+  const [voiceGender, setVoiceGender] = useState<VoiceGender>(
+    preferences.ai.voiceGender,
+  );
 
   const toggle = (agent: AgentIA) => {
     setSelected((prev) => {
@@ -29,7 +40,7 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
 
   const handleStart = () => {
     if (!canStart) return;
-    onStart({ contenders: [selected[0], selected[1]], theme });
+    onStart({ contenders: [selected[0], selected[1]], theme, voiceGender });
   };
 
   return (
@@ -124,6 +135,20 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
               </button>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="px-5 md:px-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Voz da música
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Escolha entre voz masculina ou feminina para os versos cantados.
+            </p>
+          </div>
+          <VoiceGenderSwitch value={voiceGender} onChange={setVoiceGender} />
         </CardContent>
       </Card>
 
