@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
-const CONSENT_KEY = 'cookieConsent';
-const CONSENT_VERSION = 'v1';
+const CONSENT_KEY = "cookieConsent";
+const CONSENT_VERSION = "v1";
 
 /**
  * Aviso simples e descartável de cookies (LGPD).
@@ -50,31 +49,30 @@ export function CookieConsentBanner() {
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-muted-foreground text-sm leading-relaxed">
-          Usamos apenas <strong className="text-foreground">cookies essenciais</strong> para
-          autenticação e funcionalidades básicas — sem rastreamento de marketing ou analytics.
-          Veja nossa{' '}
-          <Link to="/cookies" className="text-foreground underline underline-offset-4">
+          Usamos apenas{" "}
+          <strong className="text-foreground">cookies essenciais</strong> para
+          autenticação e funcionalidades básicas — sem rastreamento de marketing
+          ou analytics. Veja nossa{" "}
+          <Link
+            to="/cookies"
+            className="text-foreground underline underline-offset-4"
+          >
             Política de Cookies
-          </Link>{' '}
-          e a{' '}
-          <Link to="/privacy" className="text-foreground underline underline-offset-4">
+          </Link>{" "}
+          e a{" "}
+          <Link
+            to="/privacy"
+            className="text-foreground underline underline-offset-4"
+          >
             Política de Privacidade
           </Link>
           .
         </p>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <Button size="sm" onClick={accept}>
+        <div className="flex w-full mt-2 md:mt-0 md:w-fit shrink-0 items-center gap-2">
+          <Button className="w-full" onClick={accept}>
             Entendi
           </Button>
-          <button
-            type="button"
-            onClick={accept}
-            aria-label="Fechar aviso"
-            className="text-muted-foreground hover:text-foreground sm:hidden"
-          >
-            <X className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </div>
