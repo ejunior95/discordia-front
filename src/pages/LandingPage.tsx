@@ -144,7 +144,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <motion.div {...pageMotion} className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <motion.div {...pageMotion} className="min-h-screen scroll-smooth bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
       <TopNav scrolled={scrolled} user={!!user} />
       <Hero ctaTarget={ctaTarget} />
       <AgentsStrip />

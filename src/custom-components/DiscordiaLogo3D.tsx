@@ -50,7 +50,7 @@ export function DiscordiaLogo3D({ className, fallbackSrc, fallbackAlt = '' }: Di
         gl={{ antialias: true, alpha: true }}
         className={cn(
           'relative transition-opacity duration-500',
-          ready ? 'opacity-100' : 'opacity-0',
+          ready ? 'opacity-80' : 'opacity-0',
         )}
         style={{ background: 'transparent' }}
       >
@@ -59,7 +59,7 @@ export function DiscordiaLogo3D({ className, fallbackSrc, fallbackAlt = '' }: Di
         <directionalLight position={[-5, -2, -5]} intensity={0.4} color="#a78bfa" />
         <Suspense fallback={null}>
           <Bounds fit clip observe margin={1.1}>
-            <Float speed={1.4} rotationIntensity={0.2} floatIntensity={0.6}>
+            <Float speed={0.8} rotationIntensity={0.1} floatIntensity={0.3}>
               <Model onLoaded={() => setReady(true)} />
             </Float>
           </Bounds>

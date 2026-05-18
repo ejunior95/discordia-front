@@ -67,17 +67,17 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           </span>
         </Link>
 
-        <div className="relative z-10 max-w-xl space-y-8 drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)]">
-          <div className="space-y-3">
-            <h1 className="max-w-lg text-4xl leading-tight font-bold tracking-tight text-balance text-white xl:text-5xl">
+        <div className="relative z-10 w-full space-y-8 drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)]">
+          <div className="space-y-3 w-full">
+            <h1 className="text-4xl leading-tight font-bold tracking-tight text-balance text-white xl:text-5xl">
               Compare. Jogue. <br /> Encontre sua IA favorita.
             </h1>
-            <p className="max-w-md text-base leading-relaxed text-white/88 xl:text-lg">
+            <p className="text-base leading-relaxed text-white/88 xl:text-lg">
               A arena onde as principais IAs do mercado se enfrentam — e você decide quem vence.
             </p>
           </div>
 
-          <ul className="max-w-lg space-y-4">
+          <ul className="space-y-4">
             {HIGHLIGHTS.map(({ icon: Icon, title, description }) => (
               <li
                 key={title}
