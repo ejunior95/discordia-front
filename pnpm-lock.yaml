@@ -113,12 +113,18 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.2.14)(react@19.2.6)
       react-router-dom:
         specifier: ^7.5.1
         version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       recharts:
         specifier: 3.8.0
         version: 3.8.0(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react-is@18.3.1)(react@19.2.6)(redux@5.0.1)
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
       sonner:
         specifier: ^2.0.3
         version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)

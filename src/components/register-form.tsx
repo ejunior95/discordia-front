@@ -13,6 +13,7 @@ import { isAxiosError } from 'axios';
 import PasswordStrengthMeter, {
   evaluatePasswordStrength,
 } from './PasswordStrengthMeter';
+import { LEGAL_CONFIG } from '@/config/legal';
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
     payload.append('email', email);
     payload.append('password', password);
     payload.append('acceptTerms', 'true');
+    payload.append('termsVersion', LEGAL_CONFIG.TERMS_VERSION);
     if (avatarFile && avatarFile.size > 0) {
       payload.append('avatar', avatarFile);
     }

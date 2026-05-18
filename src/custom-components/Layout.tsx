@@ -1,4 +1,5 @@
 import { Navbar } from "./Navbar"
+import Footer from "./Footer"
 import { Outlet, useLocation } from "react-router-dom"
 
 export const Layout = () => {
@@ -14,6 +15,7 @@ export const Layout = () => {
       <main className="flex-1">
         <Outlet />
       </main>
+      {!hideNavbar && <Footer />}
     </div>
   )
 }

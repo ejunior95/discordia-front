@@ -8,6 +8,7 @@ import ProtectedRoute from './custom-components/ProtectedRoute';
 import PublicRoute from './custom-components/PublicRoute';
 import { ErrorBoundary } from './custom-components/ErrorBoundary';
 import { FeatureGate } from './custom-components/FeatureGate';
+import CookieConsentBanner from './custom-components/CookieConsentBanner';
 
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -25,6 +26,9 @@ const Chess = lazy(() => import('./pages/Chess'));
 const Jokenpo = lazy(() => import('./pages/Jokenpo'));
 const Hangman = lazy(() => import('./pages/Hangman'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Cookies = lazy(() => import('./pages/Cookies'));
 
 export default function App() {
   const flagPageIsCreating = import.meta.env.VITE_FLAG_ISWORKING;
@@ -128,12 +132,18 @@ export default function App() {
                   <Register />
                 </PublicRoute>
               } />
+
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/cookies" element={<Cookies />} />
+
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </Suspense>
         </ErrorBoundary>
         <Toaster />
+        <CookieConsentBanner />
       </BrowserRouter>
     </ThemeProvider>
   );
