@@ -67,9 +67,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
     try {
       await createUser(payload);
       toast.success('Conta criada com sucesso!', {
-        description: 'Enviamos um e-mail de confirmação para você.',
+        description: 'Enviamos um código de confirmação para o seu e-mail.',
       });
-      navigate('/login');
+      navigate('/auth/verify-email', { state: { email }, replace: true });
     } catch (error: unknown) {
       console.error('Erro ao fazer cadastro', error);
       toast.error('Não foi possível criar a conta', {

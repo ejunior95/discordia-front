@@ -16,6 +16,7 @@ const PageCreating = lazy(() => import('./pages/PageCreating'));
 const Chat = lazy(() => import('./features/chat/Chat'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Games = lazy(() => import('./pages/Games'));
 const RapBattle = lazy(() => import('./pages/RapBattle'));
 const RolePlaying = lazy(() => import('./pages/RolePlaying'));
@@ -130,6 +131,14 @@ export default function App() {
                 <PageCreating /> :
                 <PublicRoute>
                   <Register />
+                </PublicRoute>
+              } />
+
+              <Route path="/auth/verify-email" element={
+                flagPageIsCreating === "true" ? 
+                <PageCreating /> :
+                <PublicRoute>
+                  <VerifyEmail />
                 </PublicRoute>
               } />
 

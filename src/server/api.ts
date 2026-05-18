@@ -14,7 +14,7 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-const PUBLIC_PATHS = ['/', '/login', '/register'];
+const PUBLIC_PATHS = ['/', '/login', '/register', '/auth/verify-email'];
 
 /**
  * Callback registrado pelo AuthContext para receber o saldo de créditos

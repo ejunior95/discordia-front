@@ -32,6 +32,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       navigate('/home');
     } catch (err) {
       console.error('Erro ao fazer login', err);
+      if (isAxiosError<{ code?: string; email?: string; message?: string }>(err)) {
+        const data = err.response?.data;
+        if (data?.code === 'EMAIL_NOT_VERIFIED') {
+          toast.info('Confirme seu email para continuar', {
+            description: 'Enviamos um código para o seu email no cadastro.',
+          });
+          navigate('/auth/verify-email', {
+            state: { email: data.email ?? email },
+            replace: true,
+          });
+          return;
+        }
+      }
       toast.error('Erro ao fazer login', {
         description: isAxiosError<{ message?: string }>(err)
           ? err.response?.data?.message ?? 'Verifique suas credenciais e tente novamente.'
