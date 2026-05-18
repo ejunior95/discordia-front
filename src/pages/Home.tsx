@@ -1,24 +1,28 @@
-import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
-import { HeroGreeting } from '@/features/home/components/HeroGreeting';
-import { StatsOverview } from '@/features/home/components/StatsOverview';
-import { LeaderboardCard } from '@/features/home/components/LeaderboardCard';
-import { IAOfTheWeekCard } from '@/features/home/components/IAOfTheWeekCard';
-import { PerformanceChart } from '@/features/home/components/PerformanceChart';
-import { RecentActivityCard } from '@/features/home/components/RecentActivityCard';
-import { QuickShortcuts } from '@/features/home/components/QuickShortcuts';
-import { useHomeSnapshot } from '@/features/home/hooks/useHomeSnapshot';
-import Loader from '@/custom-components/Loader';
-import { Button } from '@/components/ui/button';
-import { pageMotion } from '@/utils/pageMotion';
+import { motion } from "framer-motion";
+import { AlertCircle } from "lucide-react";
+import { HeroGreeting } from "@/features/home/components/HeroGreeting";
+import { StatsOverview } from "@/features/home/components/StatsOverview";
+import { LeaderboardCard } from "@/features/home/components/LeaderboardCard";
+import { IAOfTheWeekCard } from "@/features/home/components/IAOfTheWeekCard";
+import { PerformanceChart } from "@/features/home/components/PerformanceChart";
+import { RecentActivityCard } from "@/features/home/components/RecentActivityCard";
+import { QuickShortcuts } from "@/features/home/components/QuickShortcuts";
+import { useHomeSnapshot } from "@/features/home/hooks/useHomeSnapshot";
+import Loader from "@/custom-components/Loader";
+import { Button } from "@/components/ui/button";
+import { pageMotion } from "@/utils/pageMotion";
 
 export default function Home() {
   const { data, isLoading, error, refetch } = useHomeSnapshot();
 
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-      <motion.div {...pageMotion} className="max-w-7xl mx-auto flex flex-col gap-5 md:gap-6">
+      <motion.div
+        {...pageMotion}
+        className="max-w-7xl mx-auto flex flex-col gap-5 md:gap-6"
+      >
         <HeroGreeting />
+        <QuickShortcuts />
 
         {isLoading && !data && (
           <div className="flex justify-center py-16">
@@ -59,8 +63,6 @@ export default function Home() {
             </div>
           </>
         )}
-
-        <QuickShortcuts />
       </motion.div>
     </section>
   );
