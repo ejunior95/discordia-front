@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { askGameAction } from "@/services/main.service";
+import { askGameAction, validateOrchestratorInput } from "@/services/main.service";
 import type { ScoreboardAgent } from "@/custom-components/GameScoreboard";
 import {
+  getCategoryLabel,
   HANGMAN_STORAGE_KEY,
   MAX_WRONG,
   TOTAL_WORDS,
@@ -41,6 +42,14 @@ function loadFromStorage(): HangmanGame | null {
   } catch {
     return null;
   }
+}
+
+function readApiErrorMessage(err: unknown, fallback: string): string {
+  if (axios.isAxiosError(err)) {
+    const message = (err.response?.data as { message?: unknown } | undefined)?.message;
+    return typeof message === "string" ? message : fallback;
+  }
+  return err instanceof Error ? err.message : fallback;
 }
 
 interface StartParams {
@@ -88,6 +97,28 @@ export function useHangmanGame() {
     [],
   );
 
+  const validateChooserWord = useCallback(
+    async (category: string, word: string, signal?: AbortSignal) => {
+      try {
+        await validateOrchestratorInput(
+          "hangman-word",
+          word,
+          {
+            category,
+            categoryLabel: getCategoryLabel(category),
+          },
+          signal,
+        );
+      } catch (err) {
+        if (axios.isCancel(err)) throw err;
+        throw new Error(
+          readApiErrorMessage(err, "A palavra não combina com a categoria escolhida."),
+        );
+      }
+    },
+    [],
+  );
+
   const start = useCallback(
     async ({ ia, mode, category, word }: StartParams) => {
       cancel();
@@ -96,6 +127,19 @@ export function useHangmanGame() {
       if (mode === "chooser") {
         firstWord = normalizeWord(word ?? "");
         if (!firstWord) throw new Error("Digite uma palavra válida.");
+        setIsBusy(true);
+        const controller = new AbortController();
+        abortRef.current = controller;
+        try {
+          await validateChooserWord(category, firstWord, controller.signal);
+        } catch (err) {
+          setIsBusy(false);
+          abortRef.current = null;
+          if (axios.isCancel(err)) return;
+          throw err;
+        }
+        setIsBusy(false);
+        abortRef.current = null;
       } else {
         setIsBusy(true);
         try {
@@ -129,7 +173,7 @@ export function useHangmanGame() {
         createdAt: new Date().toISOString(),
       });
     },
-    [cancel, fetchIAWord],
+    [cancel, fetchIAWord, validateChooserWord],
   );
 
   const reset = useCallback(() => {
@@ -326,9 +370,25 @@ export function useHangmanGame() {
   }, [game, fetchIAWord]);
 
   /** Modo chooser: usuário informa a próxima palavra para o round seguinte. */
-  const setChooserNextWord = useCallback((word: string) => {
+  const setChooserNextWord = useCallback(async (word: string) => {
     const normalized = normalizeWord(word);
     if (!normalized) return;
+    if (!game || game.mode !== "chooser") return;
+
+    setIsBusy(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      await validateChooserWord(game.category, normalized, controller.signal);
+    } catch (err) {
+      setIsBusy(false);
+      abortRef.current = null;
+      if (axios.isCancel(err)) return;
+      throw err;
+    }
+    setIsBusy(false);
+    abortRef.current = null;
+
     setGame((current) => {
       if (!current || current.mode !== "chooser") return current;
       if (current.currentRound >= TOTAL_WORDS) return current;
@@ -350,7 +410,7 @@ export function useHangmanGame() {
         ],
       };
     });
-  }, []);
+  }, [game, validateChooserWord]);
 
   const currentRound = game?.rounds.find((r) => r.index === game.currentRound);
   const pattern = currentRound ? buildPattern(currentRound.word, currentRound.triedLetters) : "";

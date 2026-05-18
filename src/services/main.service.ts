@@ -28,6 +28,15 @@ export type GameActionContext =
     | 'rpg'
     | 'rap-battle';
 
+export type OrchestratorTargetKind =
+    | 'chat'
+    | 'rap-battle-theme'
+    | 'rpg-campaign-theme'
+    | 'rpg-master-narration'
+    | 'rpg-player-action'
+    | 'hangman-word'
+    | 'hangman-category';
+
 function asRecord(value: unknown): Record<string, unknown> | null {
     return value && typeof value === 'object' ? value as Record<string, unknown> : null;
 }
@@ -129,4 +138,18 @@ export async function askGameAction(
         ...response,
         data: normalizeOneIaResponse(response.data, agent),
     };
+}
+
+export async function validateOrchestratorInput(
+    kind: OrchestratorTargetKind,
+    text: string,
+    metadata?: Record<string, unknown>,
+    signal?: AbortSignal,
+) {
+    return api.request<{ severity: 'ok' | 'warn' | 'block'; reason?: string }>({
+        method: 'POST',
+        url: 'orchestrator/validate',
+        data: { kind, text, metadata },
+        signal,
+    });
 }

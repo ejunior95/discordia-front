@@ -72,15 +72,19 @@ export default function Hangman() {
     }
   };
 
-  const handleConfirmChooserNextWord = () => {
+  const handleConfirmChooserNextWord = async () => {
     const normalized = normalizeWord(nextWordInput);
     if (normalized.length < 3) {
       toast.error("Palavra muito curta.");
       return;
     }
-    actions.setChooserNextWord(normalized);
-    setNextWordInput("");
-    setChooserDialogOpen(false);
+    try {
+      await actions.setChooserNextWord(normalized);
+      setNextWordInput("");
+      setChooserDialogOpen(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Palavra inválida para a categoria.");
+    }
   };
 
   const handleReset = () => actions.reset();
