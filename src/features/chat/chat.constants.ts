@@ -2,7 +2,7 @@ import { DeepSeek, Gemini, Grok, OpenAI } from '@lobehub/icons';
 import type { AgentIA } from './types';
 
 export interface IAConfig {
-  Icon: React.ElementType;
+  Icon: React.ComponentType<{ size?: number | string; className?: string }>;
   /** Fallback label/model. Use `useAgentDisplay(name)` to read live DB values. */
   label: string;
   iconClass: string;

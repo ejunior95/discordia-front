@@ -201,7 +201,7 @@ function ContenderHeader({
   score,
 }: {
   side: 'left' | 'right';
-  Icon: React.ElementType;
+  Icon: React.ComponentType<{ size?: number | string; className?: string }>;
   cfg: (typeof IA_CONFIG)[AgentIA];
   score: number;
 }) {

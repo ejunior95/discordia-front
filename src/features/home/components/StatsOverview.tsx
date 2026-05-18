@@ -7,7 +7,7 @@ import type { HomeTotals } from '../home.types';
 interface StatItem {
   label: string;
   value: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   iconClass: string;
   hint?: string;
 }
