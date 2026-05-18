@@ -167,7 +167,7 @@ function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
             <span className="text-amber-500">A</span>
           </span>
         </Link>
-        <div className="hidden md:flex items-center gap-7 text-md text-zinc-400">
+        <div className="hidden md:flex items-center gap-7 text-md">
           <a href="#features" className="hover:text-white transition-colors">Recursos</a>
           <a href="#how" className="hover:text-white transition-colors">Como funciona</a>
           <a href="#pricing" className="hover:text-white transition-colors">Planos</a>
