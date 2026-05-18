@@ -4,7 +4,7 @@ import type { AgentIA } from '@/features/chat/types';
 
 export interface AgentDisplay extends IAConfig {
   name: AgentIA;
-  /** Model name from DB (e.g. "gpt-4.1-mini"). Falls back to '—' enquanto carrega. */
+  /** Model name from DB (e.g. "gpt-5.4-mini"). Falls back to '—' enquanto carrega. */
   model: string;
 }
 
