@@ -87,6 +87,7 @@ export interface AIPreferences {
   autoVoteFavorite: boolean;
   comparisonMode: 'parallel' | 'sequential';
   voiceGender: VoiceGender;
+  showKaraoke: boolean;
 }
 
 export interface UserPreferences {

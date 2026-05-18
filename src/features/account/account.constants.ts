@@ -20,6 +20,7 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
     autoVoteFavorite: false,
     comparisonMode: 'parallel',
     voiceGender: 'male',
+    showKaraoke: true,
   },
 };
 

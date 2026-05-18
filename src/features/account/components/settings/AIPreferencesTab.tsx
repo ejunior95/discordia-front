@@ -111,6 +111,24 @@ export default function AIPreferencesTab() {
             onChange={(voiceGender) => setAI({ voiceGender })}
           />
         </div>
+
+        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+          <div className="min-w-0 space-y-0.5">
+            <Label htmlFor="show-karaoke" className="text-sm font-medium">
+              Karaokê nas batalhas de rap
+            </Label>
+            <p className="text-muted-foreground text-xs">
+              Destaca cada palavra da letra em sincronia com o áudio enquanto a
+              música toca. Desative para ver apenas o texto estático.
+            </p>
+          </div>
+          <Switch
+            id="show-karaoke"
+            checked={preferences.ai.showKaraoke}
+            onCheckedChange={(v) => setAI({ showKaraoke: v })}
+            className="shrink-0"
+          />
+        </div>
       </CardContent>
     </Card>
   );

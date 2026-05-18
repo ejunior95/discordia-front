@@ -1,10 +1,13 @@
 import type { AxiosResponse } from "axios";
 import { api } from "@/server/api";
+import type { LyricsWordTiming, KaraokeStatus } from "@/features/rap-battle/types";
 
 export interface RapVerseStatusResponse {
     status: 'ready' | 'processing' | 'failed';
     audio_url?: string;
     error?: string;
+    lyricsTimings?: LyricsWordTiming[];
+    karaokeStatus?: KaraokeStatus;
 }
 
 export async function getRapVerseStatus(
@@ -18,8 +21,14 @@ export async function getRapVerseStatus(
     });
 }
 
+export interface RapVerseReadyPayload {
+    audioUrl: string;
+    lyricsTimings?: LyricsWordTiming[];
+    karaokeStatus?: KaraokeStatus;
+}
+
 interface PollOptions {
-    onReady: (audioUrl: string) => void;
+    onReady: (payload: RapVerseReadyPayload) => void;
     onError: (message: string) => void;
     signal?: AbortSignal;
     intervalMs?: number;
@@ -52,7 +61,11 @@ export function pollRapMusic(taskId: string, opts: PollOptions): () => void {
             const data = res.data;
             if (stopped) return;
             if (data.status === 'ready' && data.audio_url) {
-                opts.onReady(data.audio_url);
+                opts.onReady({
+                    audioUrl: data.audio_url,
+                    lyricsTimings: data.lyricsTimings,
+                    karaokeStatus: data.karaokeStatus,
+                });
                 stop();
                 return;
             }
@@ -61,7 +74,7 @@ export function pollRapMusic(taskId: string, opts: PollOptions): () => void {
                 stop();
                 return;
             }
-        } catch (err) {
+        } catch {
             if (opts.signal?.aborted) {
                 stop();
                 return;

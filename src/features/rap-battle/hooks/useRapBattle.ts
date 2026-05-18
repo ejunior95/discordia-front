@@ -128,7 +128,7 @@ export function useRapBattle() {
     (
       roundIndex: 1 | 2 | 3,
       agent: AgentIA,
-      patch: Partial<Pick<RapVerse, 'audioStatus' | 'audioUrl' | 'audioError'>>,
+      patch: Partial<Pick<RapVerse, 'audioStatus' | 'audioUrl' | 'audioError' | 'lyricsTimings' | 'karaokeStatus'>>,
     ) => {
       setBattle((current) => {
         if (!current) return current;
@@ -155,8 +155,13 @@ export function useRapBattle() {
       const existing = pollStopsRef.current.get(key);
       if (existing) existing();
       const stop = pollRapMusic(taskId, {
-        onReady: (audioUrl) => {
-          updateVerseAudio(roundIndex, agent, { audioStatus: 'ready', audioUrl });
+        onReady: ({ audioUrl, lyricsTimings, karaokeStatus }) => {
+          updateVerseAudio(roundIndex, agent, {
+            audioStatus: 'ready',
+            audioUrl,
+            lyricsTimings,
+            karaokeStatus,
+          });
           pollStopsRef.current.delete(key);
         },
         onError: (message) => {

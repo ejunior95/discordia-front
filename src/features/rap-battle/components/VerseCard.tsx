@@ -5,8 +5,10 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils';
 import { useAgentDisplay } from '@/hooks/useAgentDisplay';
 import { AudioPlayer, type AudioPlayerStatus } from '@/custom-components/AudioPlayer';
+import { usePreferences } from '@/features/account/hooks/usePreferences';
 import type { AgentIA } from '@/features/chat/types';
 import type { RapVerse } from '../types';
+import { KaraokeLyrics } from './KaraokeLyrics';
 
 interface VerseCardProps {
   agent: AgentIA;
@@ -65,18 +67,11 @@ export function VerseCard({
         {status === 'loading' && <LoadingState />}
         {status === 'error' && <ErrorState message={verse?.error ?? 'Erro desconhecido'} />}
         {status === 'success' && verse && (
-          <>
-            <VerseLines content={verse.content} />
-            {verse.audioStatus && verse.audioStatus !== 'idle' && (
-              <AudioPlayer
-                status={verse.audioStatus as AudioPlayerStatus}
-                audioUrl={verse.audioUrl}
-                error={verse.audioError}
-                disabled={audioDisabled}
-                onPlayingChange={onAudioPlayingChange}
-              />
-            )}
-          </>
+          <VerseBody
+            verse={verse}
+            audioDisabled={audioDisabled}
+            onAudioPlayingChange={onAudioPlayingChange}
+          />
         )}
       </CardContent>
 
@@ -110,6 +105,50 @@ export function VerseCard({
         </div>
       </CardFooter>
     </Card>
+  );
+}
+
+function VerseBody({
+  verse,
+  audioDisabled,
+  onAudioPlayingChange,
+}: {
+  verse: RapVerse;
+  audioDisabled?: boolean;
+  onAudioPlayingChange?: (isPlaying: boolean) => void;
+}) {
+  const { preferences } = usePreferences();
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const karaokeEnabled =
+    preferences.ai.showKaraoke &&
+    verse.audioStatus === 'ready' &&
+    verse.karaokeStatus === 'ready' &&
+    Array.isArray(verse.lyricsTimings) &&
+    verse.lyricsTimings.length > 0;
+
+  return (
+    <>
+      {karaokeEnabled && verse.lyricsTimings ? (
+        <KaraokeLyrics
+          content={verse.content}
+          timings={verse.lyricsTimings}
+          currentTime={currentTime}
+        />
+      ) : (
+        <VerseLines content={verse.content} />
+      )}
+      {verse.audioStatus && verse.audioStatus !== 'idle' && (
+        <AudioPlayer
+          status={verse.audioStatus as AudioPlayerStatus}
+          audioUrl={verse.audioUrl}
+          error={verse.audioError}
+          disabled={audioDisabled}
+          onPlayingChange={onAudioPlayingChange}
+          onTimeUpdate={karaokeEnabled ? setCurrentTime : undefined}
+        />
+      )}
+    </>
   );
 }
 

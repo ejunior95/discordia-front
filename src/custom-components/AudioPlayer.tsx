@@ -13,6 +13,7 @@ interface AudioPlayerProps {
     className?: string;
     disabled?: boolean;
     onPlayingChange?: (isPlaying: boolean) => void;
+    onTimeUpdate?: (currentTime: number) => void;
 }
 
 const PENDING_MESSAGES = [
@@ -35,7 +36,7 @@ function formatTime(seconds: number): string {
     return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function AudioPlayer({ status, audioUrl, error, label, className, disabled, onPlayingChange }: AudioPlayerProps) {
+export function AudioPlayer({ status, audioUrl, error, label, className, disabled, onPlayingChange, onTimeUpdate }: AudioPlayerProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -44,9 +45,13 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
     const [isMuted, setIsMuted] = useState(false);
     const [pendingMsgIndex, setPendingMsgIndex] = useState(0);
     const onPlayingChangeRef = useRef(onPlayingChange);
+    const onTimeUpdateRef = useRef(onTimeUpdate);
     useEffect(() => {
         onPlayingChangeRef.current = onPlayingChange;
     }, [onPlayingChange]);
+    useEffect(() => {
+        onTimeUpdateRef.current = onTimeUpdate;
+    }, [onTimeUpdate]);
 
     useEffect(() => {
         if (status !== 'pending') return;
@@ -69,7 +74,10 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         const audio = audioRef.current;
         if (!audio) return;
 
-        const onTime = () => setCurrentTime(audio.currentTime);
+        const onTime = () => {
+            setCurrentTime(audio.currentTime);
+            onTimeUpdateRef.current?.(audio.currentTime);
+        };
         const onLoaded = () => setDuration(audio.duration || 0);
         const onPlay = () => {
             setIsPlaying(true);
@@ -124,6 +132,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         const next = Number(e.target.value);
         audio.currentTime = next;
         setCurrentTime(next);
+        onTimeUpdateRef.current?.(next);
     };
 
     const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -3,6 +3,13 @@ import type { VoiceGender } from '@/features/account/types';
 
 export type RapVerseStatus = 'loading' | 'success' | 'error';
 export type RapAudioStatus = 'idle' | 'pending' | 'ready' | 'failed';
+export type KaraokeStatus = 'pending' | 'ready' | 'failed';
+
+export interface LyricsWordTiming {
+  word: string;
+  start: number;
+  end: number;
+}
 
 export interface RapVerse {
   agent: AgentIA;
@@ -14,6 +21,8 @@ export interface RapVerse {
   audioStatus?: RapAudioStatus;
   audioUrl?: string;
   audioError?: string;
+  lyricsTimings?: LyricsWordTiming[];
+  karaokeStatus?: KaraokeStatus;
 }
 
 export interface RapRound {
