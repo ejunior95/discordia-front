@@ -20,6 +20,7 @@ import { IA_CONFIG } from '@/features/chat/chat.constants';
 import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import type { AgentIA } from '@/features/chat/types';
 import { pageMotion } from '@/utils/pageMotion';
+import { DiscordiaLogo3D } from '@/custom-components/DiscordiaLogo3D';
 import Discordia3dLogo from '../assets/discordia-logo-3D.png';
 import DiscordiaLogo from '../assets/discordia-logo-removebg2.png';
 import questionsBg from '../assets/questions-bg.jpeg';
@@ -223,7 +224,16 @@ function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
 
 function Hero({ ctaTarget }: { ctaTarget: string }) {
   return (
-    <section className="relative isolate overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
+    <section className="relative isolate overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32 min-h-screen">
+      {/* 3D logo background */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <DiscordiaLogo3D
+          fallbackSrc={Discordia3dLogo}
+          fallbackAlt=""
+          className="absolute inset-0 w-full h-full opacity-40"
+        />
+      </div>
+
       {/* gradient mesh */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 size-[60rem] rounded-full bg-gradient-to-br from-indigo-500/30 via-fuchsia-500/20 to-transparent blur-3xl" />
@@ -286,20 +296,6 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
               Ver recursos
             </Button>
           </a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="mt-16 md:mt-20 relative max-w-3xl mx-auto"
-        >
-          <div className="absolute -inset-6 bg-linear-to-r from-indigo-500/30 via-fuchsia-500/30 to-amber-500/30 blur-2xl rounded-full" />
-          <img
-            src={Discordia3dLogo}
-            alt="DiscordIA"
-            className="relative w-40 sm:w-56 md:w-84 mx-auto drop-shadow-2xl"
-          />
         </motion.div>
       </div>
     </section>
