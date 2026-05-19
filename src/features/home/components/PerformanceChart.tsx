@@ -55,16 +55,16 @@ export function PerformanceChart({ weekly }: PerformanceChartProps) {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-4 text-xl">
+        <CardTitle className="flex items-center gap-4 text-lg md:text-xl">
           <BarChart3 size={28} className="text-primary" />
           Desempenho ao longo do tempo
         </CardTitle>
         <CardDescription>Vitórias por semana de cada IA</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-64 w-full">
-          <BarChart data={data} margin={{ left: 4, right: 4, top: 8 }}>
-            <CartesianGrid vertical={false} strokeDasharray="3 4" strokeOpacity={0.2} />
+        <ChartContainer config={chartConfig} className="h-full w-full">
+          <BarChart data={data} margin={{ left: -30, right: 4, top: 4 }}>
+            <CartesianGrid vertical={false}/>
             <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={8} fontSize={11} />
             <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={11} allowDecimals={false} />
             <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />

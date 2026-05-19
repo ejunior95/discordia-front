@@ -155,10 +155,10 @@ export default function Profile() {
           }
         />
 
-        <div className="grid w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-[1200px]">
+        <div className="flex flex-col w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300">
           <Card>
             <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
-              <Avatar className="h-28 w-28 rounded-full">
+              <Avatar className="h-28 w-28 shrink-0 rounded-full">
                 <AvatarImage
                   src={user?.avatar}
                   alt={user?.name}
@@ -168,12 +168,15 @@ export default function Profile() {
                   {user ? formatFallbackAvatarStr(user) : "?"}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 space-y-1 text-center sm:text-left">
-                <h2 className="text-3xl font-bold tracking-tight">
+              <div className="flex-1 min-w-0 space-y-1 text-center sm:text-left">
+                <h2 className="truncate text-3xl font-bold tracking-tight">
                   {user?.name ?? "Usuário"}
                 </h2>
-                <blockquote className="my-3 max-w-225 wrap-break-word border-l-2 pl-4 italic">{user?.bio}</blockquote>
-                <p className="text-muted-foreground">{user?.email}</p>
+                <blockquote className="my-3 md:max-w-225 break-words border-l-2 pl-4 italic">
+                  {user?.bio}
+                </blockquote>
+                <p className="truncate text-muted-foreground">{user?.email}</p>
+                
                 <p className="text-muted-foreground text-sm">
                   Membro desde {formatLongDate(user?.createdAt)}
                 </p>
@@ -228,6 +231,7 @@ export default function Profile() {
                     placeholder="Curioso por IA, café e jogos de tabuleiro…"
                     rows={3}
                     maxLength={280}
+                    className="resize-none"
                   />
                   <p className="text-muted-foreground text-right text-xs">
                     {bio.length}/280
@@ -306,7 +310,7 @@ export default function Profile() {
                     (billing.loading ? "Carregando…" : "Plano indisponível")}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 md:flex md:flex-col md:h-full md:justify-center">
                 <p className="text-3xl font-bold">{currentPlan?.name ?? "—"}</p>
                 <p className="text-muted-foreground text-sm">
                   {currentPlan?.monthlyRoundsLimit
@@ -430,7 +434,7 @@ export default function Profile() {
             </CardContent>
             {stats.recentRounds.length > 0 ? (
               <CardFooter className="justify-end">
-                <Button asChild variant="ghost">
+                <Button asChild variant="link">
                   <Link to="/chat">Ver todas</Link>
                 </Button>
               </CardFooter>

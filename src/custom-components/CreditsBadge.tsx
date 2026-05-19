@@ -37,12 +37,12 @@ export function CreditsBadge() {
           >
             {isUnlimited ? (
               <>
-                <InfinityIcon className="h-3.5 w-3.5" />
-                <span>ilimitado</span>
+                <InfinityIcon className="h-5 w-5" />
+                <span className='hidden md:flex'>ilimitado</span>
               </>
             ) : (
               <>
-                <Coins className="h-3.5 w-3.5" />
+                <Coins className="h-5 w-5" />
                 <span>{balance.toLocaleString('pt-BR')}</span>
               </>
             )}

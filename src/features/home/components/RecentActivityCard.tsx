@@ -49,7 +49,7 @@ export function RecentActivityCard({ rounds }: RecentActivityCardProps) {
                   {battle.question}
                 </p>
                 <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                  <Trophy size={11} className="text-amber-500" />
+                  <Trophy size={12} className="text-amber-500" />
                   {cfg.label}
                   <span aria-hidden>·</span>
                   <span>{formatRelativeTime(when)}</span>

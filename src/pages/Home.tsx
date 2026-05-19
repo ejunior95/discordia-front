@@ -16,7 +16,7 @@ export default function Home() {
   const { data, isLoading, error, refetch } = useHomeSnapshot();
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+    <section className="w-full px-4 sm:px-6 lg:px-8 pt-2 md:pt-4">
       <motion.div
         {...pageMotion}
         className="max-w-7xl mx-auto flex flex-col gap-5 md:gap-6"
