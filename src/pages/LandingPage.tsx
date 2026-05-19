@@ -212,7 +212,7 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
         <DiscordiaLogo3D
           fallbackSrc={Discordia3dLogo}
           fallbackAlt=""
-          className="absolute inset-0 w-full h-full opacity-40"
+          className="absolute inset-0 w-full h-full"
         />
       </div>
 
@@ -229,7 +229,7 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3 py-1 text-sm text-zinc-300 mb-8"
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur p-3 text-sm text-zinc-300 mb-8"
         >
           <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
           Versão BETA
@@ -252,7 +252,7 @@ function Hero({ ctaTarget }: { ctaTarget: string }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.7 }}
-          className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-zinc-400 leading-relaxed"
+          className="mt-6 max-w-3xl mx-auto sm:text-lg leading-relaxed"
         >
           Uma única plataforma onde ChatGPT, Gemini, DeepSeek e Grok respondem,
           rimam, jogam e narram lado a lado — e o seu voto define a melhor.
