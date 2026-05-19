@@ -172,7 +172,7 @@ export default function Profile() {
                 <h2 className="text-3xl font-bold tracking-tight">
                   {user?.name ?? "Usuário"}
                 </h2>
-                <blockquote className="my-3 border-l-2 pl-4 italic">{user?.bio}</blockquote>
+                <blockquote className="my-3 max-w-225 wrap-break-word border-l-2 pl-4 italic">{user?.bio}</blockquote>
                 <p className="text-muted-foreground">{user?.email}</p>
                 <p className="text-muted-foreground text-sm">
                   Membro desde {formatLongDate(user?.createdAt)}
