@@ -14,11 +14,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GameScoreboard, type ScoreboardAgent } from "@/custom-components/GameScoreboard";
+import {
+  GameScoreboard,
+  type ScoreboardAgent,
+} from "@/custom-components/GameScoreboard";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentIA } from "@/contexts/CurrentIAContext";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Loader2, RotateCcw, Sparkles, Wand2 } from "lucide-react";
+import { Flag, Loader2, RotateCcw, Sparkles, Wand2 } from "lucide-react";
 import { HangmanSetup } from "@/features/hangman/components/HangmanSetup";
 import { HangmanStage } from "@/features/hangman/components/HangmanStage";
 import { HangmanWord } from "@/features/hangman/components/HangmanWord";
@@ -60,7 +63,9 @@ export default function Hangman() {
     try {
       await actions.start({ ia, mode, category, word });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao iniciar jogo.");
+      toast.error(
+        err instanceof Error ? err.message : "Falha ao iniciar jogo.",
+      );
     }
   };
 
@@ -68,7 +73,9 @@ export default function Hangman() {
     try {
       await actions.nextWord();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao obter nova palavra.");
+      toast.error(
+        err instanceof Error ? err.message : "Falha ao obter nova palavra.",
+      );
     }
   };
 
@@ -83,7 +90,11 @@ export default function Hangman() {
       setNextWordInput("");
       setChooserDialogOpen(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Palavra inválida para a categoria.");
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Palavra inválida para a categoria.",
+      );
     }
   };
 
@@ -160,7 +171,9 @@ export default function Hangman() {
                     </p>
                   )}
                   {currentRound.aiError && (
-                    <p className="text-sm text-destructive">{currentRound.aiError}</p>
+                    <p className="text-sm text-destructive">
+                      {currentRound.aiError}
+                    </p>
                   )}
                   {!isFinishedRound && (
                     <Button
@@ -170,7 +183,8 @@ export default function Hangman() {
                     >
                       {isBusy ? (
                         <>
-                          <Loader2 className="animate-spin" size={16} /> IA pensando...
+                          <Loader2 className="animate-spin" size={16} /> IA
+                          pensando...
                         </>
                       ) : (
                         <>
@@ -227,7 +241,11 @@ export default function Hangman() {
               <Button onClick={handleReset} className="gap-2 cursor-pointer">
                 <RotateCcw size={16} /> Jogar novamente
               </Button>
-              <Button variant="outline" onClick={handleQuit} className="cursor-pointer">
+              <Button
+                variant="outline"
+                onClick={handleQuit}
+                className="cursor-pointer"
+              >
                 Voltar aos jogos
               </Button>
             </div>
@@ -237,12 +255,12 @@ export default function Hangman() {
         {!isGameOver && (
           <div className="flex justify-end">
             <Button
-              variant="ghost"
-              size="sm"
+              variant="destructive"
               onClick={() => setConfirmEndOpen(true)}
-              className="cursor-pointer"
+              className="cursor-pointer gap-2 w-full md:w-auto"
             >
-              Encerrar partida
+              <Flag size={14} />
+              Desistir
             </Button>
           </div>
         )}
@@ -252,7 +270,10 @@ export default function Hangman() {
 
   return (
     <section className="w-full px-3 sm:px-6 lg:px-8 pt-4 pb-12">
-      <motion.div {...pageMotion} className="max-w-4xl mx-auto flex flex-col gap-5">
+      <motion.div
+        {...pageMotion}
+        className="max-w-4xl mx-auto flex flex-col gap-5"
+      >
         {game && (
           <GameScoreboard
             user={user}
@@ -292,7 +313,10 @@ export default function Hangman() {
           renderGameContent()
         )}
 
-        <AlertDialog open={chooserDialogOpen} onOpenChange={setChooserDialogOpen}>
+        <AlertDialog
+          open={chooserDialogOpen}
+          onOpenChange={setChooserDialogOpen}
+        >
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Próxima palavra</AlertDialogTitle>
@@ -334,7 +358,9 @@ export default function Hangman() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleReset}>Encerrar</AlertDialogAction>
+              <AlertDialogAction onClick={handleReset}>
+                Encerrar
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

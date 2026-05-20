@@ -67,7 +67,7 @@ export function ChessSidePanel({ game, onResign }: ChessSidePanelProps) {
       </div>
 
       {canResign && (
-        <Button variant="outline" onClick={onResign} className="cursor-pointer gap-2">
+        <Button variant="destructive" onClick={onResign} className="cursor-pointer gap-2">
           <Flag size={14} />
           Desistir
         </Button>

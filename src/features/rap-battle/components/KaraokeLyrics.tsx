@@ -92,7 +92,7 @@ export function KaraokeLyrics({ content, timings, currentTime, className }: Kara
   return (
     <div
       className={cn(
-        'text-md leading-relaxed space-y-1 max-h-[40vh] overflow-y-auto pr-1',
+        'text-md leading-relaxed space-y-1 max-h-[40vh] overflow-y-auto overflow-x-hidden pr-1',
         className,
       )}
     >

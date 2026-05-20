@@ -69,8 +69,7 @@ export default function Profile() {
   ]);
 
   const currentPlan = billing.subscription
-    ? (billing.plans.find((p) => p.slug === billing.subscription?.planSlug) ??
-      null)
+    ? (billing.plans.find((p) => p.slug === billing.subscription?.planSlug) ?? null)
     : null;
   const favorite = stats.topAgent ? IA_CONFIG[stats.topAgent] : null;
   const favoriteShare =
@@ -91,6 +90,7 @@ export default function Profile() {
     socials.twitter !== (userSocials.twitter ?? "") ||
     socials.github !== (userSocials.github ?? "") ||
     socials.linkedin !== (userSocials.linkedin ?? "");
+  const unlockedBadges = BADGES_CATALOG.filter((badge) => badge.check(badgeContext));
 
   const handleSaveBio = async () => {
     if (!user) return;
@@ -117,26 +117,10 @@ export default function Profile() {
   };
 
   const statCards = [
-    {
-      label: "Rodadas jogadas",
-      value: stats.totalRounds,
-      icon: MessagesSquare,
-    },
-    {
-      label: "Votos dados",
-      value: stats.totalVotes,
-      icon: ThumbsUp,
-    },
-    {
-      label: "IA favorita",
-      value: favorite ? favorite.label : "—",
-      icon: Sparkles,
-    },
-    {
-      label: "Domínio da favorita",
-      value: favorite ? `${favoriteShare}%` : "—",
-      icon: Trophy,
-    },
+    { label: "Rodadas jogadas", value: stats.totalRounds, icon: MessagesSquare },
+    { label: "Votos dados", value: stats.totalVotes, icon: ThumbsUp },
+    { label: "IA favorita", value: favorite ? favorite.label : "—", icon: Sparkles },
+    { label: "Domínio da favorita", value: favorite ? `${favoriteShare}%` : "—", icon: Trophy },
   ];
 
   return (
@@ -157,7 +141,7 @@ export default function Profile() {
 
         <div className="flex flex-col w-full gap-6 lg:w-[80%] 2xl:w-[60%] 2xl:max-w-300">
           <Card>
-            <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+            <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-start pt-6">
               <Avatar className="h-28 w-28 shrink-0 rounded-full">
                 <AvatarImage
                   src={user?.avatar}
@@ -168,18 +152,66 @@ export default function Profile() {
                   {user ? formatFallbackAvatarStr(user) : "?"}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0 space-y-1 text-center sm:text-left">
-                <h2 className="truncate text-3xl font-bold tracking-tight">
-                  {user?.name ?? "Usuário"}
-                </h2>
-                <blockquote className="my-3 md:max-w-225 break-words border-l-2 pl-4 italic">
-                  {user?.bio}
-                </blockquote>
-                <p className="truncate text-muted-foreground">{user?.email}</p>
+
+              <div className="flex-1 min-w-0 w-full space-y-3 text-center sm:text-left">
+                <div>
+                  <h2 className="truncate text-3xl font-bold tracking-tight">
+                    {user?.name ?? "Usuário"}
+                  </h2>
+                  <p className="truncate text-muted-foreground">{user?.email}</p>
+                </div>
+
+                {(userSocials.twitter || userSocials.github || userSocials.linkedin) && (
+                  <div className="flex items-center justify-center gap-4 sm:justify-start text-muted-foreground">
+                    {userSocials.twitter && (
+                      <a href={`https://x.com/${userSocials.twitter.replace('@', '')}`} target="_blank" rel="noreferrer" className="hover:text-primary border p-2 rounded-md transition-colors" title="Twitter / X">
+                        <Twitter className="h-5 w-5" />
+                      </a>
+                    )}
+                    {userSocials.github && (
+                      <a href={`https://github.com/${userSocials.github}`} target="_blank" rel="noreferrer" className="hover:text-primary border p-2 rounded-md transition-colors" title="GitHub">
+                        <Github className="h-5 w-5" />
+                      </a>
+                    )}
+                    {userSocials.linkedin && (
+                      <a href={`https://linkedin.com/in/${userSocials.linkedin}`} target="_blank" rel="noreferrer" className="hover:text-primary border p-2 rounded-md transition-colors" title="LinkedIn">
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {user?.bio && (
+                  <blockquote className="w-full md:max-w-225 break-words border-l-2 pl-4 italic">
+                    {user?.bio}
+                  </blockquote>
+                )}
                 
                 <p className="text-muted-foreground text-sm">
                   Membro desde {formatLongDate(user?.createdAt)}
                 </p>
+
+                {unlockedBadges.length > 0 && (
+                  <div className="flex flex-wrap items-center justify-center gap-2 pt-1 sm:justify-start">
+                    {unlockedBadges.map((badge) => {
+                      const Icon = badge.Icon;
+                      return (
+                        <div
+                          key={badge.id}
+                          title={badge.name}
+                          className={cn(
+                            "flex h-9 w-9 items-center justify-center rounded-full",
+                            badge.color,
+                            badge.bgAndBorderColor ?? "bg-muted/40 border-border/50 border-2",
+                          )}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 <div className="flex flex-wrap justify-center gap-2 pt-2 sm:justify-start">
                   {currentPlan ? (
                     <Badge variant="secondary">Plano {currentPlan.name}</Badge>
@@ -199,22 +231,22 @@ export default function Profile() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {statCards.map(({ label, value, icon: Icon }) => (
-              <Card key={label}>
+              <Card key={label} className="overflow-hidden">
                 <CardContent>
-                  <div className="flex items-center justify-between">
+                  <div className="relative flex items-center justify-between">
                     <p className="text-muted-foreground text-sm font-medium">
                       {label}
                     </p>
-                    <Icon className="text-muted-foreground h-4 w-4" />
+                    <Icon className="absolute -top-9 -right-10 text-muted-foreground h-34 w-34 rotate-20 opacity-10" />
                   </div>
-                  <p className="mt-2 text-2xl font-bold">{value}</p>
+                  <p className="mt-2 text-3xl md:text-4xl font-bold">{value}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
+            <Card className="flex-1 min-w-0 w-full lg:col-span-2">
               <CardHeader>
                 <CardTitle>Sobre mim</CardTitle>
                 <CardDescription>
@@ -289,6 +321,7 @@ export default function Profile() {
                 <Button
                   onClick={handleSaveBio}
                   disabled={!bioChanged || saving}
+                  className="w-full md:w-auto"
                 >
                   {saving ? (
                     <>
@@ -310,7 +343,7 @@ export default function Profile() {
                     (billing.loading ? "Carregando…" : "Plano indisponível")}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2 md:flex md:flex-col md:h-full md:justify-center">
+              <CardContent className="max-w-full space-y-2 md:flex md:flex-col md:h-full md:justify-center">
                 <p className="text-3xl font-bold">{currentPlan?.name ?? "—"}</p>
                 <p className="text-muted-foreground text-sm">
                   {currentPlan?.monthlyRoundsLimit
@@ -334,12 +367,13 @@ export default function Profile() {
                 <Award className="h-5 w-5" /> Conquistas
               </CardTitle>
               <CardDescription>
-                Desbloqueie conquistas conforme usa o discordIA.
+                Desbloqueie conquistas conforme usa o DiscordIA.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {BADGES_CATALOG.map((badge) => {
+                  const Icon = badge.Icon;
                   const unlocked = badge.check(badgeContext);
                   return (
                     <div
@@ -347,7 +381,7 @@ export default function Profile() {
                       className={cn(
                         "flex items-start gap-3 rounded-lg border p-3 transition-colors",
                         unlocked
-                          ? "bg-primary/5 border-primary/40"
+                          ? badge.bgAndBorderColor ?? "bg-muted/40 border-border/50"
                           : "bg-muted/30 opacity-70",
                       )}
                     >
@@ -355,14 +389,14 @@ export default function Profile() {
                         className={cn(
                           "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
                           unlocked
-                            ? "bg-primary text-primary-foreground"
+                            ? badge.color
                             : "bg-muted",
                         )}
                       >
                         {unlocked ? (
-                          <Award className="h-5 w-5" />
+                          <Icon className="h-8 w-8" />
                         ) : (
-                          <Lock className="h-4 w-4" />
+                          <Lock className="h-8 w-8 text-muted-foreground" />
                         )}
                       </div>
                       <div>

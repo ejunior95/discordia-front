@@ -182,7 +182,7 @@ function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
             </Link>
           ) : (
             <>
-              <Link to="/login" className="hidden sm:block">
+              <Link to="/login">
                 <Button variant="ghost" size="sm" className="cursor-pointer text-zinc-300 hover:text-white hover:bg-white/5">
                   Entrar
                 </Button>

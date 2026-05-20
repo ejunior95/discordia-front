@@ -76,7 +76,7 @@ export default function ProfileTab() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
-          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+          <div className="flex gap-4 items-center">
             <Avatar className="h-24 w-24 rounded-full">
               <AvatarImage
                 src={previewAvatar}
@@ -132,7 +132,7 @@ export default function ProfileTab() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
-          <Button type="submit" disabled={!hasChanges || saving} className="min-w-32">
+          <Button type="submit" disabled={!hasChanges || saving} className="w-full mt-6 md:w-auto">
             {saving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

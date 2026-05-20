@@ -35,13 +35,13 @@ export default function AIPreferencesTab() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
+        <div className="space-y-2 w-full max-w-fit">
           <Label>IA favorita</Label>
           <Select
             value={preferences.ai.favoriteAgent}
             onValueChange={(v) => setAI({ favoriteAgent: v as AgentIA | 'none' })}
           >
-            <SelectTrigger>
+            <SelectTrigger className='w-full'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -54,12 +54,11 @@ export default function AIPreferencesTab() {
             </SelectContent>
           </Select>
           <p className="text-muted-foreground text-xs">
-            {/* TODO(chat): destacar visualmente a IA favorita nas próximas rodadas. */}
             Sua IA favorita ganhará destaque visual nos próximos rounds.
           </p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 w-full max-w-sm">
           <Label>Modo de comparação</Label>
           <Select
             value={preferences.ai.comparisonMode}
@@ -67,7 +66,7 @@ export default function AIPreferencesTab() {
               setAI({ comparisonMode: v as AIPreferences['comparisonMode'] })
             }
           >
-            <SelectTrigger>
+            <SelectTrigger className='w-full'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -95,7 +94,7 @@ export default function AIPreferencesTab() {
           />
         </div>
 
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-4 rounded-lg border p-4">
           <div className="min-w-0 space-y-0.5">
             <Label htmlFor="voice-gender" className="text-sm font-medium">
               Voz padrão para músicas

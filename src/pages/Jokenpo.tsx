@@ -77,7 +77,7 @@ export default function Jokenpo() {
         </header>
 
         {!game ? (
-          <Card className="p-5 sm:p-7 max-w-xl mx-auto w-full flex flex-col gap-4">
+          <Card className="p-5 sm:p-7 max-w-xl mt-18 md:mt-20 mx-auto w-full flex flex-col gap-4">
             <p className="text-sm text-muted-foreground">
               Você enfrentará a IA escolhida em uma disputa de melhor de {MAX_ROUNDS} rounds.
               O primeiro a vencer {WIN_SCORE} ganha a partida.
@@ -99,10 +99,9 @@ export default function Jokenpo() {
                   />
                   <div className="flex justify-center">
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant="destructive"
                       onClick={() => setConfirmResetOpen(true)}
-                      className="cursor-pointer text-muted-foreground"
+                      className="cursor-pointer w-full md:w-auto text-muted-foreground"
                     >
                       Encerrar partida
                     </Button>

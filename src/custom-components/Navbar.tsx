@@ -53,7 +53,6 @@ export const Navbar = () => {
 
   const visibleNavItems = useMemo(() => {
     if (!user) return navigationItems;
-    // admin e beta_tester veem tudo.
     if (user.role === 'admin' || user.role === 'beta_tester') return navigationItems;
     const caps = user.plan?.capabilities ?? [];
     return filterNavigationByCapabilities(navigationItems, caps);

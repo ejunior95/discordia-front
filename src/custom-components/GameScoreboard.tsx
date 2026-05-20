@@ -63,7 +63,7 @@ export function GameScoreboard({
           "overflow-hidden",
         )}
       >
-        {/* faixas de acento laterais */}
+        {/* Faixas de acento laterais */}
         <div
           className={cn(
             "pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-linear-to-r opacity-60",
@@ -87,9 +87,9 @@ export function GameScoreboard({
           </div>
         )}
 
-        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4 px-3 sm:px-6 py-3 sm:py-4">
+        <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-1 sm:gap-4 px-2 sm:px-6 py-3 sm:py-4">
           {/* Lado do usuário */}
-          <div className="flex items-center gap-2 sm:gap-3 justify-start min-w-0">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 justify-center sm:justify-start min-w-0">
             <Avatar className="h-9 w-9 sm:h-11 sm:w-11 ring-2 ring-primary/30 shrink-0">
               <AvatarImage
                 src={user?.avatar}
@@ -98,8 +98,8 @@ export function GameScoreboard({
               />
               <AvatarFallback>{formatFallbackAvatarStr(user)}</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col min-w-0">
-              <span className="truncate text-xs sm:text-sm font-semibold leading-tight flex items-center gap-1">
+            <div className="flex flex-col min-w-0 items-center sm:items-start text-center sm:text-left">
+              <span className="truncate text-xs sm:text-sm font-semibold leading-tight flex items-center gap-1 justify-center sm:justify-start">
                 {userLeads && status === "playing" && (
                   <Crown size={12} className="text-amber-500 shrink-0" />
                 )}
@@ -109,13 +109,13 @@ export function GameScoreboard({
                 Você
               </span>
             </div>
-            <div className="ml-auto sm:ml-2">
+            <div className="mt-1 sm:mt-0 sm:ml-auto">
               <ScoreNumber value={userScore} highlight={userLeads} />
             </div>
           </div>
 
           {/* Centro: VS / Round / Pips */}
-          <div className="flex flex-col items-center gap-1 px-1 sm:px-2 min-w-20 sm:min-w-30">
+          <div className="flex flex-col items-center gap-1 px-1 sm:px-2 min-w-16 sm:min-w-30">
             {status === "finished" ? (
               <FinishedBadge result={result ?? "draw"} />
             ) : (
@@ -123,27 +123,24 @@ export function GameScoreboard({
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <Swords size={14} className="hidden sm:block" />
                   <span className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold">
-                    {safeTotal > 1
-                      ? `Round ${safeRound}/${safeTotal}`
-                      : "Partida"}
+                    {safeTotal > 1 ? `Round ${safeRound}/${safeTotal}` : "Partida"}
                   </span>
                 </div>
-                <RoundPips
-                  current={safeRound}
-                  total={safeTotal}
-                  status={status}
-                />
+                <RoundPips current={safeRound} total={safeTotal} status={status} />
               </>
             )}
           </div>
 
           {/* Lado da IA */}
-          <div className="flex items-center gap-2 sm:gap-3 justify-end min-w-0">
-            <div className="mr-auto sm:mr-2">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 justify-center sm:justify-end min-w-0">
+            {/* Pontuação da IA: última na estrutura do desktop, mas ganha order-3 no mobile */}
+            <div className="mt-1 sm:mt-0 order-3 sm:order-1 sm:mr-auto">
               <ScoreNumber value={iaScore} highlight={iaLeads} side="right" />
             </div>
-            <div className="flex flex-col min-w-0 items-end text-right">
-              <span className="truncate text-xs sm:text-sm font-semibold leading-tight flex items-center gap-1 justify-end">
+            
+            {/* Nome da IA */}
+            <div className="flex flex-col min-w-0 items-center sm:items-end text-center sm:text-right order-2 sm:order-2">
+              <span className="truncate text-xs sm:text-sm font-semibold leading-tight flex items-center gap-1 justify-center sm:justify-end">
                 {iaLeads && status === "playing" && (
                   <Crown size={12} className="text-amber-500 shrink-0" />
                 )}
@@ -153,7 +150,9 @@ export function GameScoreboard({
                 {meta.model}
               </span>
             </div>
-            <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-muted flex items-center justify-center ring-2 ring-muted-foreground/20 shrink-0">
+
+            {/* Avatar da IA: primeiro no mobile (order-1), último no desktop (sm:order-3) */}
+            <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-muted flex items-center justify-center ring-2 ring-muted-foreground/20 shrink-0 order-1 sm:order-3">
               <IAIcon size={22} />
             </div>
           </div>
@@ -178,7 +177,8 @@ function ScoreNumber({
         "tabular-nums font-extrabold leading-none select-none",
         "text-2xl sm:text-3xl md:text-4xl",
         highlight ? "text-foreground" : "text-muted-foreground/70",
-        side === "right" ? "text-left" : "text-right",
+        "text-center",
+        side === "right" ? "sm:text-left" : "sm:text-right",
       )}
     >
       {value}
@@ -224,7 +224,7 @@ function RoundPips({
 function FinishedBadge({ result }: { result: ScoreboardResult }) {
   if (result === "draw") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
+      <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
         <Minus size={12} />
         Empate
       </span>
@@ -232,14 +232,14 @@ function FinishedBadge({ result }: { result: ScoreboardResult }) {
   }
   if (result === "win") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 text-amber-950 px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 text-amber-950 px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
         <Trophy size={12} />
         Vitória
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-destructive text-destructive-foreground px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+    <span className="inline-flex items-center gap-1 rounded-full bg-destructive text-destructive-foreground px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
       Derrota
     </span>
   );

@@ -40,7 +40,7 @@ export function VoiceGenderSwitch({
         onCheckedChange={(checked) => onChange(checked ? 'female' : 'male')}
         className={cn(
           'cursor-pointer',
-          'data-[state=checked]:bg-pink-500 data-[state=unchecked]:bg-sky-500',
+          'data-[state=checked]:bg-pink-500! data-[state=unchecked]:bg-sky-500!',
         )}
         aria-label="Alternar voz masculina ou feminina"
       />

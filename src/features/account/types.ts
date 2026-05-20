@@ -57,6 +57,9 @@ export interface BadgeDefinition {
   id: BadgeId;
   name: string;
   description: string;
+  Icon: React.ComponentType<{ size?: number | string; className?: string }>;
+  color: string;
+  bgAndBorderColor?: string;
   /** key of stats to check */
   check: (ctx: BadgeCheckContext) => boolean;
 }

@@ -146,7 +146,7 @@ export default function AccountTab() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={!passwordValid || saving} className="w-full sm:w-auto">
+            <Button type="submit" disabled={!passwordValid || saving} className="w-full mt-6 md:w-auto">
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -200,7 +200,7 @@ export default function AccountTab() {
                 </div>
                 {!s.current ? (
                   <Button
-                    variant="ghost"
+                    variant="destructive"
                     size="sm"
                     onClick={() => handleRevoke(s.id)}
                     className="w-full sm:w-auto"
