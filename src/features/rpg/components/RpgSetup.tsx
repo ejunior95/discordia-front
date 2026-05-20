@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Crown, Swords, User as UserIcon } from 'lucide-react';
+import { Book, Crown, Swords, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -54,7 +54,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
     <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
       <header className="flex flex-col gap-3 text-center">
         <span className="inline-flex w-fit mx-auto items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs md:text-md font-medium text-muted-foreground">
-          <Swords size={18} className="text-amber-500" />
+          <Swords size={20} className="text-amber-500" />
           Mesa de D&amp;D · campanha solo ou cooperativa
         </span>
         <h1 className="font-extrabold tracking-tight text-3xl md:text-5xl">
@@ -69,7 +69,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
       <Card>
         <CardContent className="px-5 md:px-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Crown size={16} className="text-amber-500" />
+            <Crown size={18} className="text-amber-500" />
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Mestre da mesa
             </h2>
@@ -107,7 +107,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
         <CardContent className="px-5 md:px-6 flex flex-col gap-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <UserIcon size={16} className="text-primary" />
+              <UserIcon size={18} className="text-primary" />
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Jogadores IA
               </h2>
@@ -133,7 +133,7 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
                   onClick={() => toggleAIPlayer(agent)}
                   aria-pressed={isSelected}
                   className={cn(
-                    'group flex flex-col items-center gap-2 rounded-xl border p-4 transition-all cursor-pointer',
+                    'group flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all cursor-pointer',
                     'hover:border-primary/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     isSelected && 'border-primary bg-primary/5 shadow-sm',
                   )}
@@ -152,13 +152,17 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
       {/* Cenário */}
       <Card>
         <CardContent className="px-5 md:px-6 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+          <Book size={18} />
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Cenário
           </h2>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {SCENARIOS.map((s) => {
               const Icon = s.icon;
               const isSelected = scenario === s.id;
+              const ColorSelected = scenario === s.id ? s.color : 'border-muted-foreground';
               return (
                 <button
                   key={s.id}
@@ -166,15 +170,16 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
                   onClick={() => setScenario(s.id)}
                   aria-pressed={isSelected}
                   className={cn(
-                    'group text-left rounded-xl border p-4 transition-all cursor-pointer relative overflow-hidden',
-                    'hover:border-primary/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    isSelected && 'border-primary shadow-md',
+                    'group text-left rounded-xl p-4 transition-all cursor-pointer relative overflow-hidden',
+                    'hover:ring-2 hover:ring-ring',
+                    ColorSelected,
+                    isSelected && `border-2`,
                   )}
                 >
                   <div className={cn('absolute inset-0 bg-gradient-to-br opacity-50', s.accent)} aria-hidden />
                   <div className="relative flex flex-col gap-2">
-                    <div className={cn('size-10 rounded-lg flex items-center justify-center bg-background/70 backdrop-blur', s.accent.split(' ').pop())}>
-                      <Icon size={20} />
+                    <div className={cn('size-12 rounded-lg flex items-center justify-center bg-background/70 backdrop-blur', s.accent.split(' ').pop())}>
+                      <Icon size={24} />
                     </div>
                     <p className="font-semibold">{s.label}</p>
                     <p className="text-xs text-muted-foreground">{s.description}</p>
@@ -230,9 +235,9 @@ function MasterCard({ isSelected, onSelect, label, subtitle, icon, iconClass }: 
       onClick={onSelect}
       aria-pressed={isSelected}
       className={cn(
-        'flex flex-col items-center gap-2 rounded-xl border p-3 transition-all cursor-pointer',
-        'hover:border-amber-500/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        isSelected && 'border-amber-500 bg-amber-500/5 shadow-md',
+        'flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all cursor-pointer',
+        'hover:border-amber-400/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        isSelected && 'border-amber-400 bg-amber-400/15 shadow-md',
       )}
     >
       <div className={cn('rounded-full p-2.5', iconClass)}>{icon}</div>

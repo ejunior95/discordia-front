@@ -62,7 +62,7 @@ export function VerseCard({
         )}
       </CardHeader>
 
-      <CardContent className="flex-1 pb-3">
+      <CardContent className="flex-1">
         {status === 'idle' && <IdleState side={side} />}
         {status === 'loading' && <LoadingState />}
         {status === 'error' && <ErrorState message={verse?.error ?? 'Erro desconhecido'} />}

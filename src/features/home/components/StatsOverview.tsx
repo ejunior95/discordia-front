@@ -1,4 +1,4 @@
-import { Crown, MessageSquare, Swords, ThumbsUp } from 'lucide-react';
+import { Crown, MessagesSquare, Swords, ThumbsUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
@@ -29,7 +29,7 @@ export function StatsOverview({ totals, leader }: StatsOverviewProps) {
     {
       label: 'Perguntas feitas',
       value: totals.questions.toLocaleString('pt-BR'),
-      icon: MessageSquare,
+      icon: MessagesSquare,
       iconClass: 'bg-blue-500/10 text-blue-500',
     },
     {
@@ -53,7 +53,7 @@ export function StatsOverview({ totals, leader }: StatsOverviewProps) {
         <Card key={label} className="py-4 md:py-5">
           <CardContent className="px-4 md:px-5 flex items-center gap-3 md:gap-4">
             <div className={`shrink-0 size-16 rounded-lg flex items-center justify-center ${iconClass}`}>
-              <Icon size={30} />
+              <Icon size={40} />
             </div>
             <div className="min-w-0">
               <p className="text-md md:text-sm text-muted-foreground truncate">{label}</p>

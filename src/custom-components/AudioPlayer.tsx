@@ -154,7 +154,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         return (
             <div
                 className={cn(
-                    "flex flex-col gap-2 rounded-lg border border-dashed bg-card/40 px-3 py-2.5",
+                    "flex -ml-2 mt-4 flex-col gap-2 rounded-lg border border-dashed bg-card/40 px-3 py-2.5",
                     className,
                 )}
                 role="status"
@@ -189,7 +189,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
 
     if (status === 'failed') {
         return (
-            <div className={cn("flex items-center gap-2 text-xs text-destructive py-2", className)}>
+            <div className={cn("flex -ml-2 mt-4 items-center gap-2 text-xs text-destructive py-2", className)}>
                 <AlertCircle className="h-4 w-4" />
                 <span>{error ?? 'Falha ao gerar áudio.'}</span>
             </div>
@@ -203,7 +203,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         return (
             <div
                 className={cn(
-                    "flex items-center gap-3 rounded-lg border bg-card/50 px-3 py-2 shadow-xs",
+                    "flex -ml-2 mt-4 items-center gap-3 rounded-lg border bg-card/50 px-3 py-2 shadow-xs",
                     className,
                 )}
             >

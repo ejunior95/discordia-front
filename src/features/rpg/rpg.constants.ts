@@ -12,6 +12,7 @@ export interface ScenarioConfig {
   accent: string;
   classes: string[];
   toneLine: string;
+  color: string;
 }
 
 export const SCENARIOS: ScenarioConfig[] = [
@@ -20,7 +21,8 @@ export const SCENARIOS: ScenarioConfig[] = [
     label: 'Fantasia medieval',
     description: 'Reinos, magia, dragões e masmorras profundas.',
     icon: Castle,
-    accent: 'from-amber-500/20 to-orange-500/10 text-amber-500',
+    color: 'border-amber-400 ring-2 ring-amber-400',
+    accent: 'from-amber-700/80 to-orange-700/40 text-amber-500',
     classes: ['Guerreiro', 'Mago', 'Ladino', 'Clérigo', 'Bárbaro', 'Bardo', 'Ranger', 'Paladino'],
     toneLine: 'Tom: épico, vívido, com ar de alta fantasia.',
   },
@@ -29,7 +31,8 @@ export const SCENARIOS: ScenarioConfig[] = [
     label: 'Ficção científica',
     description: 'Naves, IAs rebeldes, planetas inexplorados.',
     icon: Rocket,
-    accent: 'from-cyan-500/20 to-blue-500/10 text-cyan-500',
+    color: 'border-blue-400 ring-2 ring-blue-400',
+    accent: 'from-cyan-700/80 to-blue-700/40 text-cyan-500',
     classes: ['Soldado', 'Hacker', 'Piloto', 'Médico', 'Engenheiro', 'Diplomata', 'Mercenário'],
     toneLine: 'Tom: tecnológico, com termos de space opera.',
   },
@@ -38,7 +41,8 @@ export const SCENARIOS: ScenarioConfig[] = [
     label: 'Terror',
     description: 'Mistério, sobrenatural e atmosfera opressora.',
     icon: Ghost,
-    accent: 'from-violet-500/20 to-fuchsia-500/10 text-violet-500',
+    color: 'border-violet-400 ring-2 ring-violet-400',
+    accent: 'from-violet-700/80 to-fuchsia-700/40 text-violet-500',
     classes: ['Detetive', 'Ocultista', 'Sobrevivente', 'Cientista', 'Padre', 'Repórter'],
     toneLine: 'Tom: sombrio, descritivo, com tensão crescente.',
   },
@@ -47,7 +51,8 @@ export const SCENARIOS: ScenarioConfig[] = [
     label: 'Personalizado',
     description: 'Você define o universo da campanha.',
     icon: Wand2,
-    accent: 'from-emerald-500/20 to-teal-500/10 text-emerald-500',
+    color: 'border-emerald-400 ring-2 ring-emerald-400',
+    accent: 'from-emerald-700/80 to-teal-700/40 text-emerald-500',
     classes: ['Aventureiro', 'Estrategista', 'Místico', 'Artesão', 'Andarilho', 'Erudito'],
     toneLine: 'Tom: defina conforme o universo informado.',
   },
