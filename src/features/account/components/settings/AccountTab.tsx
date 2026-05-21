@@ -90,17 +90,38 @@ export default function AccountTab() {
 
   const handleRevoke = (id: string) => {
     // TODO(backend): chamar DELETE /auth/sessions/:id
-    toast(`Sessão ${id} revogada (mock).`);
+    toast(`Sessão ${id} revogada (mock).`, {
+      style: {
+        border: '2px solid var(--destructive)',
+        'background': 'var(--background)',
+        'color': 'var(--destructive)',
+      },
+      icon: <Trash2 className="h-4 w-4" />,
+    });
   };
 
   const handleRevokeAll = () => {
     // TODO(backend): chamar POST /auth/sessions/revoke-all
-    toast('Todas as outras sessões foram encerradas (mock).');
+    toast('Todas as outras sessões foram encerradas (mock).', {
+      style: {
+        border: '2px solid var(--destructive)',
+        'background': 'var(--background)',
+        'color': 'var(--destructive)',
+      },
+      icon: <Trash2 className="h-4 w-4" />,
+    });
   };
 
   const handleDeleteAccount = () => {
     // TODO(backend): chamar DELETE /users/:id e fazer logout
-    toast.error('Exclusão de conta solicitada (mock).');
+    toast.error('Exclusão de conta solicitada (mock).', {
+      style: {
+        border: '2px solid var(--destructive)',
+        'background': 'var(--background)',
+        'color': 'var(--destructive)',
+      },
+      icon: <Trash2 className="h-4 w-4" />,
+    });
     setUser(null);
   };
 
@@ -146,7 +167,7 @@ export default function AccountTab() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={!passwordValid || saving} className="w-full mt-6 md:w-auto">
+            <Button type="submit" disabled={!passwordValid || saving} className="w-full mt-6 md:w-auto cursor-pointer">
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -168,7 +189,7 @@ export default function AccountTab() {
               Aparelhos atualmente conectados à sua conta.
             </CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={handleRevokeAll} className="w-full sm:w-auto">
+          <Button variant="outline" size="sm" onClick={handleRevokeAll} className="w-full sm:w-auto cursor-pointer">
             Encerrar outras
           </Button>
         </CardHeader>
@@ -201,9 +222,8 @@ export default function AccountTab() {
                 {!s.current ? (
                   <Button
                     variant="destructive"
-                    size="sm"
                     onClick={() => handleRevoke(s.id)}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto cursor-pointer"
                   >
                     Revogar
                   </Button>
@@ -224,7 +244,7 @@ export default function AccountTab() {
         <CardFooter>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-full sm:w-auto">
+              <Button variant="destructive" className="w-full sm:w-auto cursor-pointer">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Excluir minha conta
               </Button>

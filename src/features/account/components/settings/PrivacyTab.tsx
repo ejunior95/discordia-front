@@ -89,7 +89,7 @@ export default function PrivacyTab() {
               id="telemetry"
               checked={preferences.anonymousTelemetry}
               onCheckedChange={(v) => update({ anonymousTelemetry: v })}
-              className="shrink-0"
+              className="shrink-0 cursor-pointer"
             />
           </div>
         </CardContent>
@@ -104,18 +104,18 @@ export default function PrivacyTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2">
-          <Button variant="outline" onClick={handleExport} className="w-full">
+          <Button variant="outline" onClick={handleExport} className="w-full cursor-pointer">
             <Download className="mr-2 h-4 w-4" />
             Exportar meus dados (JSON)
           </Button>
-          <Button variant="outline" onClick={handleResetPreferences} className="w-full">
+          <Button variant="outline" onClick={handleResetPreferences} className="w-full cursor-pointer">
             Restaurar preferências
           </Button>
         </CardContent>
         <CardFooter>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-full sm:w-auto">
+              <Button variant="destructive" className="w-full sm:w-auto cursor-pointer">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Limpar histórico do chat
               </Button>
