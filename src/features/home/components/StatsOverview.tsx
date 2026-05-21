@@ -6,8 +6,6 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { IA_CONFIG } from "@/features/chat/chat.constants";
-import type { AgentIA } from "@/features/chat/types";
 import type { HomeTotals } from "../home.types";
 
 interface StatItem {
@@ -20,11 +18,9 @@ interface StatItem {
 
 interface StatsOverviewProps {
   totals: HomeTotals;
-  leader: AgentIA | null;
 }
 
-export function StatsOverview({ totals, leader }: StatsOverviewProps) {
-  // const leaderConfig = leader ? IA_CONFIG[leader] : null;
+export function StatsOverview({ totals }: StatsOverviewProps) {
   const stats: StatItem[] = [
     {
       label: "Perguntas feitas",

@@ -46,7 +46,7 @@ export default function Home() {
 
         {data && (
           <>
-            <StatsOverview totals={data.totals} leader={data.leader} />
+            <StatsOverview totals={data.totals} />
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 md:gap-6">
               <div className="xl:col-span-6">
