@@ -24,7 +24,7 @@ interface StatsOverviewProps {
 }
 
 export function StatsOverview({ totals, leader }: StatsOverviewProps) {
-  const leaderConfig = leader ? IA_CONFIG[leader] : null;
+  // const leaderConfig = leader ? IA_CONFIG[leader] : null;
   const stats: StatItem[] = [
     {
       label: "Perguntas feitas",

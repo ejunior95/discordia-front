@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Flame, Sparkles, ArrowRight, Crown } from 'lucide-react';
+import { Flame, ArrowRight, Crown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAgentDisplay } from '@/hooks/useAgentDisplay';
