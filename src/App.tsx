@@ -13,7 +13,7 @@ import CookieConsentBanner from './custom-components/CookieConsentBanner';
 const Home = lazy(() => import('./pages/Home'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const PageCreating = lazy(() => import('./pages/PageCreating'));
-const Chat = lazy(() => import('./features/chat/Chat'));
+const Chat = lazy(() => import('./pages/Chat'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));

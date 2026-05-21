@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ChatEmptyState } from './components/ChatEmptyState';
-import { QuestionInput } from './components/QuestionInput';
-import { RoundsHistory } from './components/RoundsHistory';
-import { useChatRounds } from './hooks/useChatRounds';
+import { ChatEmptyState } from '../features/chat/components/ChatEmptyState';
+import { QuestionInput } from '../features/chat/components/QuestionInput';
+import { RoundsHistory } from '../features/chat/components/RoundsHistory';
+import { useChatRounds } from '../features/chat/hooks/useChatRounds';
 
 export default function Chat() {
   const { rounds, isAsking, ask, retry, vote, abort, clear } = useChatRounds();
@@ -16,7 +16,7 @@ export default function Chat() {
   };
 
   return (
-    <section className="flex flex-col h-[calc(100dvh-5rem)] max-w-6xl mx-auto w-full px-4 md:px-6 pb-4">
+    <section className="flex flex-col h-[calc(100dvh-5rem)] max-w-6xl mx-auto w-full px-4 md:px-6">
       {rounds.length === 0 ? (
         <ChatEmptyState onSelectSuggestion={setQuestion} />
       ) : (

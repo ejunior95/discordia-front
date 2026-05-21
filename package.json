@@ -1,7 +1,7 @@
 {
   "name": "discordia-front",
   "private": true,
-  "version": "1.1.3",
+  "version": "2.0.0",
   "packageManager": "pnpm@10.24.0",
   "engines": {
     "node": ">=20"

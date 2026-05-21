@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { formatFallbackAvatarStr } from '@/utils/globalFunctions';
 import { AGENTS, type AgentIA, type Round as RoundType } from '../types';
 import { AIResponseCard } from './AIResponseCard';
+import { useState, useMemo, useRef } from 'react';
 
 interface RoundProps {
   round: RoundType;
@@ -12,15 +13,40 @@ interface RoundProps {
 
 export function Round({ round, onVote, onRetry }: RoundProps) {
   const { user } = useAuth();
+  const [expandedAgent, setExpandedAgent] = useState<AgentIA | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
   const askedAt = new Date(round.askedAt);
   const timeLabel = askedAt.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
   });
 
+  const displayAgents = useMemo(() => {
+    if (!expandedAgent) return AGENTS;
+    return [
+      expandedAgent,
+      ...AGENTS.filter((agent) => agent !== expandedAgent),
+    ];
+  }, [expandedAgent]);
+
+  const handleToggleExpand = (agent: AgentIA) => {
+    setExpandedAgent((prev) => {
+      const isExpanding = prev !== agent;
+
+      if (isExpanding) {
+        setTimeout(() => {
+          gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50); 
+      }
+      
+      return isExpanding ? agent : null;
+    });
+  };
+
   return (
-    <article className="w-full py-6 first:pt-2">
-      <header className="flex items-start justify-end gap-3 mb-4">
+    <article className="w-full py-6 first:pt-3">
+      <header className="flex items-start justify-end gap-3 mb-6">
         <div className="flex flex-col items-end gap-1 max-w-[80%] sm:max-w-[70%]">
           <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2 shadow-sm">
             <p className="whitespace-pre-wrap break-words">{round.question}</p>
@@ -33,8 +59,8 @@ export function Round({ round, onVote, onRetry }: RoundProps) {
         </Avatar>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-        {AGENTS.map((agent) => (
+      <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mt-1">
+        {displayAgents.map((agent) => (
           <AIResponseCard
             key={agent}
             agent={agent}
@@ -44,6 +70,8 @@ export function Round({ round, onVote, onRetry }: RoundProps) {
             votingDisabled={Boolean(round.votedAgent) || !round.roundId}
             onVote={() => onVote(agent)}
             onRetry={() => onRetry(agent)}
+            isExpanded={expandedAgent === agent}
+            onToggleExpand={() => handleToggleExpand(agent)}
           />
         ))}
       </div>

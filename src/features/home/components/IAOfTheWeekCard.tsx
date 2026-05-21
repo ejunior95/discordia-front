@@ -69,7 +69,7 @@ export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
           </div>
         </div>
         <div className="mt-auto pt-2">
-          <Button asChild variant="outline" size="sm" className="w-full gap-2">
+          <Button asChild variant="outline" className="w-full gap-2">
             <Link to="/chat">
               Desafiar agora
               <ArrowRight size={14} />
