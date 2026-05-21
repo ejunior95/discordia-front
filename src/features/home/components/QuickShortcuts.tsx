@@ -44,12 +44,13 @@ const SHORTCUTS: Shortcut[] = [
 
 export function QuickShortcuts() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
       {SHORTCUTS.map(({ label, description, path, icon: Icon, iconClass }) => (
         <Link
           key={path}
           to={path}
           className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
+          title={description}
         >
           <Card className="h-full transition-all group-hover:border-primary/50 group-hover:shadow-md py-4 md:py-5">
             <CardContent className="px-4 md:px-5 flex items-center gap-3 md:gap-4">
@@ -58,7 +59,7 @@ export function QuickShortcuts() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold truncate">{label}</p>
-                <p className="text-xs text-muted-foreground truncate">{description}</p>
+                <p className="text-sm text-muted-foreground truncate">{description}</p>
               </div>
               <ArrowRight
                 size={22}
