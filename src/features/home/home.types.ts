@@ -1,9 +1,16 @@
-import type { AgentIA } from '@/features/chat/types';
+import type { AgentIA } from "@/features/chat/types";
 
 export interface HomeTotals {
   rounds: number;
   questions: number;
+  rpgBattles: number;
+  rapBattles: number;
+  gamesRounds: number;
   votes: number;
+  chatVotes: number;
+  gameVotes: number;
+  rapVotes: number;
+  rpgVotes: number;
 }
 
 export interface LeaderboardEntry {

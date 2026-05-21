@@ -62,7 +62,7 @@ export function RapBattleSetup({ onStart }: RapBattleSetupProps) {
         <CardContent className="px-5 md:px-6 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Competidores
+              Competidoras
             </h2>
             <span className="text-xs text-muted-foreground tabular-nums">
               {selected.length}/2 selecionadas

@@ -294,7 +294,7 @@ function AgentsStrip() {
     <section className="relative border-y border-white/5 bg-zinc-950/60 backdrop-blur">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <p className="text-center text-md uppercase tracking-[0.2em] text-zinc-500 mb-6">
-          Os competidores
+          As competidoras
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-6">
           {AGENTS.map((agent) => {

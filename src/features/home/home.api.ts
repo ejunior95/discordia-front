@@ -7,5 +7,6 @@ export async function getHomeSnapshot(signal?: AbortSignal): Promise<HomeSnapsho
     url: 'stats/home',
     signal,
   });
+  console.log('Home snapshot:', res.data);
   return res.data;
 }

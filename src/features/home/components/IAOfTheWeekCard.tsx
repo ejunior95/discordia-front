@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Flame, Sparkles, ArrowRight } from 'lucide-react';
+import { Flame, Sparkles, ArrowRight, Crown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAgentDisplay } from '@/hooks/useAgentDisplay';
@@ -17,7 +17,7 @@ export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
         <div className="absolute inset-0 bg-linear-to-br from-amber-500/10 via-transparent to-primary/10" aria-hidden />
         <CardContent className="relative flex flex-col gap-4 px-5 md:px-6 h-full items-center justify-center text-center py-8">
           <div className="flex items-center gap-2 text-xs font-medium text-amber-600 dark:text-amber-400">
-            <Sparkles size={14} />
+            <Crown size={14} />
             IA DA SEMANA
           </div>
           <p className="text-muted-foreground text-sm">
@@ -42,7 +42,7 @@ export function IAOfTheWeekCard({ data }: IAOfTheWeekCardProps) {
       <div className="absolute -top-8 -right-8 size-32 rounded-full bg-amber-500/20 blur-2xl" aria-hidden />
       <CardContent className="relative flex flex-col gap-4 px-5 md:px-6 h-full">
         <div className="flex items-center gap-2 text-xs font-medium text-amber-600 dark:text-amber-400">
-          <Sparkles size={14} />
+          <Crown size={14} />
           IA DA SEMANA
         </div>
         <div className="flex items-center gap-4">

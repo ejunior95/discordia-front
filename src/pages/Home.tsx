@@ -24,6 +24,10 @@ export default function Home() {
         <HeroGreeting />
         <QuickShortcuts />
 
+        <div className="relative text-center text-md uppercase tracking-wider text-muted-foreground after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+          <span className="relative z-10 bg-background px-3 select-none">Estatísticas Globais</span>
+        </div>
+
         {isLoading && !data && (
           <div className="flex justify-center py-16">
             <Loader />

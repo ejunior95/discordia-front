@@ -17,7 +17,7 @@ const SHORTCUTS: Shortcut[] = [
     description: 'Pergunte, compare e vote na melhor IA.',
     path: '/chat',
     icon: MessagesSquare,
-    iconClass: 'bg-primary/10 text-primary',
+    iconClass: 'bg-blue-500/10 text-blue-500',
   },
   {
     label: 'Batalha de rima',
@@ -38,7 +38,7 @@ const SHORTCUTS: Shortcut[] = [
     description: 'Xadrez, Forca, Jokenpô e mais.',
     path: '/games',
     icon: Gamepad2,
-    iconClass: 'bg-emerald-500/10 text-emerald-500',
+    iconClass: 'bg-red-500/10 text-red-500',
   },
 ];
 
@@ -54,15 +54,15 @@ export function QuickShortcuts() {
           <Card className="h-full transition-all group-hover:border-primary/50 group-hover:shadow-md py-4 md:py-5">
             <CardContent className="px-4 md:px-5 flex items-center gap-3 md:gap-4">
               <div className={`shrink-0 size-11 rounded-lg flex items-center justify-center ${iconClass}`}>
-                <Icon size={20} />
+                <Icon size={24} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold truncate">{label}</p>
                 <p className="text-xs text-muted-foreground truncate">{description}</p>
               </div>
               <ArrowRight
-                size={16}
-                className="text-muted-foreground shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+                size={22}
+                className="text-muted-foreground shrink-0 transition-transform group-hover:translate-x-1.5 group-hover:text-primary"
               />
             </CardContent>
           </Card>
