@@ -17,7 +17,7 @@ export function CookieConsentBanner() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(CONSENT_KEY);
+      const stored = sessionStorage.getItem(CONSENT_KEY);
       if (!stored || !stored.startsWith(`accepted:${CONSENT_VERSION}`)) {
         setVisible(true);
       }
@@ -28,7 +28,7 @@ export function CookieConsentBanner() {
 
   const accept = () => {
     try {
-      localStorage.setItem(
+      sessionStorage.setItem(
         CONSENT_KEY,
         `accepted:${CONSENT_VERSION}:${new Date().toISOString()}`,
       );

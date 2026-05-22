@@ -21,7 +21,7 @@ function generateId(): string {
 function loadRoundsFromStorage(): Round[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(ROUNDS_STORAGE_KEY);
+    const raw = sessionStorage.getItem(ROUNDS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as Round[];
     // garantir que cards "loading" salvos viram erro ao reabrir (não vamos reiniciar request)
@@ -50,7 +50,7 @@ export function useChatRounds() {
   // persistência
   useEffect(() => {
     try {
-      localStorage.setItem(ROUNDS_STORAGE_KEY, JSON.stringify(rounds));
+      sessionStorage.setItem(ROUNDS_STORAGE_KEY, JSON.stringify(rounds));
     } catch {
       /* ignore quota */
     }

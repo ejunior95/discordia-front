@@ -36,7 +36,7 @@ export default function PrivacyTab() {
       const payload = {
         exportedAt: new Date().toISOString(),
         preferences,
-        rounds: JSON.parse(localStorage.getItem(ROUNDS_STORAGE_KEY) ?? '[]'),
+        rounds: JSON.parse(sessionStorage.getItem(ROUNDS_STORAGE_KEY) ?? '[]'),
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], {
         type: 'application/json',
@@ -54,7 +54,7 @@ export default function PrivacyTab() {
   };
 
   const handleClearHistory = () => {
-    localStorage.removeItem(ROUNDS_STORAGE_KEY);
+    sessionStorage.removeItem(ROUNDS_STORAGE_KEY);
     window.dispatchEvent(
       new StorageEvent('storage', { key: ROUNDS_STORAGE_KEY }),
     );
@@ -62,7 +62,7 @@ export default function PrivacyTab() {
   };
 
   const handleResetPreferences = () => {
-    localStorage.removeItem(PREFERENCES_STORAGE_KEY);
+    sessionStorage.removeItem(PREFERENCES_STORAGE_KEY);
     window.location.reload();
   };
 

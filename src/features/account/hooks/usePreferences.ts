@@ -31,7 +31,7 @@ function deepMerge<T>(base: T, override: Partial<T>): T {
 function loadPreferences(): UserPreferences {
   if (typeof window === 'undefined') return DEFAULT_PREFERENCES;
   try {
-    const raw = localStorage.getItem(PREFERENCES_STORAGE_KEY);
+    const raw = sessionStorage.getItem(PREFERENCES_STORAGE_KEY);
     if (!raw) return DEFAULT_PREFERENCES;
     const parsed = JSON.parse(raw) as Partial<UserPreferences>;
     return deepMerge(DEFAULT_PREFERENCES, parsed);
@@ -45,7 +45,7 @@ export function usePreferences() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+      sessionStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
     } catch {
       // storage cheio ou indisponível: silenciar
     }

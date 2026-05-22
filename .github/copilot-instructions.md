@@ -27,7 +27,7 @@ Stack: React 19, TypeScript, Vite 6, TailwindCSS 4, shadcn/ui, Radix UI, React R
 - `CurrentUser` includes role, plan capabilities, credits, profile fields, and terms acceptance metadata.
 - `registerCreditsListener` lets the Axios interceptor update navbar credit balance from `X-Credits-Balance`.
 - `CurrentIAContext` stores the selected AI for game flows as `CurrentIA = '' | 'gemini' | 'grok' | 'deepseek' | 'chat-gpt'`.
-- `CurrentIAContext` persists its value in `localStorage` under `currentIA`.
+- `CurrentIAContext` persists its value in `sessionStorage` under `currentIA`.
 - Protected game pages should redirect to `/games` when a selected AI is required and missing.
 - `ThemeProvider` uses storage key `discordia-theme-select` and supports light, dark, and system modes.
 
@@ -119,7 +119,7 @@ Prefer keeping stateful feature logic inside `src/features/<feature>/hooks`.
 `src/features/chat` implements the core competition UI.
 
 - `AGENTS` and `AgentIA` define `chat-gpt`, `gemini`, `deepseek`, and `grok`.
-- `useChatRounds()` controls send, abort, retry, vote, clear, winners, and `localStorage` persistence.
+- `useChatRounds()` controls send, abort, retry, vote, clear, winners, and `sessionStorage` persistence.
 - `askToAll(question, signal)` queries all four agents.
 - `askToOne(question, agent, signal)` retries one agent.
 - `voteOnRound(roundId, agent, signal)` persists the selected winner in the backend.
@@ -139,12 +139,12 @@ All game AI calls should use `askGameAction(context, agent, payload, signal?)` f
 - RPG master AI responses may include `audio_url`; keep audio playback optional and resilient.
 - Rap battle lives in `src/features/rap-battle`; battles use two agents, three rounds, voting, retries, previous-verse context, optional `musicTaskId`, and polling through `pollRapMusic`.
 - Use feature constants for storage keys, limits, labels, and options.
-- Sanitize restored localStorage state so stale `loading` or in-progress states do not resume abandoned requests.
+- Sanitize restored sessionStorage state so stale `loading` or in-progress states do not resume abandoned requests.
 
 ### Account and Settings
 
 - Account-related logic lives in `src/features/account`.
-- `usePreferences()` persists user preferences in `localStorage` and deep-merges saved values with defaults.
+- `usePreferences()` persists user preferences in `sessionStorage` and deep-merges saved values with defaults.
 - `useBilling()` loads plans, active subscription, invoices, and payment method for `/subscription`.
 - `useChatStats()` combines `stats/me` and `stats/me/rounds` for account/dashboard views.
 - `CreditsBadge` shows current balance or unlimited status and links to `/subscription`.

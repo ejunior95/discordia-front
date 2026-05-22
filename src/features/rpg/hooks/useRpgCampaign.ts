@@ -33,7 +33,7 @@ function sanitizeLoaded(campaign: RpgCampaign | null): RpgCampaign | null {
 function loadFromStorage(): RpgCampaign | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = localStorage.getItem(RPG_STORAGE_KEY);
+    const raw = sessionStorage.getItem(RPG_STORAGE_KEY);
     if (!raw) return null;
     return sanitizeLoaded(JSON.parse(raw) as RpgCampaign);
   } catch {
@@ -75,9 +75,9 @@ export function useRpgCampaign() {
   useEffect(() => {
     try {
       if (campaign) {
-        localStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(campaign));
+        sessionStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(campaign));
       } else {
-        localStorage.removeItem(RPG_STORAGE_KEY);
+        sessionStorage.removeItem(RPG_STORAGE_KEY);
       }
     } catch {
       /* ignore quota */

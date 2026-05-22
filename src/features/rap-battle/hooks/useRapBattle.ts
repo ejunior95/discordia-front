@@ -42,7 +42,7 @@ function sanitizeLoadedBattle(battle: RapBattle | null): RapBattle | null {
     }
     return { ...r, verses };
   });
-  // Compat: batalhas antigas no localStorage podem não ter voiceGender.
+  // Compat: batalhas antigas no sessionStorage podem não ter voiceGender.
   const voiceGender: VoiceGender = battle.voiceGender ?? 'male';
   return { ...battle, voiceGender, rounds };
 }
@@ -50,7 +50,7 @@ function sanitizeLoadedBattle(battle: RapBattle | null): RapBattle | null {
 function loadFromStorage(): RapBattle | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = localStorage.getItem(RAP_BATTLE_STORAGE_KEY);
+    const raw = sessionStorage.getItem(RAP_BATTLE_STORAGE_KEY);
     if (!raw) return null;
     return sanitizeLoadedBattle(JSON.parse(raw) as RapBattle);
   } catch {
@@ -91,9 +91,9 @@ export function useRapBattle() {
   useEffect(() => {
     try {
       if (battle) {
-        localStorage.setItem(RAP_BATTLE_STORAGE_KEY, JSON.stringify(battle));
+        sessionStorage.setItem(RAP_BATTLE_STORAGE_KEY, JSON.stringify(battle));
       } else {
-        localStorage.removeItem(RAP_BATTLE_STORAGE_KEY);
+        sessionStorage.removeItem(RAP_BATTLE_STORAGE_KEY);
       }
     } catch {
       /* ignore quota */
