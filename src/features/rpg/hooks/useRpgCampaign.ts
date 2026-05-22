@@ -21,7 +21,6 @@ function extractErrorMessage(err: unknown): string {
 
 function sanitizeLoaded(campaign: RpgCampaign | null): RpgCampaign | null {
   if (!campaign) return null;
-  // turns deixados em loading viram error ao recarregar
   const turns = campaign.turns.map<TurnAction>((t) =>
     t.status === 'loading'
       ? { ...t, status: 'error', error: 'Sessão encerrada antes da resposta.' }
@@ -93,7 +92,7 @@ export function useRpgCampaign() {
         if (axios.isCancel(err)) throw err;
         throw new Error(
           (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-          ?? (err instanceof Error ? err.message : 'O tema não é adequado para a campanha.'),
+          ?? (err instanceof Error ? err.message : 'Conteúdo inadequado para o contexto atual.'),
         );
       }
     },
@@ -116,7 +115,7 @@ export function useRpgCampaign() {
           setIsGenerating(false);
           abortRef.current = null;
           if (axios.isCancel(err)) return;
-          throw err; // relança para o componente exibir o erro
+          throw err;
         }
         setIsGenerating(false);
         abortRef.current = null;
@@ -149,18 +148,42 @@ export function useRpgCampaign() {
     return { ...current, currentTurnIndex: nextIndex };
   }, []);
 
-  const submitUserTurn = useCallback((content: string) => {
+  const submitUserTurn = useCallback(async (content: string) => {
     const trimmed = content.trim();
     if (!trimmed) return;
-    setCampaign((current) => {
-      if (!current || current.status !== 'playing') return current;
-      const actor = current.turnOrder[current.currentTurnIndex];
-      if (actor !== 'user') return current;
-      const role: TurnAction['role'] = current.master === 'user' ? 'master' : 'player';
-      const turn = makeTurn('user', role, trimmed, 'success');
-      return advanceTurn({ ...current, turns: [...current.turns, turn] });
-    });
-  }, [advanceTurn]);
+
+    if (!campaign || campaign.status !== 'playing') return;
+
+    const actor = campaign.turnOrder[campaign.currentTurnIndex];
+    if (actor !== 'user') return;
+
+    // Identifica se o usuário atual é o mestre
+    const isMaster = campaign.master === 'user';
+    const target: OrchestratorTargetKind = isMaster ? 'rpg-master-narration' : 'rpg-player-action';
+
+    setIsGenerating(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      // Executa a validação apropriada
+      await validateThemeOrNarration(trimmed, target, controller.signal);
+
+      // Se passar na validação, atualiza o estado do jogo
+      setCampaign((current) => {
+        if (!current || current.status !== 'playing') return current;
+        const role: TurnAction['role'] = isMaster ? 'master' : 'player';
+        const turn = makeTurn('user', role, trimmed, 'success');
+        return advanceTurn({ ...current, turns: [...current.turns, turn] });
+      });
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      throw err;
+    } finally {
+      setIsGenerating(false);
+      abortRef.current = null;
+    }
+  }, [campaign, validateThemeOrNarration, advanceTurn]);
 
   const generateAITurn = useCallback(async () => {
     if (isGenerating) return;

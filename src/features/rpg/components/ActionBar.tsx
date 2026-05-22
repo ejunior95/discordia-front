@@ -11,7 +11,7 @@ interface ActionBarProps {
   campaign: RpgCampaign;
   currentActor: ActorRef;
   isGenerating: boolean;
-  onSubmitUser: (content: string) => void;
+  onSubmitUser: (content: string) => Promise<void>;
   onGenerateAI: () => void;
   onAbort: () => void;
   onSkip: () => void;
@@ -27,14 +27,28 @@ export function ActionBar({
   onSkip,
 }: ActionBarProps) {
   const [draft, setDraft] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+
   const isUserTurn = currentActor === 'user';
   const isMasterTurn = currentActor === campaign.master;
 
-  const handleSubmit = () => {
+  // Gerencia o envio e captura possíveis erros de validação da API
+  const handleSubmit = async () => {
     const trimmed = draft.trim();
-    if (!trimmed) return;
-    onSubmitUser(trimmed);
-    setDraft('');
+    if (!trimmed || isValidating) return;
+
+    setValidationError(null);
+    setIsValidating(true);
+
+    try {
+      await onSubmitUser(trimmed);
+      setDraft('');
+    } catch (err) {
+      setValidationError(err instanceof Error ? err.message : 'Texto inadequado para a ação.');
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   if (isUserTurn) {
@@ -64,7 +78,11 @@ export function ActionBar({
         </div>
         <Textarea
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          disabled={isValidating}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (validationError) setValidationError(null);
+          }}
           placeholder={
             isMasterTurn
               ? 'Descreva a cena, o ambiente e o que os jogadores percebem…'
@@ -74,11 +92,18 @@ export function ActionBar({
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
               e.preventDefault();
-              handleSubmit();
+              void handleSubmit();
             }
           }}
+          className={cn(validationError && 'border-destructive focus-visible:ring-destructive')}
         />
-        <div className="flex items-center justify-between gap-2">
+        
+        {/* Exibição da mensagem de erro de validação */}
+        {validationError && (
+          <p className="text-xs text-destructive font-medium mt-1">{validationError}</p>
+        )}
+
+        <div className="flex items-center justify-between gap-2 mt-1">
           <p className="text-[11px] text-muted-foreground">
             <kbd className="px-1.5 py-0.5 rounded border bg-background text-[10px]">Ctrl</kbd>
             {' + '}
@@ -90,15 +115,20 @@ export function ActionBar({
               variant="ghost"
               size="sm"
               onClick={onSkip}
+              disabled={isValidating}
               className="cursor-pointer gap-1.5"
               title="Pular sua vez"
             >
               <SkipForward size={14} />
               Pular
             </Button>
-            <Button onClick={handleSubmit} disabled={!draft.trim()} className="cursor-pointer gap-1.5">
-              <Send size={14} />
-              Enviar
+            <Button 
+              onClick={() => void handleSubmit()} 
+              disabled={!draft.trim() || isValidating} 
+              className="cursor-pointer gap-1.5"
+            >
+              {isValidating ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              {isValidating ? 'Validando...' : 'Enviar'}
             </Button>
           </div>
         </div>
