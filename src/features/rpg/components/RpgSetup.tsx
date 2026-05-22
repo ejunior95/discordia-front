@@ -12,7 +12,7 @@ import type { RpgSetupParams } from '../hooks/useRpgCampaign';
 
 interface RpgSetupProps {
   isGenerating: boolean;
-  onStart: (params: RpgSetupParams) => void;
+  onStart: (params: RpgSetupParams) => Promise<void>;
 }
 
 export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
@@ -21,6 +21,8 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
   const [aiPlayers, setAiPlayers] = useState<AgentIA[]>([]);
   const [scenario, setScenario] = useState<Scenario>('fantasy');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [setupError, setSetupError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableAIPlayers = useMemo(
     () => AGENTS.filter((a) => a !== master),
@@ -41,14 +43,22 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
     effectiveAIPlayers.length <= 3 &&
     (scenario !== 'custom' || customPrompt.trim().length > 0);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (!canStart) return;
-    onStart({
-      scenario,
-      customPrompt: scenario === 'custom' ? customPrompt : undefined,
-      master,
-      aiPlayers: effectiveAIPlayers,
-    });
+    setSetupError(null);
+    setIsSubmitting(true);
+    try {
+      await onStart({
+        scenario,
+        customPrompt: scenario === 'custom' ? customPrompt : undefined,
+        master,
+        aiPlayers: effectiveAIPlayers,
+      });
+    } catch (err) {
+      setSetupError(err instanceof Error ? err.message : 'Erro ao validar o tema.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -154,10 +164,10 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
       <Card>
         <CardContent className="px-5 md:px-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-          <Book size={18} />
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Cenário
-          </h2>
+            <Book size={18} />
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Cenário
+            </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {SCENARIOS.map((s) => {
@@ -197,37 +207,51 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
               <Textarea
                 id="rpg-custom"
                 value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
+                onChange={(e) => {
+                  setCustomPrompt(e.target.value);
+                  if (setupError) setSetupError(null);
+                }}
                 placeholder="Ex.: uma cidade flutuante steampunk onde o vapor virou moeda…"
                 rows={3}
                 maxLength={500}
+                className={cn(setupError && 'border-destructive focus-visible:ring-destructive')}
               />
-              <p className="text-[11px] text-muted-foreground self-end tabular-nums">
-                {customPrompt.length}/500
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                {setupError ? (
+                  <p className="text-xs text-destructive">{setupError}</p>
+                ) : (
+                  <span />
+                )}
+                <p className="text-[11px] text-muted-foreground tabular-nums">
+                  {customPrompt.length}/500
+                </p>
+              </div>
             </div>
           )}
         </CardContent>
       </Card>
 
-      <div className="flex justify-center">
-        <Button 
-          size="lg" 
-          onClick={handleStart} 
-          disabled={!canStart || isGenerating} 
+      <div className="flex flex-col items-center gap-3">
+        {setupError && scenario !== 'custom' && (
+          <p className="text-sm text-destructive text-center">{setupError}</p>
+        )}
+        <Button
+          size="lg"
+          onClick={handleStart}
+          disabled={!canStart || isSubmitting || isGenerating}
           className="gap-2 w-full md:w-auto px-8 text-md cursor-pointer"
         >
-          {isGenerating ? (
-          <>
-            <Loader2 className="animate-spin mr-2" size={24} />
-            Analisando tema...
-          </>
-        ) : (
-          <>
-            <Swords className="mr-2 fill-current" size={24} />
-            Iniciar campanha
-          </>
-        )}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin mr-2" size={24} />
+              Analisando tema...
+            </>
+          ) : (
+            <>
+              <Swords className="mr-2 fill-current" size={24} />
+              Iniciar campanha
+            </>
+          )}
         </Button>
       </div>
     </div>

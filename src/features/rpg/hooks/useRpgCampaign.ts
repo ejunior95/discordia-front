@@ -61,7 +61,6 @@ function buildTurnOrder(master: ActorRef, aiPlayers: AgentIA[]): {
 }
 
 function buildCharacters(turnOrder: ActorRef[], master: ActorRef, scenario: Scenario): Character[] {
-  // todos os participantes (incluindo o mestre se ele jogar como NPC? não — mestre não tem ficha)
   return turnOrder
     .filter((actor) => actor !== master)
     .map((actor) => generateCharacter(actor, scenario));
@@ -86,9 +85,24 @@ export function useRpgCampaign() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  const validateThemeOrNarration = useCallback(
+    async (word: string, target: OrchestratorTargetKind, signal?: AbortSignal) => {
+      try {
+        await validateOrchestratorInput(target, word, undefined, signal);
+      } catch (err) {
+        if (axios.isCancel(err)) throw err;
+        throw new Error(
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+          ?? (err instanceof Error ? err.message : 'O tema não é adequado para a campanha.'),
+        );
+      }
+    },
+    [],
+  );
+
   const start = useCallback(
     async ({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams) => {
-    if (customPrompt) {
+      if (customPrompt) {
         setIsGenerating(true);
         const controller = new AbortController();
         abortRef.current = controller;
@@ -100,51 +114,35 @@ export function useRpgCampaign() {
           );
         } catch (err) {
           setIsGenerating(false);
-          // abortRef.current = null;
-          abortRef.current?.abort();
+          abortRef.current = null;
           if (axios.isCancel(err)) return;
-          throw err;
+          throw err; // relança para o componente exibir o erro
         }
         setIsGenerating(false);
-        // abortRef.current = null;
-        abortRef.current?.abort();
+        abortRef.current = null;
       }
-    const { players, turnOrder } = buildTurnOrder(master, aiPlayers);
-    const characters = buildCharacters(turnOrder, master, scenario);
-    const fresh: RpgCampaign = {
-      id: (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
-        ? crypto.randomUUID()
-        : `${Date.now()}`,
-      scenario,
-      customPrompt: customPrompt?.trim() || undefined,
-      master,
-      players,
-      turnOrder,
-      currentTurnIndex: 0,
-      characters,
-      turns: [],
-      status: 'playing',
-      createdAt: new Date().toISOString(),
-    };
-    setCampaign(fresh);
-  }, []);
 
-  const validateThemeOrNarration = useCallback(
-      async (word: string, target: OrchestratorTargetKind, signal?: AbortSignal) => {
-        try {
-          await validateOrchestratorInput(
-            target,
-            word,
-            undefined,
-            signal,
-          );
-        } catch (err) {
-          if (axios.isCancel(err)) throw err;
-          throw new Error(err instanceof Error ? err.message : String(err));  
-        }
-      },
-      [],
-    );
+      const { players, turnOrder } = buildTurnOrder(master, aiPlayers);
+      const characters = buildCharacters(turnOrder, master, scenario);
+      const fresh: RpgCampaign = {
+        id: (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+          ? crypto.randomUUID()
+          : `${Date.now()}`,
+        scenario,
+        customPrompt: customPrompt?.trim() || undefined,
+        master,
+        players,
+        turnOrder,
+        currentTurnIndex: 0,
+        characters,
+        turns: [],
+        status: 'playing',
+        createdAt: new Date().toISOString(),
+      };
+      setCampaign(fresh);
+    },
+    [validateThemeOrNarration],
+  );
 
   const advanceTurn = useCallback((current: RpgCampaign): RpgCampaign => {
     const nextIndex = (current.currentTurnIndex + 1) % current.turnOrder.length;
@@ -179,7 +177,6 @@ export function useRpgCampaign() {
     abortRef.current = controller;
     setIsGenerating(true);
 
-    // adiciona turno em loading
     const loadingTurn = makeTurn(actor, role, '', 'loading');
     setCampaign((current) => {
       if (!current) return current;
@@ -213,7 +210,6 @@ export function useRpgCampaign() {
         const turns = current.turns.map((t) =>
           t.id === loadingTurn.id ? { ...t, status: 'error' as const, error: errorMsg } : t,
         );
-        // não avança o turno em erro — usuário pode tentar de novo
         return { ...current, turns };
       });
     } finally {
@@ -224,14 +220,12 @@ export function useRpgCampaign() {
 
   const retryLastTurn = useCallback(async () => {
     if (!campaign) return;
-    // remove o último turno com erro e re-dispara
     setCampaign((current) => {
       if (!current) return current;
       const last = current.turns[current.turns.length - 1];
       if (!last || last.status !== 'error') return current;
       return { ...current, turns: current.turns.slice(0, -1) };
     });
-    // dispara de novo no próximo tick
     setTimeout(() => {
       void generateAITurn();
     }, 0);
