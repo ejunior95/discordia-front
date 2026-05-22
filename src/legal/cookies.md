@@ -6,7 +6,7 @@ Esta Política explica como o **DiscordIA** utiliza *cookies* e armazenamento lo
 
 ## 1. O que são cookies?
 
-*Cookies* são pequenos arquivos gravados pelo navegador a pedido de um site, usados para reconhecer você entre páginas e sessões. O DiscordIA também utiliza **armazenamento local** (*sessionStorage*) — um mecanismo do navegador semelhante, porém sob controle direto da aplicação web.
+*Cookies* são pequenos arquivos gravados pelo navegador a pedido de um site, usados para reconhecer você entre páginas e sessões. O DiscordIA também utiliza **armazenamento local** (*localStorage*) — um mecanismo do navegador semelhante, porém sob controle direto da aplicação web.
 
 ## 2. Cookies utilizados pelo DiscordIA
 
@@ -18,9 +18,9 @@ Hoje utilizamos **apenas cookies estritamente necessários** ao funcionamento do
 
 **Não usamos cookies de marketing, analytics, *retargeting*, redes sociais ou rastreamento entre sites.**
 
-## 3. Armazenamento local (*sessionStorage*)
+## 3. Armazenamento local (*localStorage*)
 
-Para preferências e estado de funcionamento, o DiscordIA grava algumas chaves no *sessionStorage* do seu navegador. Esses dados **ficam no seu dispositivo** e não são enviados a servidores externos:
+Para preferências e estado de funcionamento, o DiscordIA grava algumas chaves no *localStorage* do seu navegador. Esses dados **ficam no seu dispositivo** e não são enviados a servidores externos:
 
 | Chave | Finalidade |
 |-------|------------|
@@ -41,10 +41,10 @@ Como hoje o DiscordIA usa **somente cookies essenciais**, exibimos apenas um avi
 
 Você pode, a qualquer momento:
 
-- Limpar os cookies e o *sessionStorage* nas configurações do seu navegador;
+- Limpar os cookies e o *localStorage* nas configurações do seu navegador;
 - Acessar em modo privado/anônimo, que não persiste cookies entre sessões.
 
-Atenção: a remoção do cookie `access_token` resulta em **logout automático**. A remoção do *sessionStorage* apaga preferências e estado local de jogos.
+Atenção: a remoção do cookie `access_token` resulta em **logout automático**. A remoção do *localStorage* apaga preferências e estado local de jogos.
 
 ## 6. Contato
 

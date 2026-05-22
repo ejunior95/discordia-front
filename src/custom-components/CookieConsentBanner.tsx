@@ -17,7 +17,7 @@ export function CookieConsentBanner() {
 
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem(CONSENT_KEY);
+      const stored = localStorage.getItem(CONSENT_KEY);
       if (!stored || !stored.startsWith(`accepted:${CONSENT_VERSION}`)) {
         setVisible(true);
       }
@@ -28,7 +28,7 @@ export function CookieConsentBanner() {
 
   const accept = () => {
     try {
-      sessionStorage.setItem(
+      localStorage.setItem(
         CONSENT_KEY,
         `accepted:${CONSENT_VERSION}:${new Date().toISOString()}`,
       );
@@ -45,7 +45,7 @@ export function CookieConsentBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Aviso de cookies"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-3xl rounded-lg border bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:inset-x-auto sm:right-4 sm:left-4"
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-3xl rounded-lg border bg-background/75 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:inset-x-auto sm:right-4 sm:left-4"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-muted-foreground text-sm leading-relaxed">

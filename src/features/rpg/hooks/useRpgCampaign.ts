@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askGameAction } from '@/services/main.service';
+import { askGameAction, OrchestratorTargetKind, validateOrchestratorInput } from '@/services/main.service';
 import type { AgentIA } from '@/features/chat/types';
 import {
   RPG_STORAGE_KEY,
@@ -33,7 +33,7 @@ function sanitizeLoaded(campaign: RpgCampaign | null): RpgCampaign | null {
 function loadFromStorage(): RpgCampaign | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(RPG_STORAGE_KEY);
+    const raw = localStorage.getItem(RPG_STORAGE_KEY);
     if (!raw) return null;
     return sanitizeLoaded(JSON.parse(raw) as RpgCampaign);
   } catch {
@@ -75,9 +75,9 @@ export function useRpgCampaign() {
   useEffect(() => {
     try {
       if (campaign) {
-        sessionStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(campaign));
+        localStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(campaign));
       } else {
-        sessionStorage.removeItem(RPG_STORAGE_KEY);
+        localStorage.removeItem(RPG_STORAGE_KEY);
       }
     } catch {
       /* ignore quota */
@@ -86,8 +86,29 @@ export function useRpgCampaign() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  const start = useCallback(({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams) => {
-    abortRef.current?.abort();
+  const start = useCallback(
+    async ({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams) => {
+    if (customPrompt) {
+        setIsGenerating(true);
+        const controller = new AbortController();
+        abortRef.current = controller;
+        try {
+          await validateThemeOrNarration(
+            customPrompt,
+            'rpg-campaign-theme',
+            controller.signal,
+          );
+        } catch (err) {
+          setIsGenerating(false);
+          // abortRef.current = null;
+          abortRef.current?.abort();
+          if (axios.isCancel(err)) return;
+          throw err;
+        }
+        setIsGenerating(false);
+        // abortRef.current = null;
+        abortRef.current?.abort();
+      }
     const { players, turnOrder } = buildTurnOrder(master, aiPlayers);
     const characters = buildCharacters(turnOrder, master, scenario);
     const fresh: RpgCampaign = {
@@ -99,7 +120,7 @@ export function useRpgCampaign() {
       master,
       players,
       turnOrder,
-      currentTurnIndex: 0, // começa com o mestre
+      currentTurnIndex: 0,
       characters,
       turns: [],
       status: 'playing',
@@ -107,6 +128,23 @@ export function useRpgCampaign() {
     };
     setCampaign(fresh);
   }, []);
+
+  const validateThemeOrNarration = useCallback(
+      async (word: string, target: OrchestratorTargetKind, signal?: AbortSignal) => {
+        try {
+          await validateOrchestratorInput(
+            target,
+            word,
+            undefined,
+            signal,
+          );
+        } catch (err) {
+          if (axios.isCancel(err)) throw err;
+          throw new Error(err instanceof Error ? err.message : String(err));  
+        }
+      },
+      [],
+    );
 
   const advanceTurn = useCallback((current: RpgCampaign): RpgCampaign => {
     const nextIndex = (current.currentTurnIndex + 1) % current.turnOrder.length;

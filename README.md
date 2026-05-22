@@ -98,7 +98,7 @@ O frontend esconde ou redireciona recursos indisponíveis, mas o backend continu
 
 O chat vive em `src/features/chat` e funciona por rodadas:
 
-- `useChatRounds` controla envio, cancelamento, retry, votos, vencedor e persistência em `sessionStorage`.
+- `useChatRounds` controla envio, cancelamento, retry, votos, vencedor e persistência em `localStorage`.
 - `askToAll(question, signal)` consulta ChatGPT, Gemini, DeepSeek e Grok em uma única rodada e recebe `roundId`.
 - `askToOne(question, agent)` refaz a resposta de uma IA específica.
 - `voteOnRound(roundId, agent)` registra no backend a IA vencedora escolhida pelo usuário.
@@ -182,7 +182,7 @@ Roles `admin` e `beta_tester` devem aparecer como acesso total/ilimitado, em par
 - Novas rotas devem ser importadas com `lazy()` em `App.tsx` e protegidas conforme o tipo de acesso.
 - Recursos por plano devem ter `FeatureGate` e `requiresCapability` na navegação quando aparecerem no menu principal.
 - Preserve a normalização de respostas em `main.service.ts`, pois a API pode retornar `{ response }` ou `{ [agent]: { response } }`.
-- Ao mudar formatos persistidos em `sessionStorage`, sanitize estados antigos e transforme `loading` abandonado em erro/estado neutro.
+- Ao mudar formatos persistidos em `localStorage`, sanitize estados antigos e transforme `loading` abandonado em erro/estado neutro.
 
 ## Observações
 

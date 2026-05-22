@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Book, Crown, Swords, User as UserIcon } from 'lucide-react';
+import { Book, Crown, Loader2, Swords, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,10 +11,11 @@ import type { ActorRef, Scenario } from '../types';
 import type { RpgSetupParams } from '../hooks/useRpgCampaign';
 
 interface RpgSetupProps {
+  isGenerating: boolean;
   onStart: (params: RpgSetupParams) => void;
 }
 
-export function RpgSetup({ onStart }: RpgSetupProps) {
+export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
   const agentsDisplay = useAgentsDisplay();
   const [master, setMaster] = useState<ActorRef>('user');
   const [aiPlayers, setAiPlayers] = useState<AgentIA[]>([]);
@@ -210,9 +211,23 @@ export function RpgSetup({ onStart }: RpgSetupProps) {
       </Card>
 
       <div className="flex justify-center">
-        <Button size="lg" onClick={handleStart} disabled={!canStart} className="gap-2 w-full md:w-auto px-8 text-md cursor-pointer">
-          <Swords size={24} />
-          Iniciar campanha
+        <Button 
+          size="lg" 
+          onClick={handleStart} 
+          disabled={!canStart || isGenerating} 
+          className="gap-2 w-full md:w-auto px-8 text-md cursor-pointer"
+        >
+          {isGenerating ? (
+          <>
+            <Loader2 className="animate-spin mr-2" size={24} />
+            Analisando tema...
+          </>
+        ) : (
+          <>
+            <Swords className="mr-2 fill-current" size={24} />
+            Iniciar campanha
+          </>
+        )}
         </Button>
       </div>
     </div>

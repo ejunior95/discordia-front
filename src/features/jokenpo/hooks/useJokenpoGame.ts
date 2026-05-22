@@ -20,7 +20,7 @@ function generateId(): string {
 function loadFromStorage(): JokenpoGame | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(JOKENPO_STORAGE_KEY);
+    const raw = localStorage.getItem(JOKENPO_STORAGE_KEY);
     if (!raw) return null;
     const g = JSON.parse(raw) as JokenpoGame;
     // Sanitiza estado "revealing" pendente.
@@ -40,8 +40,8 @@ export function useJokenpoGame() {
 
   useEffect(() => {
     try {
-      if (game) sessionStorage.setItem(JOKENPO_STORAGE_KEY, JSON.stringify(game));
-      else sessionStorage.removeItem(JOKENPO_STORAGE_KEY);
+      if (game) localStorage.setItem(JOKENPO_STORAGE_KEY, JSON.stringify(game));
+      else localStorage.removeItem(JOKENPO_STORAGE_KEY);
     } catch {
       /* ignore */
     }

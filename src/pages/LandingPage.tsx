@@ -206,7 +206,7 @@ function TopNav({ scrolled, user }: { scrolled: boolean; user: boolean }) {
 
 function Hero({ ctaTarget }: { ctaTarget: string }) {
   return (
-    <section className="relative isolate overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32 min-h-screen">
+    <section className="relative isolate overflow-hidden flex flex-col items-center justify-center min-h-screen">
       {/* 3D logo background */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <DiscordiaLogo3D

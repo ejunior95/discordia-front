@@ -17,14 +17,14 @@ const CurrentIAContext = createContext<CurrentIAContextType>({
 export function CurrentIAProvider({ children }: { children: React.ReactNode }) {
   const [currentIA, setCurrentIAState] = useState<CurrentIA>(() => {
     if (typeof window === 'undefined') return '';
-    return (sessionStorage.getItem(STORAGE_KEY) as CurrentIA) || '';
+    return (localStorage.getItem(STORAGE_KEY) as CurrentIA) || '';
   });
 
   useEffect(() => {
     if (currentIA) {
-      sessionStorage.setItem(STORAGE_KEY, currentIA);
+      localStorage.setItem(STORAGE_KEY, currentIA);
     } else {
-      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY);
     }
   }, [currentIA]);
 

@@ -36,7 +36,7 @@ function isWordRevealed(word: string, tried: string[]): boolean {
 function loadFromStorage(): HangmanGame | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(HANGMAN_STORAGE_KEY);
+    const raw = localStorage.getItem(HANGMAN_STORAGE_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as HangmanGame;
   } catch {
@@ -67,8 +67,8 @@ export function useHangmanGame() {
 
   useEffect(() => {
     try {
-      if (game) sessionStorage.setItem(HANGMAN_STORAGE_KEY, JSON.stringify(game));
-      else sessionStorage.removeItem(HANGMAN_STORAGE_KEY);
+      if (game) localStorage.setItem(HANGMAN_STORAGE_KEY, JSON.stringify(game));
+      else localStorage.removeItem(HANGMAN_STORAGE_KEY);
     } catch {
       /* ignore quota */
     }
