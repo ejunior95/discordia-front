@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   Crown,
   Loader2,
@@ -37,7 +37,6 @@ export function ActionBar({
   const [draft, setDraft] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
 
   const isUserTurn = currentActor === "user";
   const isMasterTurn = currentActor === campaign.master;
