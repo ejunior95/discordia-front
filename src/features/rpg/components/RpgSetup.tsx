@@ -218,7 +218,7 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
               />
               <div className="flex items-center justify-between gap-2">
                 {setupError ? (
-                  <p className="text-xs text-destructive">{setupError}</p>
+                  <p className="text-xs text-destructive first-letter:capitalize">{setupError}</p>
                 ) : (
                   <span />
                 )}

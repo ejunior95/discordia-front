@@ -23,7 +23,7 @@ interface RpgTableProps {
   campaign: RpgCampaign;
   currentActor: ActorRef;
   isGenerating: boolean;
-  onSubmitUser: (content: string) => void;
+  onSubmitUser: (content: string) => Promise<void>;
   onGenerateAI: () => void;
   onRetryLast: () => void;
   onSkip: () => void;
@@ -52,7 +52,6 @@ export function RpgTable({
   const timelineRef = useRef<HTMLDivElement>(null);
   const lastTurn = campaign.turns[campaign.turns.length - 1];
 
-  // auto-scroll para o último turno
   useEffect(() => {
     const el = timelineRef.current;
     if (!el) return;

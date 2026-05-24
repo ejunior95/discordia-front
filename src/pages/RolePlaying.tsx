@@ -24,7 +24,7 @@ export default function RolePlaying() {
     <section className="w-full px-4 sm:px-6 lg:px-8 pt-6">
       <motion.div {...pageMotion} className="max-w-7xl mx-auto">
         {!campaign || campaign.status === 'setup' || !currentActor ? (
-          <RpgSetup onStart={start} />
+          <RpgSetup onStart={start} isGenerating={isGenerating} />
         ) : (
           <RpgTable
             campaign={campaign}

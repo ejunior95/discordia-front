@@ -84,10 +84,11 @@ export function useRpgCampaign() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  const validateThemeOrNarration = useCallback(
-    async (word: string, target: OrchestratorTargetKind, signal?: AbortSignal) => {
+  // Função interna de validação — não exportada
+  const validateContent = useCallback(
+    async (content: string, target: OrchestratorTargetKind, signal?: AbortSignal): Promise<void> => {
       try {
-        await validateOrchestratorInput(target, word, undefined, signal);
+        await validateOrchestratorInput(target, content, undefined, signal);
       } catch (err) {
         if (axios.isCancel(err)) throw err;
         throw new Error(
@@ -100,17 +101,13 @@ export function useRpgCampaign() {
   );
 
   const start = useCallback(
-    async ({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams) => {
+    async ({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams): Promise<void> => {
       if (customPrompt) {
         setIsGenerating(true);
         const controller = new AbortController();
         abortRef.current = controller;
         try {
-          await validateThemeOrNarration(
-            customPrompt,
-            'rpg-campaign-theme',
-            controller.signal,
-          );
+          await validateContent(customPrompt, 'rpg-campaign-theme', controller.signal);
         } catch (err) {
           setIsGenerating(false);
           abortRef.current = null;
@@ -140,7 +137,7 @@ export function useRpgCampaign() {
       };
       setCampaign(fresh);
     },
-    [validateThemeOrNarration],
+    [validateContent],
   );
 
   const advanceTurn = useCallback((current: RpgCampaign): RpgCampaign => {
@@ -148,16 +145,18 @@ export function useRpgCampaign() {
     return { ...current, currentTurnIndex: nextIndex };
   }, []);
 
-  const submitUserTurn = useCallback(async (content: string) => {
+  /**
+   * Valida e submete o turno do usuário.
+   * Lança erro se a validação falhar — o componente (ActionBar) deve capturar e exibir.
+   */
+  const submitUserTurn = useCallback(async (content: string): Promise<void> => {
     const trimmed = content.trim();
     if (!trimmed) return;
-
     if (!campaign || campaign.status !== 'playing') return;
 
     const actor = campaign.turnOrder[campaign.currentTurnIndex];
     if (actor !== 'user') return;
 
-    // Identifica se o usuário atual é o mestre
     const isMaster = campaign.master === 'user';
     const target: OrchestratorTargetKind = isMaster ? 'rpg-master-narration' : 'rpg-player-action';
 
@@ -166,24 +165,22 @@ export function useRpgCampaign() {
     abortRef.current = controller;
 
     try {
-      // Executa a validação apropriada
-      await validateThemeOrNarration(trimmed, target, controller.signal);
+      await validateContent(trimmed, target, controller.signal);
 
-      // Se passar na validação, atualiza o estado do jogo
+      const role: TurnAction['role'] = isMaster ? 'master' : 'player';
       setCampaign((current) => {
         if (!current || current.status !== 'playing') return current;
-        const role: TurnAction['role'] = isMaster ? 'master' : 'player';
         const turn = makeTurn('user', role, trimmed, 'success');
         return advanceTurn({ ...current, turns: [...current.turns, turn] });
       });
     } catch (err) {
       if (axios.isCancel(err)) return;
-      throw err;
+      throw err; // relança para o ActionBar exibir o erro
     } finally {
       setIsGenerating(false);
       abortRef.current = null;
     }
-  }, [campaign, validateThemeOrNarration, advanceTurn]);
+  }, [campaign, validateContent, advanceTurn]);
 
   const generateAITurn = useCallback(async () => {
     if (isGenerating) return;
