@@ -33,20 +33,6 @@ export function HeroGreeting() {
         <p className="text-lg md:text-2xl font-medium text-muted-foreground max-w-2xl">
           {greeting}
         </p>
-        <div className="flex flex-wrap gap-3 pt-2">
-          <Button asChild size="lg" className="gap-2 text-md">
-            <Link to="/chat">
-              <MessagesSquare size={20} />
-              Iniciar chat conflituoso
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="gap-2 text-md">
-            <Link to="/games">
-              <Gamepad2 size={20} />
-              Ver todos os jogos
-            </Link>
-          </Button>
-        </div>
       </div>
     </section>
   );
