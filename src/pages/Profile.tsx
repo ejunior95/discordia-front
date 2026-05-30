@@ -34,7 +34,6 @@ import {
   Sparkles,
   ThumbsUp,
   Trophy,
-  Twitter,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
