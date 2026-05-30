@@ -246,7 +246,7 @@ function RoundPips({ current }: { current: 1 | 2 | 3 }) {
           className={cn(
             'size-3 rounded-full transition-colors',
             n < current && 'bg-primary',
-            n === current && 'bg-primary scale-125',
+            n === current && 'bg-[#D152F6] border border-[#34B0DE] scale-150',
             n > current && 'bg-muted',
           )}
         />
