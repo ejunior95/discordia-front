@@ -35,6 +35,7 @@ import {
   ThumbsUp,
   Trophy,
   Twitter,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -164,8 +165,8 @@ export default function Profile() {
                 {(userSocials.twitter || userSocials.github || userSocials.linkedin) && (
                   <div className="flex items-center justify-center gap-4 sm:justify-start text-muted-foreground">
                     {userSocials.twitter && (
-                      <a href={`https://x.com/${userSocials.twitter.replace('@', '')}`} target="_blank" rel="noreferrer" className="hover:text-primary border p-2 rounded-md transition-colors" title="Twitter / X">
-                        <Twitter className="h-5 w-5" />
+                      <a href={`https://x.com/${userSocials.twitter.replace('@', '')}`} target="_blank" rel="noreferrer" className="hover:text-primary border p-2 rounded-md transition-colors" title="X / Twitter">
+                        <X className="h-5 w-5" />
                       </a>
                     )}
                     {userSocials.github && (
@@ -275,7 +276,7 @@ export default function Profile() {
                       htmlFor="twitter"
                       className="flex items-center gap-2"
                     >
-                      <Twitter className="h-4 w-4" /> Twitter / X
+                      <X className="h-4 w-4" /> X / Twitter
                     </Label>
                     <Input
                       id="twitter"
