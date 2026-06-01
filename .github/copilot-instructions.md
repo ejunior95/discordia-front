@@ -30,6 +30,7 @@ Stack: React 19, TypeScript, Vite 6, TailwindCSS 4, shadcn/ui, Radix UI, React R
 - `CurrentIAContext` persists its value in `localStorage` under `currentIA`.
 - Protected game pages should redirect to `/games` when a selected AI is required and missing.
 - `ThemeProvider` uses storage key `discordia-theme-select` and supports light, dark, and system modes.
+- Treat `VITE_FLAG_ISWORKING=true` as a broad maintenance/creation mode for public entry routes, not as a per-feature flag.
 
 ### Routes
 
@@ -59,7 +60,7 @@ Do not create a second Axios instance for app API calls.
 
 - Services export async functions, not classes.
 - Use `api.request<T>({ method, url, data, signal })`.
-- Accept `AbortSignal` for long-running AI calls that the UI can cancel.
+- Accept and pass through `AbortSignal` for long-running AI calls that the UI can cancel; hooks should abort superseded chat/game requests instead of leaving them pending.
 - Catch inside a service only when the caller genuinely needs a fallback there, as auth bootstrap does.
 - Normalize backend response variants in the service when the UI needs one stable shape.
 
