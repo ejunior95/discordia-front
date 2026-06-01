@@ -8,6 +8,11 @@ import {
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
+import {
+  ATTRIBUTE_LABELS,
+  type AttributeKey,
+  getClassPrimaryAttribute,
+} from '../rpg.constants';
 import type { Character } from '../types';
 
 interface CharacterPanelProps {
@@ -32,6 +37,7 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
         const iconClass = isUser ? 'bg-primary text-primary-foreground' : cfg!.iconClass;
         const ownerLabel = isUser ? 'Jogador' : cfg!.label;
         const hpPct = Math.round((char.hp / char.maxHp) * 100);
+        const primaryAttr = getClassPrimaryAttribute(char.classe);
 
         return (
           <AccordionItem key={char.name} value={char.name} className="border rounded-lg mb-2 px-3">
@@ -55,7 +61,7 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
                     <Heart size={11} className="text-rose-500" />
                     HP
                   </span>
-                  <span className="font-semibold tabular-nums">
+                  <span className="font-semibold tabular-nums min-w-14 text-right">
                     {char.hp}/{char.maxHp}
                   </span>
                 </div>
@@ -70,12 +76,14 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-1.5 text-center">
-                <AttrBlock label="FOR" value={char.attributes.for} />
-                <AttrBlock label="DES" value={char.attributes.des} />
-                <AttrBlock label="CON" value={char.attributes.con} />
-                <AttrBlock label="INT" value={char.attributes.int} />
-                <AttrBlock label="SAB" value={char.attributes.sab} />
-                <AttrBlock label="CAR" value={char.attributes.car} />
+                {(Object.keys(ATTRIBUTE_LABELS) as AttributeKey[]).map((key) => (
+                  <AttrBlock
+                    key={key}
+                    label={ATTRIBUTE_LABELS[key]}
+                    value={char.attributes[key]}
+                    highlight={key === primaryAttr}
+                  />
+                ))}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -85,10 +93,26 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
   );
 }
 
-function AttrBlock({ label, value }: { label: string; value: number }) {
+function AttrBlock({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: number;
+  highlight?: boolean;
+}) {
   return (
-    <div className="rounded-md border bg-background/50 px-2 py-1.5">
-      <p className="text-[10px] text-muted-foreground tracking-wide">{label}</p>
+    <div
+      className={cn(
+        'rounded-md border bg-background/50 px-2 py-1.5',
+        highlight && 'border-primary/60 bg-primary/5',
+      )}
+    >
+      <p className="text-[10px] text-muted-foreground tracking-wide">
+        {label}
+        {highlight && ' ★'}
+      </p>
       <p className="text-sm font-bold tabular-nums">{value}</p>
     </div>
   );

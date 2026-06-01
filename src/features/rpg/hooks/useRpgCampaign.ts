@@ -5,9 +5,13 @@ import type { AgentIA } from '@/features/chat/types';
 import {
   RPG_STORAGE_KEY,
   generateCharacter,
+  getClassPrimaryAttribute,
+  attributeModifier,
   makeTurn,
+  parseHpTags,
+  rollWithModifier,
 } from '../rpg.constants';
-import type { ActorRef, Character, RpgCampaign, Scenario, TurnAction } from '../types';
+import type { ActorRef, Character, DiceRoll, RpgCampaign, Scenario, TurnAction } from '../types';
 
 function extractErrorMessage(err: unknown): string {
   if (axios.isCancel(err) || (err instanceof Error && err.name === 'CanceledError')) {
@@ -45,6 +49,8 @@ export interface RpgSetupParams {
   customPrompt?: string;
   master: ActorRef;
   aiPlayers: AgentIA[];
+  /** personagem criado pelo jogador humano (quando o mestre é uma IA) */
+  userCharacter?: Character;
 }
 
 function buildTurnOrder(master: ActorRef, aiPlayers: AgentIA[]): {
@@ -59,10 +65,34 @@ function buildTurnOrder(master: ActorRef, aiPlayers: AgentIA[]): {
   return { players, turnOrder };
 }
 
-function buildCharacters(turnOrder: ActorRef[], master: ActorRef, scenario: Scenario): Character[] {
+function buildCharacters(
+  turnOrder: ActorRef[],
+  master: ActorRef,
+  scenario: Scenario,
+  userCharacter?: Character,
+): Character[] {
   return turnOrder
     .filter((actor) => actor !== master)
-    .map((actor) => generateCharacter(actor, scenario));
+    .map((actor) =>
+      actor === 'user' && userCharacter
+        ? userCharacter
+        : generateCharacter(actor, scenario),
+    );
+}
+
+function applyHpDeltas(characters: Character[], deltas: { owner: ActorRef; delta: number }[]): Character[] {
+  if (deltas.length === 0) return characters;
+  return characters.map((character) => {
+    const totalDelta = deltas
+      .filter((delta) => delta.owner === character.owner)
+      .reduce((sum, delta) => sum + delta.delta, 0);
+
+    if (totalDelta === 0) return character;
+    return {
+      ...character,
+      hp: Math.max(0, Math.min(character.maxHp, character.hp + totalDelta)),
+    };
+  });
 }
 
 export function useRpgCampaign() {
@@ -101,7 +131,7 @@ export function useRpgCampaign() {
   );
 
   const start = useCallback(
-    async ({ scenario, customPrompt, master, aiPlayers }: RpgSetupParams): Promise<void> => {
+    async ({ scenario, customPrompt, master, aiPlayers, userCharacter }: RpgSetupParams): Promise<void> => {
       if (customPrompt) {
         setIsGenerating(true);
         const controller = new AbortController();
@@ -119,7 +149,7 @@ export function useRpgCampaign() {
       }
 
       const { players, turnOrder } = buildTurnOrder(master, aiPlayers);
-      const characters = buildCharacters(turnOrder, master, scenario);
+      const characters = buildCharacters(turnOrder, master, scenario, userCharacter);
       const fresh: RpgCampaign = {
         id: (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
           ? crypto.randomUUID()
@@ -149,7 +179,7 @@ export function useRpgCampaign() {
    * Valida e submete o turno do usuário.
    * Lança erro se a validação falhar — o componente (ActionBar) deve capturar e exibir.
    */
-  const submitUserTurn = useCallback(async (content: string): Promise<void> => {
+  const submitUserTurn = useCallback(async (content: string, roll?: DiceRoll): Promise<void> => {
     const trimmed = content.trim();
     if (!trimmed) return;
     if (!campaign || campaign.status !== 'playing') return;
@@ -170,8 +200,19 @@ export function useRpgCampaign() {
       const role: TurnAction['role'] = isMaster ? 'master' : 'player';
       setCampaign((current) => {
         if (!current || current.status !== 'playing') return current;
-        const turn = makeTurn('user', role, trimmed, 'success');
-        return advanceTurn({ ...current, turns: [...current.turns, turn] });
+        const parsedHp = role === 'master'
+          ? parseHpTags(trimmed, current.characters)
+          : { stripped: trimmed, deltas: [] };
+        const turn = makeTurn('user', role, parsedHp.stripped, 'success');
+        const turnWithRoll: TurnAction = roll ? { ...turn, roll } : turn;
+        const turnWithHp: TurnAction = parsedHp.deltas.length > 0
+          ? { ...turnWithRoll, hpDeltas: parsedHp.deltas }
+          : turnWithRoll;
+        return advanceTurn({
+          ...current,
+          characters: applyHpDeltas(current.characters, parsedHp.deltas),
+          turns: [...current.turns, turnWithHp],
+        });
       });
     } catch (err) {
       if (axios.isCancel(err)) return;
@@ -197,6 +238,17 @@ export function useRpgCampaign() {
     abortRef.current = controller;
     setIsGenerating(true);
 
+    // jogadores IA rolam automaticamente um d20 + modificador do atributo principal
+    let pendingRoll: DiceRoll | undefined;
+    if (!isMasterTurn) {
+      const character = campaign.characters.find((c) => c.owner === actor);
+      if (character) {
+        const attrKey = getClassPrimaryAttribute(character.classe);
+        const mod = attributeModifier(character.attributes[attrKey]);
+        pendingRoll = rollWithModifier('d20', mod, attrKey.toUpperCase());
+      }
+    }
+
     const loadingTurn = makeTurn(actor, role, '', 'loading');
     setCampaign((current) => {
       if (!current) return current;
@@ -204,10 +256,13 @@ export function useRpgCampaign() {
     });
 
     try {
+      const requestCampaign = pendingRoll
+        ? { ...campaign, pendingRoll }
+        : campaign;
       const response = await askGameAction(
         'rpg',
         actor as AgentIA,
-        { campaign: campaign as unknown as Record<string, unknown> },
+        { campaign: requestCampaign as unknown as Record<string, unknown> },
         controller.signal,
       );
       const msg = response?.data?.response?.trim();
@@ -216,12 +271,26 @@ export function useRpgCampaign() {
 
       setCampaign((current) => {
         if (!current) return current;
+        const parsedHp = isMasterTurn
+          ? parseHpTags(msg, current.characters)
+          : { stripped: msg, deltas: [] };
         const turns = current.turns.map((t) =>
           t.id === loadingTurn.id
-            ? { ...t, status: 'success' as const, content: msg, audioUrl }
+            ? {
+                ...t,
+                status: 'success' as const,
+                content: parsedHp.stripped,
+                audioUrl,
+                ...(pendingRoll ? { roll: pendingRoll } : {}),
+                ...(parsedHp.deltas.length > 0 ? { hpDeltas: parsedHp.deltas } : {}),
+              }
             : t,
         );
-        return advanceTurn({ ...current, turns });
+        return advanceTurn({
+          ...current,
+          characters: applyHpDeltas(current.characters, parsedHp.deltas),
+          turns,
+        });
       });
     } catch (err) {
       const errorMsg = extractErrorMessage(err);

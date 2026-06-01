@@ -1,12 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { Crown, MoreVertical, Pause, Play, Sparkles, Trash2 } from 'lucide-react';
+import { Crown, MoreVertical, Pause, Play, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import type { AgentIA } from '@/features/chat/types';
 import { getScenarioConfig } from '../rpg.constants';
-import type { ActorRef, RpgCampaign } from '../types';
+import type { ActorRef, DiceRoll, RpgCampaign } from '../types';
 import { ActionBar } from './ActionBar';
 import { CharacterPanel } from './CharacterPanel';
 import { TurnBubble } from './TurnBubble';
@@ -23,7 +22,7 @@ interface RpgTableProps {
   campaign: RpgCampaign;
   currentActor: ActorRef;
   isGenerating: boolean;
-  onSubmitUser: (content: string) => Promise<void>;
+  onSubmitUser: (content: string, roll?: DiceRoll) => Promise<void>;
   onGenerateAI: () => void;
   onRetryLast: () => void;
   onSkip: () => void;
@@ -61,14 +60,14 @@ export function RpgTable({
   }, [campaign.turns.length, lastTurn?.status]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 md:gap-6 h-[calc(100dvh-7rem)] min-h-[36rem]">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 lg:h-[calc(100dvh-7rem)] lg:min-h-144">
       {/* Coluna principal: header + timeline + action bar */}
-      <div className="lg:col-span-3 flex flex-col gap-4 min-h-0">
+      <div className="lg:col-span-3 flex flex-col gap-3 md:gap-4 lg:min-h-0">
         {/* Header */}
         <Card className="py-4">
-          <CardContent className="px-4 md:px-5 flex items-center justify-between gap-3">
+          <CardContent className="px-4 md:px-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className={cn('size-10 rounded-lg flex items-center justify-center bg-gradient-to-br', scenarioCfg.accent)}>
+              <div className={cn('size-10 rounded-lg flex items-center justify-center bg-linear-to-br', scenarioCfg.accent)}>
                 <ScenarioIcon size={20} />
               </div>
               <div className="min-w-0">
@@ -106,11 +105,6 @@ export function RpgTable({
                     <Trash2 size={14} />
                     Encerrar campanha
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                    <Sparkles size={14} />
-                    Em breve: rolagem de dados
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -118,7 +112,7 @@ export function RpgTable({
         </Card>
 
         {/* Timeline */}
-        <Card className="flex-1 min-h-0 py-0 overflow-hidden">
+        <Card className="flex-1 min-h-[55vh] lg:min-h-0 py-0 overflow-hidden">
           <ScrollArea className="h-full">
             <div ref={timelineRef} className="h-full overflow-y-auto px-4 md:px-6 py-4">
               {campaign.turns.length === 0 ? (
@@ -165,8 +159,8 @@ export function RpgTable({
       </div>
 
       {/* Coluna lateral: fichas */}
-      <div className="lg:col-span-1 min-h-0">
-        <Card className="h-full py-4 overflow-hidden flex flex-col">
+      <div className="lg:col-span-1 lg:min-h-0">
+        <Card className="h-auto lg:h-full max-h-[55vh] lg:max-h-none py-4 overflow-hidden flex flex-col">
           <CardContent className="px-3 md:px-4 flex flex-col gap-3 min-h-0">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground px-1">
               Personagens
@@ -185,7 +179,7 @@ export function RpgTable({
 
 function EmptyTimeline({ isMasterAI }: { isMasterAI: boolean }) {
   return (
-    <div className="h-full min-h-[18rem] flex flex-col items-center justify-center text-center gap-3 px-4">
+    <div className="h-full min-h-72 flex flex-col items-center justify-center text-center gap-3 px-4">
       <div className="size-12 rounded-full bg-amber-500/15 border-2 border-amber-500/30 flex items-center justify-center">
         <Crown size={22} className="text-amber-500" />
       </div>

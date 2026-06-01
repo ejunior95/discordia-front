@@ -22,6 +22,26 @@ export interface Character {
   attributes: Attributes;
 }
 
+export type DiceType = 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'd100';
+
+export interface DiceRoll {
+  dice: DiceType;
+  /** valor bruto rolado no dado */
+  raw: number;
+  /** modificador aplicado (pode ser negativo ou zero) */
+  modifier: number;
+  /** rótulo do modificador, ex.: "DES" */
+  modifierLabel?: string;
+  /** raw + modifier */
+  total: number;
+}
+
+export interface HpDelta {
+  owner: ActorRef;
+  name: string;
+  delta: number;
+}
+
 export type TurnRole = 'master' | 'player';
 export type TurnStatus = 'loading' | 'success' | 'error';
 
@@ -34,6 +54,8 @@ export interface TurnAction {
   error?: string;
   createdAt: string;
   audioUrl?: string;
+  roll?: DiceRoll;
+  hpDeltas?: HpDelta[];
 }
 
 export type CampaignStatus = 'setup' | 'playing' | 'paused';
@@ -50,6 +72,8 @@ export interface RpgCampaign {
   currentTurnIndex: number;
   characters: Character[];
   turns: TurnAction[];
+  /** rolagem pendente do ator atual (injetada no prompt do backend) */
+  pendingRoll?: DiceRoll;
   status: CampaignStatus;
   createdAt: string;
 }

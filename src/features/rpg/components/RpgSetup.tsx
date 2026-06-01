@@ -7,16 +7,20 @@ import { cn } from '@/lib/utils';
 import { useAgentsDisplay } from '@/hooks/useAgentDisplay';
 import { AGENTS, type AgentIA } from '@/features/chat/types';
 import { SCENARIOS } from '../rpg.constants';
-import type { ActorRef, Scenario } from '../types';
+import type { ActorRef, Character, Scenario } from '../types';
 import type { RpgSetupParams } from '../hooks/useRpgCampaign';
+import { CharacterCreator } from './CharacterCreator';
 
 interface RpgSetupProps {
   isGenerating: boolean;
   onStart: (params: RpgSetupParams) => Promise<void>;
 }
 
+type SetupStep = 'config' | 'create';
+
 export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
   const agentsDisplay = useAgentsDisplay();
+  const [step, setStep] = useState<SetupStep>('config');
   const [master, setMaster] = useState<ActorRef>('user');
   const [aiPlayers, setAiPlayers] = useState<AgentIA[]>([]);
   const [scenario, setScenario] = useState<Scenario>('fantasy');
@@ -43,8 +47,10 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
     effectiveAIPlayers.length <= 3 &&
     (scenario !== 'custom' || customPrompt.trim().length > 0);
 
-  const handleStart = async () => {
-    if (!canStart) return;
+  // quando o humano é jogador (mestre é IA), passa pela criação de personagem
+  const userIsPlayer = master !== 'user';
+
+  const launch = async (userCharacter?: Character) => {
     setSetupError(null);
     setIsSubmitting(true);
     try {
@@ -53,13 +59,35 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
         customPrompt: scenario === 'custom' ? customPrompt : undefined,
         master,
         aiPlayers: effectiveAIPlayers,
+        userCharacter,
       });
     } catch (err) {
+      setStep('config');
       setSetupError(err instanceof Error ? err.message : 'Erro ao validar o tema.');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleStart = async () => {
+    if (!canStart) return;
+    if (userIsPlayer) {
+      setSetupError(null);
+      setStep('create');
+      return;
+    }
+    await launch();
+  };
+
+  if (step === 'create') {
+    return (
+      <CharacterCreator
+        scenario={scenario}
+        onBack={() => setStep('config')}
+        onConfirm={(character) => void launch(character)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
@@ -245,6 +273,11 @@ export function RpgSetup({ isGenerating, onStart }: RpgSetupProps) {
             <>
               <Loader2 className="animate-spin mr-2" size={24} />
               Analisando tema...
+            </>
+          ) : userIsPlayer ? (
+            <>
+              <UserIcon className="mr-2" size={24} />
+              Criar personagem
             </>
           ) : (
             <>

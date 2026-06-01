@@ -1,10 +1,10 @@
-import { Crown, RotateCcw, Sparkles, User as UserIcon } from 'lucide-react';
+import { Crown, Dices, Heart, RotateCcw, Sparkles, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { IA_CONFIG } from '@/features/chat/chat.constants';
 import { AudioPlayer } from '@/custom-components/AudioPlayer';
 import type { AgentIA } from '@/features/chat/types';
-import type { Character, TurnAction } from '../types';
+import type { Character, DiceRoll, TurnAction } from '../types';
 
 interface TurnBubbleProps {
   turn: TurnAction;
@@ -48,6 +48,11 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
         )}
       </header>
 
+      {turn.roll && turn.status !== 'loading' && <RollBadge roll={turn.roll} />}
+      {turn.hpDeltas && turn.hpDeltas.length > 0 && turn.status !== 'loading' && (
+        <HpDeltaBadges deltas={turn.hpDeltas} />
+      )}
+
       {turn.status === 'loading' && <LoadingLines />}
       {turn.status === 'error' && (
         <div className="flex flex-col gap-2">
@@ -76,6 +81,49 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
         </>
       )}
     </article>
+  );
+}
+
+function RollBadge({ roll }: { roll: DiceRoll }) {
+  const sign = roll.modifier > 0 ? '+' : '−';
+  return (
+    <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-medium text-indigo-600 dark:text-indigo-300">
+      <Dices size={12} />
+      <span className="tabular-nums">
+        {roll.dice} {roll.raw}
+        {roll.modifier !== 0 && (
+          <>
+            {' '}
+            {sign}
+            {Math.abs(roll.modifier)}
+            {roll.modifierLabel ? ` ${roll.modifierLabel}` : ''}
+          </>
+        )}
+        {' = '}
+        <span className="font-bold">{roll.total}</span>
+      </span>
+    </div>
+  );
+}
+
+function HpDeltaBadges({ deltas }: { deltas: NonNullable<TurnAction['hpDeltas']> }) {
+  return (
+    <div className="mb-1.5 flex flex-wrap gap-1.5">
+      {deltas.map((delta, index) => (
+        <span
+          key={`${delta.owner}-${index}`}
+          className={cn(
+            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium tabular-nums',
+            delta.delta < 0
+              ? 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-300'
+              : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+          )}
+        >
+          <Heart size={10} />
+          {delta.name} {delta.delta > 0 ? '+' : ''}{delta.delta} HP
+        </span>
+      ))}
+    </div>
   );
 }
 

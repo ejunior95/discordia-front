@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Crown,
+  Dices,
   Loader2,
   Send,
   SkipForward,
@@ -9,17 +10,34 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { IA_CONFIG } from "@/features/chat/chat.constants";
 import type { AgentIA } from "@/features/chat/types";
-import type { ActorRef, RpgCampaign } from "../types";
+import {
+  ATTRIBUTE_KEYS,
+  ATTRIBUTE_LABELS,
+  type AttributeKey,
+  attributeModifier,
+  DICE_TYPES,
+  getClassPrimaryAttribute,
+  rollWithModifier,
+} from "../rpg.constants";
+import type { ActorRef, DiceRoll, DiceType, RpgCampaign } from "../types";
+import { DiceRoller } from "./DiceRoller";
 
 interface ActionBarProps {
   campaign: RpgCampaign;
   currentActor: ActorRef;
   isGenerating: boolean;
-  onSubmitUser: (content: string) => Promise<void>;
+  onSubmitUser: (content: string, roll?: DiceRoll) => Promise<void>;
   onGenerateAI: () => void;
   onAbort: () => void;
   onSkip: () => void;
@@ -42,6 +60,34 @@ export function ActionBar({
   const isMasterTurn = currentActor === campaign.master;
   const isBusy = isSubmitting || isGenerating;
 
+  const userCharacter = useMemo(
+    () => campaign.characters.find((c) => c.owner === "user"),
+    [campaign.characters],
+  );
+
+  // estado dos dados (apenas quando o usuário é jogador)
+  const [diceType, setDiceType] = useState<DiceType>("d20");
+  const [modAttr, setModAttr] = useState<AttributeKey | "none">(
+    userCharacter ? getClassPrimaryAttribute(userCharacter.classe) : "none",
+  );
+  const [spinning, setSpinning] = useState(false);
+  const [roll, setRoll] = useState<DiceRoll | null>(null);
+
+  const handleRoll = () => {
+    if (spinning || isBusy) return;
+    setSpinning(true);
+    setRoll(null);
+    window.setTimeout(() => {
+      const mod =
+        modAttr !== "none" && userCharacter
+          ? attributeModifier(userCharacter.attributes[modAttr])
+          : 0;
+      const label = modAttr !== "none" ? ATTRIBUTE_LABELS[modAttr] : undefined;
+      setRoll(rollWithModifier(diceType, mod, label));
+      setSpinning(false);
+    }, 850);
+  };
+
   const handleSubmit = async () => {
     const trimmed = draft.trim();
     if (!trimmed || isBusy) return;
@@ -49,8 +95,9 @@ export function ActionBar({
     setSubmitError(null);
     setIsSubmitting(true);
     try {
-      await onSubmitUser(trimmed);
+      await onSubmitUser(trimmed, roll ?? undefined);
       setDraft("");
+      setRoll(null);
     } catch (err) {
       const isCanceled = (err as { name?: string })?.name === "CanceledError";
       if (!isCanceled) {
@@ -73,18 +120,18 @@ export function ActionBar({
             : "border-primary/40 bg-primary/5",
         )}
       >
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs min-w-0">
           {isMasterTurn ? (
             <>
               <Crown size={14} className="text-amber-500" />
-              <span className="font-semibold text-amber-700 dark:text-amber-400">
+              <span className="font-semibold text-amber-700 dark:text-amber-400 truncate">
                 Sua vez como Mestre — narre a cena
               </span>
             </>
           ) : (
             <>
               <UserIcon size={14} className="text-primary" />
-              <span className="font-semibold text-primary">
+              <span className="font-semibold text-primary truncate">
                 Sua vez como jogador — descreva sua ação
               </span>
             </>
@@ -112,7 +159,93 @@ export function ActionBar({
             }
           }}
         />
-        <div className="flex items-start justify-between gap-2">
+        {!isMasterTurn && (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border bg-muted/30 p-2.5">
+            <div className="shrink-0 mx-auto sm:mx-0">
+              <DiceRoller
+                dice={diceType}
+                spinning={spinning}
+                value={roll?.raw ?? null}
+                size={72}
+                color="#6366f1"
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-2 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <Select
+                  value={diceType}
+                  onValueChange={(v) => {
+                    setDiceType(v as DiceType);
+                    setRoll(null);
+                  }}
+                  disabled={spinning}
+                >
+                  <SelectTrigger className="h-8 flex-1 sm:w-22">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DICE_TYPES.map((d) => (
+                      <SelectItem key={d} value={d}>
+                        {d}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={modAttr}
+                  onValueChange={(v) => {
+                    setModAttr(v as AttributeKey | "none");
+                    setRoll(null);
+                  }}
+                  disabled={spinning}
+                >
+                  <SelectTrigger className="h-8 flex-1 sm:w-35">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem modificador</SelectItem>
+                    {ATTRIBUTE_KEYS.map((key) => {
+                      const mod = userCharacter
+                        ? attributeModifier(userCharacter.attributes[key])
+                        : 0;
+                      const sign = mod >= 0 ? `+${mod}` : `${mod}`;
+                      return (
+                        <SelectItem key={key} value={key}>
+                          {ATTRIBUTE_LABELS[key]} ({sign})
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleRoll}
+                  disabled={spinning || isBusy}
+                  className="h-8 gap-1.5 cursor-pointer"
+                >
+                  <Dices size={14} />
+                  Rolar
+                </Button>
+              </div>
+              {roll && !spinning && (
+                <p className="text-xs text-muted-foreground">
+                  Resultado:{" "}
+                  <span className="font-semibold text-foreground tabular-nums">
+                    {roll.dice} {roll.raw}
+                    {roll.modifier !== 0 &&
+                      ` ${roll.modifier > 0 ? "+" : "−"}${Math.abs(roll.modifier)}`}
+                    {" = "}
+                    {roll.total}
+                  </span>{" "}
+                  — descreva sua ação usando esse resultado.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
           <div className="flex flex-col justify-center">
             {submitError ? (
               <p className="text-xs text-destructive first-letter:capitalize">{submitError}</p>
@@ -129,7 +262,7 @@ export function ActionBar({
               </p>
             )}
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center justify-end gap-2 shrink-0">
             <Button
               variant="ghost"
               size="sm"
@@ -166,7 +299,7 @@ export function ActionBar({
   return (
     <div
       className={cn(
-        "rounded-xl border p-3 md:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3",
+        "rounded-xl border p-3 md:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 md:gap-3",
         isMasterTurn ? "border-amber-500/40 bg-amber-500/5" : "bg-muted/30",
       )}
     >
