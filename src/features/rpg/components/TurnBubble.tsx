@@ -75,7 +75,7 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
           >
             {turn.content}
           </p>
-          {isMaster && turn.audioUrl && (
+          {turn.audioUrl && (
             <AudioPlayer status="ready" audioUrl={turn.audioUrl} />
           )}
         </>

@@ -14,6 +14,7 @@ export interface IResponseApiAllIa {
 export interface IResponseApiOneIa {
     response: string
     audio_url?: string
+    voice_id?: string
     musicTaskId?: string
     musicStatus?: 'pending' | 'failed' | 'ready'
     creditsCharged?: number
@@ -52,6 +53,7 @@ function readAudioFields(value: unknown): Omit<IResponseApiOneIa, 'response'> {
     if (!record) return {};
     const result: Omit<IResponseApiOneIa, 'response'> = {};
     if (typeof record.audio_url === 'string') result.audio_url = record.audio_url;
+    if (typeof record.voice_id === 'string') result.voice_id = record.voice_id;
     if (typeof record.musicTaskId === 'string') result.musicTaskId = record.musicTaskId;
     if (typeof record.musicStatus === 'string') {
         const s = record.musicStatus;

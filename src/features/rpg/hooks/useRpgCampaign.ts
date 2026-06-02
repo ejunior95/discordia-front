@@ -80,7 +80,10 @@ function buildCharacters(
     );
 }
 
-function applyHpDeltas(characters: Character[], deltas: { owner: ActorRef; delta: number }[]): Character[] {
+function applyHpDeltas(
+  characters: Character[],
+  deltas: { owner: ActorRef; delta: number }[],
+): Character[] {
   if (deltas.length === 0) return characters;
   return characters.map((character) => {
     const totalDelta = deltas
@@ -93,6 +96,17 @@ function applyHpDeltas(characters: Character[], deltas: { owner: ActorRef; delta
       hp: Math.max(0, Math.min(character.maxHp, character.hp + totalDelta)),
     };
   });
+}
+
+function applyCharacterVoiceId(
+  characters: Character[],
+  owner: ActorRef,
+  voiceId?: string,
+): Character[] {
+  if (!voiceId) return characters;
+  return characters.map((character) =>
+    character.owner === owner ? { ...character, voiceId } : character,
+  );
 }
 
 export function useRpgCampaign() {
@@ -268,6 +282,7 @@ export function useRpgCampaign() {
       const msg = response?.data?.response?.trim();
       if (!msg) throw new Error('Sem resposta');
       const audioUrl = response?.data?.audio_url;
+      const voiceId = response?.data?.voice_id;
 
       setCampaign((current) => {
         if (!current) return current;
@@ -286,9 +301,13 @@ export function useRpgCampaign() {
               }
             : t,
         );
+        const charactersWithHp = applyHpDeltas(
+          current.characters,
+          parsedHp.deltas,
+        );
         return advanceTurn({
           ...current,
-          characters: applyHpDeltas(current.characters, parsedHp.deltas),
+          characters: applyCharacterVoiceId(charactersWithHp, actor, voiceId),
           turns,
         });
       });

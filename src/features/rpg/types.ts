@@ -20,6 +20,7 @@ export interface Character {
   hp: number;
   maxHp: number;
   attributes: Attributes;
+  voiceId?: string;
 }
 
 export type DiceType = 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'd100';
