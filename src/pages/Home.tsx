@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { HeroGreeting } from "@/features/home/components/HeroGreeting";
 import { StatsOverview } from "@/features/home/components/StatsOverview";
@@ -8,12 +9,16 @@ import { PerformanceChart } from "@/features/home/components/PerformanceChart";
 import { RecentActivityCard } from "@/features/home/components/RecentActivityCard";
 import { QuickShortcuts } from "@/features/home/components/QuickShortcuts";
 import { useHomeSnapshot } from "@/features/home/hooks/useHomeSnapshot";
+import type { StatsScope } from "@/features/home/home.types";
 import Loader from "@/custom-components/Loader";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { pageMotion } from "@/utils/pageMotion";
 
 export default function Home() {
-  const { data, isLoading, error, refetch } = useHomeSnapshot();
+  const [scope, setScope] = useState<StatsScope>("global");
+  const { data, isLoading, error, refetch } = useHomeSnapshot(scope);
 
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 pt-2 md:pt-4">
@@ -25,7 +30,34 @@ export default function Home() {
         <QuickShortcuts />
 
         <div className="relative text-center text-md uppercase tracking-wider text-muted-foreground after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-3 select-none">Estatísticas Globais</span>
+          <span className="relative z-10 bg-background px-3 select-none">
+            {scope === "user" ? "Minhas Estatísticas" : "Estatísticas Globais"}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-center gap-3">
+          <Label
+            htmlFor="stats-scope"
+            className={`text-sm cursor-pointer select-none transition-colors ${
+              scope === "global" ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Globais
+          </Label>
+          <Switch
+            id="stats-scope"
+            checked={scope === "user"}
+            onCheckedChange={(checked) => setScope(checked ? "user" : "global")}
+            aria-label="Alternar entre estatísticas globais e pessoais"
+          />
+          <Label
+            htmlFor="stats-scope"
+            className={`text-sm cursor-pointer select-none transition-colors ${
+              scope === "user" ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Minhas
+          </Label>
         </div>
 
         {isLoading && !data && (
@@ -62,7 +94,7 @@ export default function Home() {
                 <PerformanceChart weekly={data.weekly} />
               </div>
               <div className="xl:col-span-4">
-                <RecentActivityCard rounds={data.recent} />
+                <RecentActivityCard items={data.recent} />
               </div>
             </div>
           </>

@@ -93,6 +93,9 @@ export function useJokenpoGame() {
       let aiChoice: JokenpoChoice;
       try {
         const res = await askGameAction('jokenpo', game.ia, {
+          gameId: game.id,
+          userChoice: choice,
+          gameStatus: game.status,
           history: game.rounds.map((r) => ({ user: r.user, ai: r.ai })),
         }, controller.signal);
         aiChoice = parseAIChoice(res?.data?.response ?? "") ?? randomChoice();

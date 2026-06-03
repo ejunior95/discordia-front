@@ -1,12 +1,15 @@
 import { api } from '@/server/api';
-import type { HomeSnapshot } from './home.types';
+import type { HomeSnapshot, StatsScope } from './home.types';
 
-export async function getHomeSnapshot(signal?: AbortSignal): Promise<HomeSnapshot> {
+export async function getHomeSnapshot(
+  scope: StatsScope = 'global',
+  signal?: AbortSignal,
+): Promise<HomeSnapshot> {
   const res = await api.request<HomeSnapshot>({
     method: 'GET',
     url: 'stats/home',
+    params: scope === 'user' ? { scope: 'user' } : undefined,
     signal,
   });
-  console.log('Home snapshot:', res.data);
   return res.data;
 }

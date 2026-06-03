@@ -230,6 +230,7 @@ export function useRapBattle() {
     const payloadA = {
       agent: a,
       opponent: b,
+      battleId: battle.id,
       theme: battle.theme,
       roundIndex: index,
       previousOpponentVerse: prevB,
@@ -239,6 +240,7 @@ export function useRapBattle() {
     const payloadB = {
       agent: b,
       opponent: a,
+      battleId: battle.id,
       theme: battle.theme,
       roundIndex: index,
       previousOpponentVerse: prevA,
@@ -340,6 +342,7 @@ export function useRapBattle() {
       const payload = {
         agent,
         opponent,
+        battleId: battle.id,
         theme: battle.theme,
         roundIndex,
         previousOpponentVerse: prevOpponent,

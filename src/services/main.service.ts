@@ -155,3 +155,15 @@ export async function validateOrchestratorInput(
         signal,
     });
 }
+
+export async function syncGameStatus(
+    context: GameActionContext,
+    gameId: string,
+    status: string,
+) {
+    return api.request<{ updated: number }>({
+        method: 'POST',
+        url: 'stats/game-status',
+        data: { context, gameId, status },
+    });
+}

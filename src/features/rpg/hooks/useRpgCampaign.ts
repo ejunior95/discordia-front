@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { askGameAction, OrchestratorTargetKind, validateOrchestratorInput } from '@/services/main.service';
+import { askGameAction, OrchestratorTargetKind, syncGameStatus, validateOrchestratorInput } from '@/services/main.service';
 import type { AgentIA } from '@/features/chat/types';
 import {
   RPG_STORAGE_KEY,
@@ -348,12 +348,14 @@ export function useRpgCampaign() {
 
   const pause = useCallback(() => {
     abortRef.current?.abort();
+    if (campaign) void syncGameStatus('rpg', campaign.id, 'paused').catch(() => undefined);
     setCampaign((current) => (current ? { ...current, status: 'paused' } : current));
-  }, []);
+  }, [campaign]);
 
   const resume = useCallback(() => {
+    if (campaign) void syncGameStatus('rpg', campaign.id, 'playing').catch(() => undefined);
     setCampaign((current) => (current ? { ...current, status: 'playing' } : current));
-  }, []);
+  }, [campaign]);
 
   const reset = useCallback(() => {
     abortRef.current?.abort();

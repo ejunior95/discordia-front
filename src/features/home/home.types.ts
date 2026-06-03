@@ -1,16 +1,13 @@
 import type { AgentIA } from "@/features/chat/types";
 
+export type StatsScope = "global" | "user";
+
 export interface HomeTotals {
-  rounds: number;
   questions: number;
-  rpgBattles: number;
   rapBattles: number;
-  gamesRounds: number;
+  rpgCampaigns: number;
+  miniGames: number;
   votes: number;
-  chatVotes: number;
-  gameVotes: number;
-  rapVotes: number;
-  rpgVotes: number;
 }
 
 export interface LeaderboardEntry {
@@ -33,12 +30,15 @@ export interface WeeklyBucket {
   byAgent: Record<AgentIA, number>;
 }
 
-export interface RecentRound {
+export type RecentActivityKind = "chat" | "rap" | "rpg" | "game";
+
+export interface RecentActivityItem {
   id: string;
-  question: string;
-  winner: AgentIA;
-  votedAt: string;
-  createdAt: string;
+  kind: RecentActivityKind;
+  title: string;
+  subtitle: string;
+  winner: AgentIA | null;
+  at: string;
 }
 
 export interface HomeSnapshot {
@@ -47,5 +47,5 @@ export interface HomeSnapshot {
   leaderboard: LeaderboardEntry[];
   iaOfWeek: IAOfWeek | null;
   weekly: WeeklyBucket[];
-  recent: RecentRound[];
+  recent: RecentActivityItem[];
 }

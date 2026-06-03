@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { getHomeSnapshot } from '../home.api';
-import type { HomeSnapshot } from '../home.types';
+import type { HomeSnapshot, StatsScope } from '../home.types';
 
 interface UseHomeSnapshotState {
   data: HomeSnapshot | null;
@@ -10,7 +10,7 @@ interface UseHomeSnapshotState {
   refetch: () => void;
 }
 
-export function useHomeSnapshot(): UseHomeSnapshotState {
+export function useHomeSnapshot(scope: StatsScope = 'global'): UseHomeSnapshotState {
   const [data, setData] = useState<HomeSnapshot | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export function useHomeSnapshot(): UseHomeSnapshotState {
     setIsLoading(true);
     setError(null);
     try {
-      const snapshot = await getHomeSnapshot(controller.signal);
+      const snapshot = await getHomeSnapshot(scope, controller.signal);
       setData(snapshot);
     } catch (err) {
       if (axios.isCancel(err) || (err instanceof Error && err.name === 'CanceledError')) return;
@@ -34,7 +34,7 @@ export function useHomeSnapshot(): UseHomeSnapshotState {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [scope]);
 
   useEffect(() => {
     void fetchSnapshot();

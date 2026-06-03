@@ -129,6 +129,8 @@ export function useChessGame() {
 
       try {
         const res = await askGameAction('chess', current.ia, {
+          gameId: current.id,
+          gameStatus: current.status,
           fen: chess.fen(),
           pgn: chess.pgn(),
           side: aiSide,
