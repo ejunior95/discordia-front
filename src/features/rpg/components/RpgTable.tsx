@@ -62,7 +62,7 @@ export function RpgTable({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 lg:h-[calc(100dvh-7rem)] lg:min-h-144">
       {/* Coluna principal: header + timeline + action bar */}
-      <div className="lg:col-span-3 flex flex-col gap-3 md:gap-4 lg:min-h-0">
+      <div className="lg:col-span-3 flex flex-col gap-3 md:gap-4 min-w-0 lg:min-h-0">
         {/* Header */}
         <Card className="py-4">
           <CardContent className="px-4 md:px-5 flex flex-wrap items-center justify-between gap-3">
@@ -112,13 +112,13 @@ export function RpgTable({
         </Card>
 
         {/* Timeline */}
-        <Card className="flex-1 min-h-[55vh] lg:min-h-0 py-0 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div ref={timelineRef} className="h-full overflow-y-auto px-4 md:px-6 py-4">
+        <Card className="flex-1 min-w-0 max-w-full min-h-[55vh] max-h-[70vh] lg:max-h-none lg:min-h-0 py-0 overflow-hidden">
+          <ScrollArea className="h-full min-w-0 max-w-full overflow-hidden">
+            <div ref={timelineRef} className="h-full w-full min-w-0 max-w-full overflow-y-auto overflow-x-hidden px-4 md:px-6 py-4">
               {campaign.turns.length === 0 ? (
                 <EmptyTimeline isMasterAI={campaign.master !== 'user'} />
               ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex w-full min-w-0 max-w-full flex-col gap-3">
                   {campaign.turns.map((turn, i) => (
                     <TurnBubble
                       key={turn.id}
@@ -159,7 +159,7 @@ export function RpgTable({
       </div>
 
       {/* Coluna lateral: fichas */}
-      <div className="lg:col-span-1 lg:min-h-0">
+      <div className="lg:col-span-1 min-w-0 lg:min-h-0">
         <Card className="h-auto lg:h-full max-h-[55vh] lg:max-h-none py-4 overflow-hidden flex flex-col">
           <CardContent className="px-3 md:px-4 flex flex-col gap-3 min-h-0">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground px-1">

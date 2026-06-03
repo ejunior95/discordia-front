@@ -113,11 +113,11 @@ export function RecentActivityCard({ items }: RecentActivityCardProps) {
                               <Icon size={16} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm truncate" title={item.title}>
-                                {item.title}
+                              <p className="text-sm truncate" title={item.title.split(':')[0] || 'N/A'}>
+                                {item.title.split(':')[0] || 'N/A'}
                               </p>
                               <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5 min-w-0">
-                                <span className="truncate">{item.subtitle}</span>
+                                <span className="truncate first-letter:capitalize">{item.title.split(':')[1] || 'N/A'}</span>
                                 {winnerCfg && (
                                   <>
                                     <span aria-hidden>·</span>

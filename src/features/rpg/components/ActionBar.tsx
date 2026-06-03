@@ -223,7 +223,7 @@ export function ActionBar({
                   size="sm"
                   onClick={handleRoll}
                   disabled={spinning || isBusy}
-                  className="h-8 gap-1.5 cursor-pointer"
+                  className="h-8 gap-1.5 cursor-pointer w-full sm:w-auto"
                 >
                   <Dices size={14} />
                   Rolar

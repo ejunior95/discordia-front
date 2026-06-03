@@ -154,13 +154,13 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         return (
             <div
                 className={cn(
-                    "flex -ml-2 mt-4 flex-col gap-2 rounded-lg border border-dashed bg-card/40 px-3 py-2.5",
+                    "flex ml-0 mt-4 w-full min-w-0 max-w-full flex-col gap-2 rounded-lg border border-dashed bg-card/40 px-2 py-2.5 sm:-ml-2 sm:px-3",
                     className,
                 )}
                 role="status"
                 aria-live="polite"
             >
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin shrink-0 text-primary" />
                     <Music2 className="h-4 w-4 shrink-0 text-primary/70" aria-hidden="true" />
                     <span
@@ -189,9 +189,9 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
 
     if (status === 'failed') {
         return (
-            <div className={cn("flex -ml-2 mt-4 items-center gap-2 text-xs text-destructive py-2", className)}>
-                <AlertCircle className="h-4 w-4" />
-                <span>{error ?? 'Falha ao gerar áudio.'}</span>
+            <div className={cn("flex ml-0 mt-4 w-full min-w-0 max-w-full items-start gap-2 text-xs text-destructive py-2 sm:-ml-2", className)}>
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 wrap-anywhere">{error ?? 'Falha ao gerar áudio.'}</span>
             </div>
         );
     }
@@ -203,7 +203,7 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
         return (
             <div
                 className={cn(
-                    "flex -ml-2 mt-4 items-center gap-3 rounded-lg border bg-card/50 px-3 py-2 shadow-xs",
+                    "flex ml-0 mt-4 w-full min-w-0 max-w-full flex-wrap items-center gap-2 rounded-lg border bg-card/50 px-2 py-2 shadow-xs sm:-ml-2 sm:flex-nowrap sm:gap-3 sm:px-3",
                     className,
                 )}
             >
@@ -222,8 +222,8 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
                     {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-px" />}
                 </Button>
 
-                <div className="flex flex-1 items-center gap-2 min-w-0">
-                    <span className="text-[10px] tabular-nums text-muted-foreground w-10 text-right">
+                <div className="flex min-w-0 flex-1 basis-full items-center gap-1.5 sm:basis-auto sm:gap-2">
+                    <span className="w-9 shrink-0 text-right text-[10px] tabular-nums text-muted-foreground sm:w-10">
                         {formatTime(currentTime)}
                     </span>
                     <input
@@ -234,10 +234,10 @@ export function AudioPlayer({ status, audioUrl, error, label, className, disable
                         value={currentTime}
                         onChange={handleSeek}
                         aria-label="Progresso"
-                        className="audio-range flex-1"
+                        className="audio-range min-w-0 flex-1"
                         style={{ ['--progress' as string]: `${progress}%` }}
                     />
-                    <span className="text-[10px] tabular-nums text-muted-foreground w-10">
+                    <span className="w-9 shrink-0 text-[10px] tabular-nums text-muted-foreground sm:w-10">
                         {formatTime(duration)}
                     </span>
                 </div>

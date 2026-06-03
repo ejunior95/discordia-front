@@ -22,14 +22,14 @@ interface CharacterPanelProps {
 export function CharacterPanel({ characters }: CharacterPanelProps) {
   if (characters.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground italic px-2">
+      <p className="min-w-0 max-w-full px-2 text-xs italic text-muted-foreground">
         Nenhum personagem na mesa.
       </p>
     );
   }
 
   return (
-    <Accordion type="multiple" defaultValue={characters.map((c) => c.name)} className="w-full">
+    <Accordion type="multiple" defaultValue={characters.map((c) => c.name)} className="w-full min-w-0 max-w-full">
       {characters.map((char) => {
         const isUser = char.owner === 'user';
         const cfg = isUser ? null : IA_CONFIG[char.owner as AgentIA];
@@ -40,13 +40,13 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
         const primaryAttr = getClassPrimaryAttribute(char.classe);
 
         return (
-          <AccordionItem key={char.name} value={char.name} className="border rounded-lg mb-2 px-3">
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
+          <AccordionItem key={char.name} value={char.name} className="mb-2 w-full min-w-0 max-w-full overflow-hidden rounded-lg border px-2 sm:px-3">
+            <AccordionTrigger className="min-w-0 gap-2 py-3 hover:no-underline sm:gap-4 sm:py-4">
+              <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
                 <div className={cn('rounded-full p-1.5 shrink-0', iconClass)}>
                   <Icon size={14} />
                 </div>
-                <div className="text-left min-w-0">
+                <div className="min-w-0 flex-1 text-left">
                   <p className="text-sm font-semibold truncate">{char.name}</p>
                   <p className="text-[11px] text-muted-foreground truncate">
                     {char.classe} · {ownerLabel}
@@ -54,14 +54,14 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-2 space-y-3">
-              <div>
-                <div className="flex items-center justify-between text-[11px] mb-1">
-                  <span className="flex items-center gap-1 text-muted-foreground">
+            <AccordionContent className="min-w-0 space-y-3 pt-2">
+              <div className="min-w-0">
+                <div className="mb-1 flex min-w-0 items-center justify-between gap-2 text-[11px]">
+                  <span className="flex min-w-0 items-center gap-1 text-muted-foreground">
                     <Heart size={11} className="text-rose-500" />
                     HP
                   </span>
-                  <span className="font-semibold tabular-nums min-w-14 text-right">
+                  <span className="min-w-14 shrink-0 text-right font-semibold tabular-nums">
                     {char.hp}/{char.maxHp}
                   </span>
                 </div>
@@ -75,7 +75,7 @@ export function CharacterPanel({ characters }: CharacterPanelProps) {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1.5 text-center">
+              <div className="grid min-w-0 grid-cols-3 gap-1 text-center sm:gap-1.5">
                 {(Object.keys(ATTRIBUTE_LABELS) as AttributeKey[]).map((key) => (
                   <AttrBlock
                     key={key}
@@ -105,11 +105,11 @@ function AttrBlock({
   return (
     <div
       className={cn(
-        'rounded-md border bg-background/50 px-2 py-1.5',
+        'min-w-0 rounded-md border bg-background/50 px-1.5 py-1.5 sm:px-2',
         highlight && 'border-primary/60 bg-primary/5',
       )}
     >
-      <p className="text-[10px] text-muted-foreground tracking-wide">
+      <p className="truncate text-[10px] tracking-wide text-muted-foreground">
         {label}
         {highlight && ' ★'}
       </p>

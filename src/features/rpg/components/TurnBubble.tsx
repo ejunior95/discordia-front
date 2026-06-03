@@ -24,25 +24,25 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
   return (
     <article
       className={cn(
-        'rounded-xl border px-4 py-3 transition-all',
+        'w-full min-w-0 max-w-full overflow-hidden rounded-xl border px-4 py-3 transition-all',
         bubbleClass,
         turn.status === 'error' && 'border-destructive/50',
       )}
     >
-      <header className="flex items-center gap-2 mb-1.5">
+      <header className="flex min-w-0 max-w-full items-center gap-2 mb-1.5">
         <div className={cn('size-7 rounded-full flex items-center justify-center shrink-0', ringClass)}>
           <Icon size={14} />
         </div>
-        <p className="text-xs font-semibold uppercase tracking-wide truncate">
+        <p className="text-xs font-semibold uppercase tracking-wide truncate min-w-0">
           {isMaster ? 'Mestre' : character?.name ?? label}
         </p>
         {!isMaster && character && (
-          <p className="text-[11px] text-muted-foreground truncate">
+          <p className="text-[11px] text-muted-foreground truncate shrink-0">
             · {character.classe}
           </p>
         )}
         {turn.actor !== 'user' && (
-          <span className="ml-auto text-[10px] text-muted-foreground/70 truncate">
+          <span className="ml-auto max-w-[35%] text-[10px] text-muted-foreground/70 truncate shrink-0">
             via {label}
           </span>
         )}
@@ -69,14 +69,18 @@ export function TurnBubble({ turn, characters, onRetry, isLast }: TurnBubbleProp
         <>
           <p
             className={cn(
-              'whitespace-pre-wrap wrap-break-word',
+              'min-w-0 max-w-full whitespace-pre-wrap wrap-anywhere',
               isMaster ? 'text-[15px] leading-relaxed' : 'text-sm leading-relaxed',
             )}
           >
             {turn.content}
           </p>
           {turn.audioUrl && (
-            <AudioPlayer status="ready" audioUrl={turn.audioUrl} />
+            <AudioPlayer
+              status="ready"
+              audioUrl={turn.audioUrl}
+              className="ml-0 w-full max-w-full min-w-0 flex-wrap gap-2 sm:-ml-2 sm:flex-nowrap sm:gap-3"
+            />
           )}
         </>
       )}

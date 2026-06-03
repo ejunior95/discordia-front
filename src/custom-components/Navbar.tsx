@@ -39,7 +39,7 @@ import {
   NavigationMenuList, 
 } from "@/components/ui/navigation-menu"
 import { navigationItems, filterNavigationByCapabilities } from "@/config/navigation"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useEffect, useMemo, useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatFallbackAvatarStr } from "@/utils/globalFunctions"
@@ -92,8 +92,7 @@ export const Navbar = () => {
               <NavigationMenuList  className="items-center flex justify-center gap-2 xl:gap-4">
                 {visibleNavItems.map((item) => (
                   <NavigationMenuItem key={item.path}>
-                    <Link to={item.path}>
-                      <NavigationMenuLink className="
+                    <NavigationMenuLink asChild className="
                         rounded-md 
                         bg-background 
                         text-sm 
@@ -109,12 +108,13 @@ export const Navbar = () => {
                         transition-[color,box-shadow] 
                         focus-visible:ring-[3px] 
                         focus-visible:outline-1">
+                      <Link to={item.path}>
                         <div className="flex items-center justify-center gap-3">
                           {item.icon && <item.icon className="w-10 h-10" />}
                           <p>{item.label}</p>
                         </div>
-                      </NavigationMenuLink>
-                    </Link>
+                      </Link>
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                 ))}
               </NavigationMenuList>
@@ -191,6 +191,8 @@ export const Navbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="top" className="flex w-full max-w-full flex-col gap-0 p-0">
+                <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
+                <SheetDescription className="sr-only">Menu de navegação mobile</SheetDescription>
                 <div className="border-b px-4 py-4 pr-12">
                   <div className="flex items-center gap-3">
                     <img
